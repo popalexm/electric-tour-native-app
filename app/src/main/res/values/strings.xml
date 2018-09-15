@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">EVGrandTour</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="message_error_opening_file">There was an error while trying to open the selected file!</string>
+    <string name="message_error_format_invalid">File format is invalid !</string>
+    <string name="title_marker_current_location">Current location</string>
+    <string name="message_calculating_routes">Calculating routes in progress !</string>
+    <string name="message_done">Done</string>
+    <string name="message_all_waypoints_removed">All Waypoints have been removed !</string>
+
+    <string name="lorem_ipsum">Lorem Ipsun</string>
+
+</resources>
