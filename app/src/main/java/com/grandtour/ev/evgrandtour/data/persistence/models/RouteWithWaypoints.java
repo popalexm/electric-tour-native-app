@@ -9,7 +9,7 @@ public class RouteWithWaypoints {
 
     @Embedded
     public Route route;
-    @Relation(parentColumn = "routeId" , entityColumn = "waypointId" , entity = RouteWaypoint.class)
+    @Relation(parentColumn = "routeId", entityColumn = "routeId", entity = RouteWaypoint.class)
     public List<RouteWaypoint> routeWaypoints;
 
 }

@@ -4,8 +4,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
-import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
+import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
 import com.grandtour.ev.evgrandtour.utils.ArrayUtils;
@@ -15,12 +15,13 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
 import retrofit2.Response;
 
-public class GetRoutesForWaypointsUseCase extends BaseUseCase implements BaseUseCaseFlowable {
+public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlowable {
 
     @NonNull
     private final List<Marker> waypoints;
@@ -28,7 +29,8 @@ public class GetRoutesForWaypointsUseCase extends BaseUseCase implements BaseUse
     private final NetworkAPI networkAPI;
     private final static int NUMBER_OF_MAX_WAYPOINTS_PER_ROUTE = 12;
 
-    public GetRoutesForWaypointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull NetworkAPI networkAPI, @NonNull List<Marker> waypoints) {
+    public CalculateRouteUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull NetworkAPI networkAPI,
+            @NonNull List<Marker> waypoints) {
         super(executorThread, postExecutionThread);
         this.waypoints = waypoints;
         this.networkAPI = networkAPI;
@@ -44,7 +46,7 @@ public class GetRoutesForWaypointsUseCase extends BaseUseCase implements BaseUse
     @NonNull
     private List<Maybe<Response<RoutesResponse>>> generateIndividualRouteUseCases(@NonNull List<Marker> waypoints) {
         List<Maybe<Response<RoutesResponse>>> calculateRouteTasks = new ArrayList<>();
-        List<List<Marker>> routesList = ArrayUtils.split(waypoints , GetRoutesForWaypointsUseCase.NUMBER_OF_MAX_WAYPOINTS_PER_ROUTE);
+        List<List<Marker>> routesList = ArrayUtils.split(waypoints, CalculateRouteUseCase.NUMBER_OF_MAX_WAYPOINTS_PER_ROUTE);
         for (int i = 0; i < routesList.size(); i ++) {
             List<Marker> route = routesList.get(i);
             Marker startMarker = route.get(0);

@@ -7,8 +7,9 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
 import com.grandtour.ev.evgrandtour.utils.JSONUtils;
 
 import android.support.annotation.NonNull;
+
 import java.util.List;
-import java.util.concurrent.Callable;
+
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 
@@ -40,7 +41,8 @@ public class SaveWaypointsUseCase extends BaseUseCase implements BaseUseCaseSing
                     e.printStackTrace();
                 }
             }
-            return storageManager.waypointsDao().addWaypoints(waypoints);
+            return storageManager.waypointsDao()
+                    .insert(waypoints);
         }).subscribeOn(postExecutionThread)
                 .observeOn(postExecutionThread);
     }

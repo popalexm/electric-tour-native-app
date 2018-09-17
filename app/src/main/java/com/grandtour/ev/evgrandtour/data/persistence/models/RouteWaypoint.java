@@ -6,15 +6,14 @@ import android.arch.persistence.room.PrimaryKey;
 
 @Entity(foreignKeys = @ForeignKey(
         entity = Route.class,
-        parentColumns = "routeId",
-        childColumns = "waypointId"))
-
+        parentColumns = "routeId", childColumns = "routeId"))
 public class RouteWaypoint {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int waypointId;
     private double lat;
     private double lng;
+    private int routeId;
 
     public int getRouteId() {
         return routeId;
@@ -23,8 +22,6 @@ public class RouteWaypoint {
     public void setRouteId(int routeId) {
         this.routeId = routeId;
     }
-
-    private int routeId;
 
     public int getWaypointId() {
         return waypointId;

@@ -12,6 +12,6 @@ import java.util.List;
 public interface RouteWaypointsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] addWaypoints(List<RouteWaypoint> waypoints);
+    long[] insert(List<RouteWaypoint> waypoints);
 
 }

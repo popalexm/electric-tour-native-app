@@ -1,7 +1,9 @@
 package com.grandtour.ev.evgrandtour.data.network;
 
 import android.support.annotation.NonNull;
+
 import javax.annotation.Nonnull;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -41,7 +43,7 @@ public final class NetworkManager {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder()
-                .addInterceptor(logging)
+                //.addInterceptor(logging)
                 .build();
     }
 }

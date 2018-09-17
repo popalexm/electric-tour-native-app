@@ -1,4 +1,5 @@
 package com.grandtour.ev.evgrandtour.maps;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -12,10 +13,13 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.response.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
 import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
+import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
+import com.grandtour.ev.evgrandtour.domain.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.DeletePreviousWaypointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.GetAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.GetAvailableWaypointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.GetRoutesForWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
@@ -34,6 +38,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -96,6 +101,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 locationUpdatesService.requestLocationUpdates();
             }
             loadAvailableWaypoints();
+            loadAvailableRoutes();
         }
     }
 
@@ -182,7 +188,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             view.showLoadingStatus(true , Injection.provideGlobalContext().getString(R.string.message_calculating_routes));
         }
         NetworkAPI networkAPI = Injection.provideNetworkApi();
-        routesCalculationRequests  = new GetRoutesForWaypointsUseCase(Schedulers.io() , AndroidSchedulers.mainThread(), networkAPI, waypointList).perform()
+        routesCalculationRequests = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), networkAPI, waypointList).perform()
                 .doOnComplete(() -> {
                     areRouteRequestsInProgress = false;
                     view.showLoadingStatus(false, "");
@@ -204,10 +210,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                             .getPoints();
                     List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(poly);
 
-                    PolylineOptions routePolyline = MapUtils.generateRoute(mapPoints);
-                    if (isViewAttached) {
-                        view.drawWaypointRoute(routePolyline);
-                    }
+                    drawRouteFromPoints(mapPoints);
                     saveNewRouteLocally(mapPoints);
                 }
           }
@@ -220,12 +223,13 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             public void onSubscribe(Disposable d) { }
 
             @Override
-            public void onSuccess(Long[] longs) { }
+            public void onSuccess(Long[] longs) {
+
+            }
 
             @Override
             public void onError(Throwable e) { e.printStackTrace(); }
         });
-
     }
 
     private void saveNewWaypoints(@NonNull List<Waypoint> waypoints) {
@@ -272,6 +276,38 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         });
     }
 
+    private void loadAvailableRoutes() {
+        new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe(new MaybeObserver<List<RouteWithWaypoints>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(List<RouteWithWaypoints> routeWithWaypoints) {
+                        for (RouteWithWaypoints route : routeWithWaypoints) {
+                            List<RouteWaypoint> routes = route.routeWaypoints;
+                            List<LatLng> routeMapPoints = new ArrayList<>();
+                            for (RouteWaypoint routeWaypoint : routes) {
+                                LatLng routeMapPoint = new LatLng(routeWaypoint.getLat(), routeWaypoint.getLng());
+                                routeMapPoints.add(routeMapPoint);
+                            }
+                            drawRouteFromPoints(routeMapPoints);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
     private void deleteAllStoredWaypoints() {
         new DeletePreviousWaypointsUseCase(Schedulers.io() , AndroidSchedulers.mainThread() , Injection.provideStorageManager())
                 .perform().subscribe(new CompletableObserver() {
@@ -290,5 +326,12 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             @Override
             public void onError(Throwable e) { e.printStackTrace(); }
         });
+    }
+
+    private void drawRouteFromPoints(List<LatLng> routeMapPoints) {
+        PolylineOptions routePolyline = MapUtils.generateRoute(routeMapPoints);
+        if (isViewAttached) {
+            view.drawWaypointRoute(routePolyline);
+        }
     }
 }

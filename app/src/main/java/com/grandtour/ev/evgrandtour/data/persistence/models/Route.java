@@ -5,7 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class Route {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int routeId;
 
     public int getRouteId() {

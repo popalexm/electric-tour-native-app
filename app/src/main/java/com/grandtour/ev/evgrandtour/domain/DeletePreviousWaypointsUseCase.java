@@ -5,7 +5,6 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseCompletable;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import io.reactivex.Completable;
 import io.reactivex.Scheduler;
@@ -28,7 +27,8 @@ public class DeletePreviousWaypointsUseCase extends BaseUseCase implements BaseU
         return Completable.fromAction(new Action() {
             @Override
             public void run() {
-                storageManager.waypointsDao().deleteAllStoredWaypoints();
+                storageManager.waypointsDao()
+                        .deleteAll();
             }
         }).subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
