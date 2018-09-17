@@ -2,5 +2,6 @@
 <resources>
 
     <string name="format_start_number_end_message" > %1$s  %2$d  %3$s </string>
+    <string name="format_navigation_directions">%1$s%2$f,%3$f</string>
 
 </resources>

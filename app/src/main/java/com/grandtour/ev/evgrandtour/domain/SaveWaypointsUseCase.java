@@ -4,7 +4,7 @@ import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
-import com.grandtour.ev.evgrandtour.utils.JSONUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.JSONUtils;
 
 import android.support.annotation.NonNull;
 

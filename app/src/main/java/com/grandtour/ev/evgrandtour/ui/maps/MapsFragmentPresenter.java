@@ -1,7 +1,8 @@
-package com.grandtour.ev.evgrandtour.maps;
+package com.grandtour.ev.evgrandtour.ui.maps;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,8 +25,8 @@ import com.grandtour.ev.evgrandtour.domain.GetAvailableWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
-import com.grandtour.ev.evgrandtour.utils.DocumentUtils;
-import com.grandtour.ev.evgrandtour.utils.MapUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -42,9 +43,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import io.reactivex.CompletableObserver;
 import io.reactivex.MaybeObserver;
+import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -80,14 +83,13 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         }
     };
 
-
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
     }
 
     @Override
     public void onAttach() {
-          isViewAttached = true;
+        isViewAttached = true;
     }
 
     @Override
@@ -159,8 +161,6 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     public void onCalculateRoutesClicked(@NonNull List<Marker> waypoints) {
         if (!areRouteRequestsInProgress) {
             requestDirectionsForWaypoints(waypoints);
-        } else {
-            onStopCalculatingRoutesClicked();
         }
     }
 
@@ -170,12 +170,10 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             routesCalculationRequests.dispose();
             areRouteRequestsInProgress = false;
             view.clearMapRoutes();
+            view.showLoadingStatus(false, "");
         }
     }
 
-    @Override
-    public void onMarkerLongClicked(@NonNull Marker marker) {
-    }
 
     private void displayMessage(@NonNull String msg){
         if (isViewAttached) {
@@ -225,7 +223,6 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
 
             @Override
             public void onSuccess(Long[] longs) {
-
             }
 
             @Override
@@ -244,7 +241,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
 
             @Override
             public void onSuccess(long[] longs) {
-                String message = Injection.provideGlobalContext().getString(R.string.format_start_number_end_message , "Added " , longs.length , " WayPoints !");
+                Context ctx = Injection.provideGlobalContext();
+                String message = ctx.getString(R.string.format_start_number_end_message, ctx.getString(R.string.message_added), longs.length,
+                        ctx.getString(R.string.message_checkpoints));
                 displayMessage(message);
                 loadAvailableWaypoints();
             }
@@ -262,11 +261,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
 
             @Override
             public void onSuccess(List<Waypoint> waypoints) {
-                if (waypoints.size() > 0) {
-                    if (isViewAttached) {
-                        view.loadDestinations(MapUtils.convertWaypointsToMarkers(waypoints));
-                    }
-                }
+                loadWaypointsOnMapView(waypoints);
             }
 
             @Override
@@ -275,6 +270,36 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             @Override
             public void onComplete() { }
         });
+    }
+
+    private void loadWaypointsOnMapView(@NonNull List<Waypoint> waypoints) {
+        Single.fromCallable(new Callable<List<MarkerOptions>>() {
+            @Override
+            public List<MarkerOptions> call() {
+                return MapUtils.convertWaypointsToMarkers(waypoints);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<MarkerOptions>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(List<MarkerOptions> markerOptions) {
+                        if (waypoints.size() > 0) {
+                            if (isViewAttached) {
+                                view.loadDestinations(markerOptions);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private void loadAvailableRoutes() {

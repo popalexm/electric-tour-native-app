@@ -8,8 +8,8 @@ import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
-import com.grandtour.ev.evgrandtour.utils.ArrayUtils;
-import com.grandtour.ev.evgrandtour.utils.MapUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.ArrayUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.support.annotation.NonNull;
 

@@ -15,15 +15,25 @@
         <ProgressBar
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3" />
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.2" />
 
         <TextView
-            android:layout_weight="0.7"
+            android:layout_weight="0.5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textAlignment="center"
             android:text="@string/lorem_ipsum"/>
+
+        <Button
+            android:id="@+id/btn_cancel_route_calculations"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.3"
+            android:text="@string/btn_cancel" />
 
     </LinearLayout>
 

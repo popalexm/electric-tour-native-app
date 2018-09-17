@@ -1,8 +1,8 @@
-package com.grandtour.ev.evgrandtour.main;
-
+package com.grandtour.ev.evgrandtour.ui.main;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.maps.MapsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.maps.MapsFragmentView;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.bottomappbar.BottomAppBar;
@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mapsFragmentView.clearWaypointsClicked();
                 }
                 break;
+            case R.id.action_calculate_routes:
+                if (mapsFragmentView != null) {
+                    mapsFragmentView.calculateRoutesClicked();
+                }
+                break;
         }
         return true;
     }
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
         if (mapsFragmentView != null) {
-            mapsFragmentView.calculateRoutesClicked();
+            mapsFragmentView.openNavigationForSelectedMarker();
         }
     }
 }

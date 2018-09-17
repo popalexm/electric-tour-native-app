@@ -1,8 +1,7 @@
-package com.grandtour.ev.evgrandtour.utils;
+package com.grandtour.ev.evgrandtour.services;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.app.Injection;
-import com.grandtour.ev.evgrandtour.maps.MapsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.maps.MapsFragmentView;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.utils;
+package com.grandtour.ev.evgrandtour.ui.utils;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -6,12 +6,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
+import com.google.maps.android.ui.IconGenerator;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 
@@ -58,10 +60,13 @@ public final class MapUtils {
             try {
                 double latitude = Double.valueOf(waypoint.getLatitude());
                 double longitude = Double.valueOf(waypoint.getLongitude());
+                IconGenerator iconGenerator = new IconGenerator(Injection.provideGlobalContext());
+                iconGenerator.setStyle(IconGenerator.STYLE_BLUE);
+                Bitmap icon = iconGenerator.makeIcon(String.valueOf(waypoint.getWaypointId()));
                 markerOptions.add(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_red_500_24dp))
-                        .title(waypoint.getWaypointId() + " - " + waypoint.getWaypointName()));
+                        .icon(BitmapDescriptorFactory.fromBitmap(icon))
+                        .title(waypoint.getWaypointName()));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }

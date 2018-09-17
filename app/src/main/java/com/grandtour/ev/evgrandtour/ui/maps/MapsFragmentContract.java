@@ -1,10 +1,12 @@
-package com.grandtour.ev.evgrandtour.maps;
+package com.grandtour.ev.evgrandtour.ui.maps;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import com.grandtour.ev.evgrandtour.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+
 import android.content.Context;
 import android.location.Location;
 import android.net.Uri;
@@ -47,7 +49,5 @@ public class MapsFragmentContract {
         void onCalculateRoutesClicked(@NonNull List<Marker> waypoints);
 
         void onStopCalculatingRoutesClicked();
-
-        void onMarkerLongClicked(@NonNull Marker marker);
     }
 }

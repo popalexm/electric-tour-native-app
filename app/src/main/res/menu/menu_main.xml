@@ -9,11 +9,11 @@
         android:title="Add Waypoints" />
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_calculate_routes"
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_settings_black_24dp"
-        android:title="Settings" />
+        android:icon="@drawable/ic_directions_black_24dp"
+        android:title="Add Waypoints" />
 
     <item
         android:id="@+id/action_delete_waypoints"

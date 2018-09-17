@@ -6,8 +6,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import com.grandtour.ev.evgrandtour.utils.NotificationsUtils;
-
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;

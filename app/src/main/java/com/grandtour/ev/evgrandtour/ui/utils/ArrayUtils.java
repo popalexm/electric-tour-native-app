@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.utils;
+package com.grandtour.ev.evgrandtour.ui.utils;
 
 import android.support.annotation.NonNull;
 

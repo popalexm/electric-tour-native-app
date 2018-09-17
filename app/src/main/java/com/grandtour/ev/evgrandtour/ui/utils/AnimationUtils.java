@@ -1,6 +1,7 @@
-package com.grandtour.ev.evgrandtour.utils;
+package com.grandtour.ev.evgrandtour.ui.utils;
 
 import com.google.android.gms.maps.model.Circle;
+
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
