@@ -21,4 +21,6 @@ public interface RouteDao {
     @Query("Select * from ROUTE")
     Maybe<List<RouteWithWaypoints>> getAllRoutesAddWaypoints();
 
+    @Query("DELETE FROM ROUTE")
+    int deleteAll();
 }

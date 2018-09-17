@@ -18,6 +18,7 @@ import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
 import com.grandtour.ev.evgrandtour.domain.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.DeletePreviousWaypointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.GetAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.GetAvailableWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
@@ -217,8 +218,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     private void saveNewRouteLocally(@NonNull List<LatLng> mapPoints) {
-        SaveRouteToDatabaseUseCase saveRouteToDatabaseUseCase = new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints);
-        saveRouteToDatabaseUseCase.perform().subscribe(new SingleObserver<Long[]>() {
+        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints).perform()
+                .subscribe(new SingleObserver<Long[]>() {
             @Override
             public void onSubscribe(Disposable d) { }
 
@@ -309,15 +310,18 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     private void deleteAllStoredWaypoints() {
-        new DeletePreviousWaypointsUseCase(Schedulers.io() , AndroidSchedulers.mainThread() , Injection.provideStorageManager())
-                .perform().subscribe(new CompletableObserver() {
+        DeleteRoutesUseCase deleteRoutesUseCase = new DeleteRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager());
+        DeletePreviousWaypointsUseCase deletePreviousWaypointsUseCase = new DeletePreviousWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+                Injection.provideStorageManager());
+        deletePreviousWaypointsUseCase.perform()
+                .andThen(deleteRoutesUseCase.perform())
+                .subscribe(new CompletableObserver() {
             @Override
             public void onSubscribe(Disposable d) { }
 
             @Override
             public void onComplete() {
                 if (isViewAttached) {
-                    displayMessage(Injection.provideGlobalContext().getString(R.string.message_all_waypoints_removed));
                     view.clearMapWaypoints();
                     view.clearMapRoutes();
                 }
