@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 
 import io.reactivex.Completable;
 import io.reactivex.Scheduler;
-import io.reactivex.functions.Action;
 
 public class DeletePreviousWaypointsUseCase extends BaseUseCase implements BaseUseCaseCompletable {
 
@@ -24,13 +23,9 @@ public class DeletePreviousWaypointsUseCase extends BaseUseCase implements BaseU
 
     @Override
     public Completable perform() {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() {
-                storageManager.waypointsDao()
-                        .deleteAll();
-            }
-        }).subscribeOn(executorThread)
+        return Completable.fromAction(() -> storageManager.waypointsDao()
+                .deleteAll())
+                .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }
 }

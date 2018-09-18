@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 
 import io.reactivex.Completable;
 import io.reactivex.Scheduler;
-import io.reactivex.functions.Action;
 
 public class DeleteRoutesUseCase extends BaseUseCase implements BaseUseCaseCompletable {
 
@@ -22,14 +21,11 @@ public class DeleteRoutesUseCase extends BaseUseCase implements BaseUseCaseCompl
 
     @Override
     public Completable perform() {
-        return Completable.fromAction(new Action() {
-            @Override
-            public void run() {
-                localStorageManager.routeWaypointsDao()
-                        .deleteAll();
-                localStorageManager.routeDao()
-                        .deleteAll();
-            }
+        return Completable.fromAction(() -> {
+            localStorageManager.routeWaypointsDao()
+                    .deleteAll();
+            localStorageManager.routeDao()
+                    .deleteAll();
         })
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);

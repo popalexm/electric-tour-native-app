@@ -13,7 +13,6 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
@@ -35,29 +34,26 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
 
     @Override
     public Single<Long[]> perform() {
-        Single<Long> insertRoute = Single.fromCallable(new Callable<Long>() {
-            @Override
-            public Long call() {
-                Route route = new Route();
-                return storageManager.routeDao()
-                        .insert(route);
-            }
+        Single<Long> insertRoute = Single.fromCallable(() -> {
+            Route route = new Route();
+            return storageManager.routeDao()
+                    .insert(route);
         }).subscribeOn(executorThread).observeOn(executorThread);
-       return insertRoute.flatMap(new Function<Long, SingleSource<Long[]>>() {
-            @Override
-            public SingleSource<Long[]> apply(Long routeId) {
-                List<RouteWaypoint> routeWaypointList = new ArrayList<>();
-                for (LatLng waypoint : routeMapPoints) {
-                    RouteWaypoint routeWaypoint = new RouteWaypoint();
-                    routeWaypoint.setLat(waypoint.latitude);
-                    routeWaypoint.setLng(waypoint.longitude);
-                    routeWaypoint.setRouteId(routeId.intValue());
-                    routeWaypointList.add(routeWaypoint);
-                }
-                long[] waypoints = storageManager.routeWaypointsDao()
-                        .insert(routeWaypointList);
-                return Single.just(ArrayUtils.toWrapperArray(waypoints));
+
+        return insertRoute.flatMap((Function<Long, SingleSource<Long[]>>) routeId -> {
+            List<RouteWaypoint> routeWaypointList = new ArrayList<>();
+            for (LatLng waypoint : routeMapPoints) {
+                RouteWaypoint routeWaypoint = new RouteWaypoint();
+                routeWaypoint.setLat(waypoint.latitude);
+                routeWaypoint.setLng(waypoint.longitude);
+                routeWaypoint.setRouteId(routeId.intValue());
+                routeWaypointList.add(routeWaypoint);
             }
-        }).subscribeOn(executorThread).observeOn(postExecutionThread);
+            long[] waypoints = storageManager.routeWaypointsDao()
+                    .insert(routeWaypointList);
+            return Single.just(ArrayUtils.toWrapperArray(waypoints));
+        })
+                .subscribeOn(executorThread)
+                .observeOn(postExecutionThread);
     }
 }

@@ -43,11 +43,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.reactivex.CompletableObserver;
 import io.reactivex.MaybeObserver;
-import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -154,7 +152,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
 
     @Override
     public void onClearWaypointsClicked() {
-        deleteAllStoredWaypoints();
+        deleteAllCheckpointsAndRoutes();
     }
 
     @Override
@@ -169,9 +167,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         if (routesCalculationRequests != null && !routesCalculationRequests.isDisposed()) {
             routesCalculationRequests.dispose();
             areRouteRequestsInProgress = false;
-            view.clearMapRoutes();
-            view.showLoadingStatus(false, "");
         }
+        view.showLoadingView(false, false, "");
+        deletedAllStoredRoutes();
     }
 
 
@@ -183,15 +181,19 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
 
     private void requestDirectionsForWaypoints(@NonNull List<Marker> waypointList) {
         areRouteRequestsInProgress = true;
-        if (isViewAttached) {
-            view.showLoadingStatus(true , Injection.provideGlobalContext().getString(R.string.message_calculating_routes));
-        }
         NetworkAPI networkAPI = Injection.provideNetworkApi();
         routesCalculationRequests = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), networkAPI, waypointList).perform()
                 .doOnComplete(() -> {
                     areRouteRequestsInProgress = false;
-                    view.showLoadingStatus(false, "");
-                }).subscribe(response -> {
+                    view.showLoadingView(false, true, "");
+                })
+                .doOnSubscribe(subscription -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(true, true, Injection.provideGlobalContext()
+                                .getString(R.string.message_calculating_routes));
+                    }
+                })
+                .subscribe(response -> {
             if (response != null) {
                 processDirectionsResponse(response);
             }
@@ -254,50 +256,31 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     private void loadAvailableWaypoints() {
-        GetAvailableWaypointsUseCase getAvailableWaypointsUseCase = new GetAvailableWaypointsUseCase(Schedulers.io() , AndroidSchedulers.mainThread() , Injection.provideStorageManager());
-        getAvailableWaypointsUseCase.perform().subscribe(new MaybeObserver<List<Waypoint>>() {
-            @Override
-            public void onSubscribe(Disposable d) { }
-
-            @Override
-            public void onSuccess(List<Waypoint> waypoints) {
-                loadWaypointsOnMapView(waypoints);
-            }
-
-            @Override
-            public void onError(Throwable e) { e.printStackTrace(); }
-
-            @Override
-            public void onComplete() { }
-        });
-    }
-
-    private void loadWaypointsOnMapView(@NonNull List<Waypoint> waypoints) {
-        Single.fromCallable(new Callable<List<MarkerOptions>>() {
-            @Override
-            public List<MarkerOptions> call() {
-                return MapUtils.convertWaypointsToMarkers(waypoints);
-            }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SingleObserver<List<MarkerOptions>>() {
+        new GetAvailableWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe(new MaybeObserver<List<MarkerOptions>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
+                        view.showLoadingView(true, false, Injection.provideGlobalContext()
+                                .getString(R.string.message_loading_checkpoints));
                     }
 
                     @Override
                     public void onSuccess(List<MarkerOptions> markerOptions) {
-                        if (waypoints.size() > 0) {
-                            if (isViewAttached) {
+                        if (isViewAttached) {
+                            if (markerOptions.size() > 0) {
                                 view.loadDestinations(markerOptions);
                             }
+                            view.showLoadingView(false, false, "");
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
                     }
                 });
     }
@@ -334,7 +317,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 });
     }
 
-    private void deleteAllStoredWaypoints() {
+    private void deleteAllCheckpointsAndRoutes() {
         DeleteRoutesUseCase deleteRoutesUseCase = new DeleteRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager());
         DeletePreviousWaypointsUseCase deletePreviousWaypointsUseCase = new DeletePreviousWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager());
@@ -355,6 +338,27 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             @Override
             public void onError(Throwable e) { e.printStackTrace(); }
         });
+    }
+
+    private void deletedAllStoredRoutes() {
+        new DeletePreviousWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe(new CompletableObserver() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (isViewAttached) {
+                            view.clearMapRoutes();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private void drawRouteFromPoints(List<LatLng> routeMapPoints) {

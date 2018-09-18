@@ -42,8 +42,7 @@ public final class NetworkManager {
     private static OkHttpClient buildOkHttpClient() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        return new OkHttpClient.Builder()
-                //.addInterceptor(logging)
+        return new OkHttpClient.Builder().addInterceptor(logging)
                 .build();
     }
 }

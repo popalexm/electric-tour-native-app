@@ -172,11 +172,18 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     @Override
-    public void showLoadingStatus(boolean isLoading, @NonNull String msg) {
+    public void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg) {
         if (loadingLayout != null) {
             if (isLoading) {
                 loadingLayout.setVisibility(View.VISIBLE);
                 ((TextView) loadingLayout.getChildAt(1)).setText(msg);
+                if (isCancelable) {
+                    loadingLayout.getChildAt(2)
+                            .setVisibility(View.VISIBLE);
+                } else {
+                    loadingLayout.getChildAt(2)
+                            .setVisibility(View.GONE);
+                }
             } else {
                 loadingLayout.setVisibility(View.GONE);
             }
