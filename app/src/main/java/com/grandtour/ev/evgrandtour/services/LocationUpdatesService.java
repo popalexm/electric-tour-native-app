@@ -84,7 +84,7 @@ public class LocationUpdatesService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Notification notification = NotificationsUtils.createNotification(this, "Location updates are running the the background" , "GrandTour");
+        Notification notification = NotificationsUtils.createNotification(this, "Location updates are running while app is in the background", "Grand-Tour");
         startForeground(LocationUpdatesService.NOTIFICATION_ID, notification);
         return true;
     }

@@ -11,7 +11,7 @@ import com.google.maps.android.ui.IconGenerator;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
+import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class MapUtils {
+
+    private static final int LOCATION_CIRCLE_RADIUS = 200;
 
     @NonNull
     private static final String DIRECTIONS_REQUEST_MODE = "driving";
@@ -54,19 +56,19 @@ public final class MapUtils {
     }
 
     @NonNull
-    public static List<MarkerOptions> convertWaypointsToMarkers(@NonNull Iterable<Waypoint> waypoints) {
+    public static List<MarkerOptions> convertWaypointsToMarkers(@NonNull Iterable<Checkpoint> waypoints) {
         List<MarkerOptions> markerOptions = new ArrayList<>();
-        for (Waypoint waypoint : waypoints) {
+        for (Checkpoint checkpoint : waypoints) {
             try {
-                double latitude = Double.valueOf(waypoint.getLatitude());
-                double longitude = Double.valueOf(waypoint.getLongitude());
+                double latitude = Double.valueOf(checkpoint.getLatitude());
+                double longitude = Double.valueOf(checkpoint.getLongitude());
                 IconGenerator iconGenerator = new IconGenerator(Injection.provideGlobalContext());
                 iconGenerator.setStyle(IconGenerator.STYLE_BLUE);
-                Bitmap icon = iconGenerator.makeIcon(String.valueOf(waypoint.getWaypointId()));
+                Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getCheckpointId()));
                 markerOptions.add(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .icon(BitmapDescriptorFactory.fromBitmap(icon))
-                        .title(waypoint.getWaypointName()));
+                        .title(checkpoint.getCheckpointName()));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -88,6 +90,6 @@ public final class MapUtils {
         return new CircleOptions()
                 .center(latLng)
                 .strokeColor(Injection.provideGlobalContext().getResources().getColor(R.color.colorPrimary))
-                .radius(100);
+                .radius(MapUtils.LOCATION_CIRCLE_RADIUS);
     }
 }

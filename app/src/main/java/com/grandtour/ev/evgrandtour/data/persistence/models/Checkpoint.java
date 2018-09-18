@@ -4,21 +4,19 @@ package com.grandtour.ev.evgrandtour.data.persistence.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = LocalStorageManager.WAYPOINTS_TABLE_NAME)
-public class Waypoint {
+@Entity
+public class Checkpoint {
 
     @PrimaryKey
     @SerializedName("ID")
     @Expose
-    private Integer waypointId;
+    private Integer checkpointId;
     @SerializedName("NAME")
     @Expose
-    private String waypointName;
+    private String checkpointName;
     @SerializedName("LAT")
     @Expose
     private String latitude;
@@ -29,20 +27,20 @@ public class Waypoint {
     @Expose
     private Integer distanceToNext;
 
-    public Integer getWaypointId() {
-        return waypointId;
+    public Integer getCheckpointId() {
+        return checkpointId;
     }
 
-    public void setWaypointId(Integer waypointId) {
-        this.waypointId = waypointId;
+    public void setCheckpointId(Integer checkpointId) {
+        this.checkpointId = checkpointId;
     }
 
-    public String getWaypointName() {
-        return waypointName;
+    public String getCheckpointName() {
+        return checkpointName;
     }
 
-    public void setWaypointName(String waypointName) {
-        this.waypointName = waypointName;
+    public void setCheckpointName(String checkpointName) {
+        this.checkpointName = checkpointName;
     }
 
     public String getLatitude() {

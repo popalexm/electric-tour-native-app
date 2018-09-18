@@ -1,6 +1,6 @@
 package com.grandtour.ev.evgrandtour.data.persistence.dao;
 
-import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
+import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
@@ -12,15 +12,15 @@ import java.util.List;
 import io.reactivex.Maybe;
 
 @Dao
-public interface WaypointsDao {
+public interface CheckpointsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insert(List<Waypoint> waypoints);
+    long[] insert(List<Checkpoint> checkpoints);
 
-    @Query("DELETE FROM waypoints")
+    @Query("DELETE FROM Checkpoint")
     int deleteAll();
 
-    @Query("SELECT * FROM waypoints")
-    Maybe<List<Waypoint>> getAllWaypoints();
+    @Query("SELECT * FROM Checkpoint")
+    Maybe<List<Checkpoint>> getAllCheckpoints();
 
 }

@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.domain;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
+import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
@@ -17,12 +17,12 @@ import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class GetAvailableWaypointsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class GetAvailableCheckpointsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public GetAvailableWaypointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public GetAvailableCheckpointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
@@ -30,10 +30,10 @@ public class GetAvailableWaypointsUseCase extends BaseUseCase implements BaseUse
 
     @Override
     public Maybe<List<MarkerOptions>> perform() {
-        return storageManager.waypointsDao()
-                .getAllWaypoints()
-                .flatMap((Function<List<Waypoint>, MaybeSource<List<MarkerOptions>>>) waypoints -> Maybe.fromCallable(
-                        () -> MapUtils.convertWaypointsToMarkers(waypoints)))
+        return storageManager.checkpointsDao()
+                .getAllCheckpoints()
+                .flatMap((Function<List<Checkpoint>, MaybeSource<List<MarkerOptions>>>) checkpoints -> Maybe.fromCallable(
+                        () -> MapUtils.convertWaypointsToMarkers(checkpoints)))
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }

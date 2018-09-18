@@ -14,16 +14,16 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.response.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
 import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWithWaypoints;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Waypoint;
 import com.grandtour.ev.evgrandtour.domain.CalculateRouteUseCase;
-import com.grandtour.ev.evgrandtour.domain.DeletePreviousWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.DeleteRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.DeleteStoredCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.GetAvailableCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.GetAvailableRoutesUseCase;
-import com.grandtour.ev.evgrandtour.domain.GetAvailableWaypointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.SaveWaypointsUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
@@ -101,7 +101,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             if (locationUpdatesService != null) {
                 locationUpdatesService.requestLocationUpdates();
             }
-            loadAvailableWaypoints();
+            loadAvailableCheckpoints();
             loadAvailableRoutes();
         }
     }
@@ -140,8 +140,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         if (!TextUtils.isEmpty(json)) {
             Gson gson = new GsonBuilder().create();
             try {
-                Waypoint[] waypoints = gson.fromJson(json, Waypoint[].class);
-                List<Waypoint> waypointsFromJson = Arrays.asList(waypoints);
+                Checkpoint[] checkpoints = gson.fromJson(json, Checkpoint[].class);
+                List<Checkpoint> waypointsFromJson = Arrays.asList(checkpoints);
                 saveNewWaypoints(waypointsFromJson);
             } catch (JsonSyntaxException e){
                 e.printStackTrace();
@@ -151,7 +151,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     @Override
-    public void onClearWaypointsClicked() {
+    public void onClearCheckpointsClicked() {
         deleteAllCheckpointsAndRoutes();
     }
 
@@ -232,11 +232,14 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         });
     }
 
-    private void saveNewWaypoints(@NonNull List<Waypoint> waypoints) {
+    private void saveNewWaypoints(@NonNull List<Checkpoint> checkpoints) {
         LocalStorageManager storageManager = Injection.provideStorageManager();
-        DeletePreviousWaypointsUseCase deletePreviousWaypointsUseCase = new DeletePreviousWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), storageManager);
-        SaveWaypointsUseCase saveWaypointsUseCase = new SaveWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), storageManager, waypoints);
-        deletePreviousWaypointsUseCase.perform().andThen(saveWaypointsUseCase.perform())
+        DeleteStoredCheckpointsUseCase deleteStoredCheckpointsUseCase = new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+                storageManager);
+        SaveCheckpointsUseCase saveCheckpointsUseCase = new SaveCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), storageManager,
+                checkpoints);
+        deleteStoredCheckpointsUseCase.perform()
+                .andThen(saveCheckpointsUseCase.perform())
                 .subscribe(new SingleObserver<long[]>() {
             @Override
             public void onSubscribe(Disposable d) {}
@@ -247,7 +250,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 String message = ctx.getString(R.string.format_start_number_end_message, ctx.getString(R.string.message_added), longs.length,
                         ctx.getString(R.string.message_checkpoints));
                 displayMessage(message);
-                loadAvailableWaypoints();
+                loadAvailableCheckpoints();
             }
 
             @Override
@@ -255,8 +258,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         });
     }
 
-    private void loadAvailableWaypoints() {
-        new GetAvailableWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+    private void loadAvailableCheckpoints() {
+        new GetAvailableCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .subscribe(new MaybeObserver<List<MarkerOptions>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -268,7 +271,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                     public void onSuccess(List<MarkerOptions> markerOptions) {
                         if (isViewAttached) {
                             if (markerOptions.size() > 0) {
-                                view.loadDestinations(markerOptions);
+                                view.loadCheckpoints(markerOptions);
                             }
                             view.showLoadingView(false, false, "");
                         }
@@ -319,9 +322,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
 
     private void deleteAllCheckpointsAndRoutes() {
         DeleteRoutesUseCase deleteRoutesUseCase = new DeleteRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager());
-        DeletePreviousWaypointsUseCase deletePreviousWaypointsUseCase = new DeletePreviousWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        DeleteStoredCheckpointsUseCase deleteStoredCheckpointsUseCase = new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager());
-        deletePreviousWaypointsUseCase.perform()
+        deleteStoredCheckpointsUseCase.perform()
                 .andThen(deleteRoutesUseCase.perform())
                 .subscribe(new CompletableObserver() {
             @Override
@@ -330,7 +333,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             @Override
             public void onComplete() {
                 if (isViewAttached) {
-                    view.clearMapWaypoints();
+                    view.clearMapCheckpoints();
                     view.clearMapRoutes();
                 }
             }
@@ -341,7 +344,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     private void deletedAllStoredRoutes() {
-        new DeletePreviousWaypointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .subscribe(new CompletableObserver() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -364,7 +367,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     private void drawRouteFromPoints(List<LatLng> routeMapPoints) {
         PolylineOptions routePolyline = MapUtils.generateRoute(routeMapPoints);
         if (isViewAttached) {
-            view.drawWaypointRoute(routePolyline);
+            view.drawCheckpointsRoute(routePolyline);
         }
     }
 }

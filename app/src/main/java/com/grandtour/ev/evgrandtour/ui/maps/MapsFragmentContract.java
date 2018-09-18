@@ -20,15 +20,15 @@ public class MapsFragmentContract {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
-        void loadDestinations(@NonNull List<MarkerOptions> destinations);
+        void loadCheckpoints(@NonNull List<MarkerOptions> checkpoints);
 
         void openFileExplorer();
 
-        void clearMapWaypoints();
+        void clearMapCheckpoints();
 
         void clearMapRoutes();
 
-        void drawWaypointRoute(@NonNull PolylineOptions routePolyOptions);
+        void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions);
 
     }
 
@@ -44,7 +44,7 @@ public class MapsFragmentContract {
 
         void onLocalFileOpened(@NonNull Uri fileUri);
 
-        void onClearWaypointsClicked();
+        void onClearCheckpointsClicked();
 
         void onCalculateRoutesClicked(@NonNull List<Marker> waypoints);
 

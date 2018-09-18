@@ -51,7 +51,10 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @NonNull
     public static final String TAG = MapsFragmentView.class.getSimpleName();
     private static final int OPEN_LOCAL_STORAGE_CODE = 100;
+    @NonNull
     private static final String OPEN_NAVIGATION_URI = "google.navigation:q=";
+    @NonNull
+    private static final String MAPS_PACKECGE_NAME = "com.google.android.apps.maps";
 
     @NonNull
     private GoogleMap googleMap;
@@ -70,7 +73,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     private LatLng currentSelectedCheckpoint;
 
     @NonNull
-    private final List<Marker> waypoints = new ArrayList<>();
+    private final List<Marker> checkpoints = new ArrayList<>();
     @NonNull
     private final List<Polyline> routes = new ArrayList<>();
 
@@ -149,7 +152,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-        presenter.onDetach();
+        checkpoints.clear();
+        routes.clear();
     }
 
     @Override
@@ -244,10 +248,10 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     @Override
-    public void loadDestinations(@NonNull List<MarkerOptions> destinations) {
-        for (MarkerOptions markerOptions : destinations) {
+    public void loadCheckpoints(@NonNull List<MarkerOptions> checkpoints) {
+        for (MarkerOptions markerOptions : checkpoints) {
             Marker waypointMarker = googleMap.addMarker(markerOptions);
-            waypoints.add(waypointMarker);
+            this.checkpoints.add(waypointMarker);
         }
     }
 
@@ -264,10 +268,11 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     @Override
-    public void clearMapWaypoints() {
-        for (Marker waypoint : waypoints) {
+    public void clearMapCheckpoints() {
+        for (Marker waypoint : checkpoints) {
             waypoint.remove();
         }
+        checkpoints.clear();
     }
 
     @Override
@@ -275,10 +280,11 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         for (Polyline route : routes) {
             route.remove();
         }
+        routes.clear();
     }
 
     @Override
-    public void drawWaypointRoute(@NonNull PolylineOptions routePolyOptions) {
+    public void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions) {
         Polyline route = googleMap.addPolyline(routePolyOptions);
         routes.add(route);
     }
@@ -299,18 +305,18 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         double longitude = latLng.longitude;
         String navUri = getString(R.string.format_navigation_directions, MapsFragmentView.OPEN_NAVIGATION_URI, latitude, longitude);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navUri));
-        mapIntent.setPackage("com.google.android.apps.maps");
+        mapIntent.setPackage(MapsFragmentView.MAPS_PACKECGE_NAME);
         startActivity(mapIntent);
     }
 
     /** Delegated methods from the main activity
      */
     public void clearWaypointsClicked(){
-        presenter.onClearWaypointsClicked();
+        presenter.onClearCheckpointsClicked();
     }
 
     public void calculateRoutesClicked(){
-        presenter.onCalculateRoutesClicked(waypoints);
+        presenter.onCalculateRoutesClicked(checkpoints);
     }
 
     @Override

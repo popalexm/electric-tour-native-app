@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.services;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.ui.maps.MapsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.main.MainActivity;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -13,8 +13,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
-import static android.app.NotificationManager.IMPORTANCE_HIGH;
-
 public final class NotificationsUtils {
 
     private static final String NOTIFICATION_CHANNEL_ID = "10001";
@@ -25,9 +23,7 @@ public final class NotificationsUtils {
     public static Notification createNotification(@NonNull Context context, @NonNull CharSequence notificationMessage, @NonNull CharSequence notificationTitle) {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 10,
-                new Intent(context, MapsFragmentView.class), 0);
-
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 10, NotificationsUtils.getStartCurrentMainActivityIntent(context), 0);
         if (notificationManager != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationsUtils.setOreoNotificationChannel(notificationManager);
         }
@@ -46,14 +42,23 @@ public final class NotificationsUtils {
     /**
      * Notification channel creation for Android Oreo (8.0/8.1) and up
      */
-    private static void setOreoNotificationChannel(@NonNull android.app.NotificationManager mNotificationManager) {
+    private static void setOreoNotificationChannel(@NonNull NotificationManager mNotificationManager) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NotificationsUtils.NOTIFICATION_CHANNEL_ID,
-                    NotificationsUtils.NOTIFICATION_DESCRIPTION, IMPORTANCE_HIGH);
+                    NotificationsUtils.NOTIFICATION_DESCRIPTION, NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.enableLights(true);
             notificationChannel.setShowBadge(true);
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
+    }
+
+    @NonNull
+    private static Intent getStartCurrentMainActivityIntent(@NonNull Context context) {
+        Intent notificationIntent = new Intent(context, MainActivity.class);
+        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return notificationIntent;
     }
 }

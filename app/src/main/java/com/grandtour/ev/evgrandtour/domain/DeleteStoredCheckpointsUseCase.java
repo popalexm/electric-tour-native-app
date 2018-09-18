@@ -9,13 +9,12 @@ import android.support.annotation.NonNull;
 import io.reactivex.Completable;
 import io.reactivex.Scheduler;
 
-public class DeletePreviousWaypointsUseCase extends BaseUseCase implements BaseUseCaseCompletable {
+public class DeleteStoredCheckpointsUseCase extends BaseUseCase implements BaseUseCaseCompletable {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-
-    public DeletePreviousWaypointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public DeleteStoredCheckpointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
@@ -23,7 +22,7 @@ public class DeletePreviousWaypointsUseCase extends BaseUseCase implements BaseU
 
     @Override
     public Completable perform() {
-        return Completable.fromAction(() -> storageManager.waypointsDao()
+        return Completable.fromAction(() -> storageManager.checkpointsDao()
                 .deleteAll())
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
