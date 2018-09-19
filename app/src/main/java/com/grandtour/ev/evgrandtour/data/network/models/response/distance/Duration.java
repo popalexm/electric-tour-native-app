@@ -1,10 +1,9 @@
-
-package com.grandtour.ev.evgrandtour.data.network.models.response;
+package com.grandtour.ev.evgrandtour.data.network.models.response.distance;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Distance_ {
+public class Duration {
 
     @SerializedName("text")
     @Expose

@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.domain;
 
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
-import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 

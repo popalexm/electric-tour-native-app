@@ -11,8 +11,9 @@ import com.google.gson.JsonSyntaxException;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
-import com.grandtour.ev.evgrandtour.data.network.models.response.Route;
-import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.distance.DistanceResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
+import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
@@ -22,6 +23,7 @@ import com.grandtour.ev.evgrandtour.domain.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.DeleteStoredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.GetAvailableCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.GetAvailableRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.RequestDistancesUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
@@ -49,6 +51,8 @@ import io.reactivex.MaybeObserver;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
@@ -121,9 +125,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     @Override
     public void onCurrentLocationChanged(@NonNull Location location) {
         if (isViewAttached) {
-            double lat = location.getLatitude();
-            double lng = location.getLongitude();
-            LatLng latLng = new LatLng(lat, lng);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             view.updateCurrentUserLocation(latLng);
         }
     }
@@ -142,7 +144,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             try {
                 Checkpoint[] checkpoints = gson.fromJson(json, Checkpoint[].class);
                 List<Checkpoint> waypointsFromJson = Arrays.asList(checkpoints);
-                saveNewWaypoints(waypointsFromJson);
+                saveCheckpoints(waypointsFromJson);
             } catch (JsonSyntaxException e){
                 e.printStackTrace();
                 displayMessage(Injection.provideGlobalContext().getString(R.string.message_error_opening_file));
@@ -156,9 +158,10 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     @Override
-    public void onCalculateRoutesClicked(@NonNull List<Marker> waypoints) {
+    public void onCalculateRoutesClicked(@NonNull List<Marker> checkpoints) {
         if (!areRouteRequestsInProgress) {
-            requestDirectionsForWaypoints(waypoints);
+            requestDirectionsForCheckpoints(checkpoints);
+            requestDistancesBetweenCheckpoints(checkpoints);
         }
     }
 
@@ -168,7 +171,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             routesCalculationRequests.dispose();
             areRouteRequestsInProgress = false;
         }
-        view.showLoadingView(false, false, "");
+        if (isViewAttached) {
+            view.showLoadingView(false, false, "");
+        }
         deletedAllStoredRoutes();
     }
 
@@ -179,10 +184,27 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         }
     }
 
-    private void requestDirectionsForWaypoints(@NonNull List<Marker> waypointList) {
+    private void requestDistancesBetweenCheckpoints(@NonNull List<Marker> checkpoints) {
+        Disposable distanceCalculcationsRequest = new RequestDistancesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideNetworkApi(),
+                checkpoints).perform()
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+
+                    }
+                })
+                .subscribe(new Consumer<Response<DistanceResponse>>() {
+                    @Override
+                    public void accept(Response<DistanceResponse> distanceResponseResponse) throws Exception {
+                        // Log.e(TAG , "Got response - >" + distanceResponseResponse.body().getRows().get(0).getElements().get(0).getDistance().getText());
+                    }
+                });
+    }
+
+    private void requestDirectionsForCheckpoints(@NonNull List<Marker> checkpoints) {
         areRouteRequestsInProgress = true;
         NetworkAPI networkAPI = Injection.provideNetworkApi();
-        routesCalculationRequests = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), networkAPI, waypointList).perform()
+        routesCalculationRequests = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), networkAPI, checkpoints).perform()
                 .doOnComplete(() -> {
                     areRouteRequestsInProgress = false;
                     view.showLoadingView(false, true, "");
@@ -209,16 +231,22 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                             .get(0)
                             .getOverviewPolyline()
                             .getPoints();
+                    int routeDistance = routesResponse.getRoutes()
+                            .get(0)
+                            .getLegs()
+                            .get(0)
+                            .getDistance()
+                            .getValue();
                     List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(poly);
 
                     drawRouteFromPoints(mapPoints);
-                    saveNewRouteLocally(mapPoints);
+                    saveRouteToDatabase(mapPoints, routeDistance);
                 }
           }
     }
 
-    private void saveNewRouteLocally(@NonNull List<LatLng> mapPoints) {
-        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints).perform()
+    private void saveRouteToDatabase(@NonNull List<LatLng> mapPoints, int routeDistance) {
+        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints, routeDistance).perform()
                 .subscribe(new SingleObserver<Long[]>() {
             @Override
             public void onSubscribe(Disposable d) { }
@@ -232,7 +260,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         });
     }
 
-    private void saveNewWaypoints(@NonNull List<Checkpoint> checkpoints) {
+    private void saveCheckpoints(@NonNull List<Checkpoint> checkpoints) {
         LocalStorageManager storageManager = Injection.provideStorageManager();
         DeleteStoredCheckpointsUseCase deleteStoredCheckpointsUseCase = new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 storageManager);

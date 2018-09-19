@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.Marker;
 
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
-import com.grandtour.ev.evgrandtour.data.network.models.response.RoutesResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
 import com.grandtour.ev.evgrandtour.ui.utils.ArrayUtils;
@@ -41,7 +41,6 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
         List<Maybe<Response<RoutesResponse>>> routeUseCases = generateIndividualRouteUseCases(waypoints);
         return Maybe.concat(routeUseCases);
     }
-
 
     @NonNull
     private List<Maybe<Response<RoutesResponse>>> generateIndividualRouteUseCases(@NonNull List<Marker> waypoints) {

@@ -1,5 +1,4 @@
-
-package com.grandtour.ev.evgrandtour.data.network.models.response;
+package com.grandtour.ev.evgrandtour.data.network.models.response.routes;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

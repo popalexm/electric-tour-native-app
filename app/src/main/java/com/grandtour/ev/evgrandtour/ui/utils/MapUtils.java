@@ -10,6 +10,7 @@ import com.google.maps.android.ui.IconGenerator;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.network.models.request.DistanceRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 
@@ -22,7 +23,7 @@ import java.util.List;
 
 public final class MapUtils {
 
-    private static final int LOCATION_CIRCLE_RADIUS = 200;
+    private static final int LOCATION_CIRCLE_RADIUS = 1000;
 
     @NonNull
     private static final String DIRECTIONS_REQUEST_MODE = "driving";
@@ -53,6 +54,15 @@ public final class MapUtils {
                 .setMode(MapUtils.DIRECTIONS_REQUEST_MODE)
                 .setAPIKey(Injection.provideGlobalContext().getString(R.string.google_maps_key))
                 .createRouteParameters();
+    }
+
+    @NonNull
+    public static DistanceRequest generateDistanceRequest(@NonNull LatLng startCheckpoint, @NonNull LatLng endCheckpoint) {
+        return new DistanceRequest.DistanceRequestBuilder().setStartWaypoint(startCheckpoint)
+                .setEndWaypoint(endCheckpoint)
+                .setApiKey(Injection.provideGlobalContext()
+                        .getString(R.string.google_maps_key))
+                .createDistanceRequest();
     }
 
     @NonNull

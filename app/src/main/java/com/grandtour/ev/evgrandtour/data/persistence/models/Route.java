@@ -7,6 +7,8 @@ public class Route {
 
     @PrimaryKey(autoGenerate = true)
     private int routeId;
+    // Route distance in meters
+    private int distance;
 
     public int getRouteId() {
         return routeId;
@@ -14,5 +16,13 @@ public class Route {
 
     public void setRouteId(int routeId) {
         this.routeId = routeId;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }
