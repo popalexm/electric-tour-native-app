@@ -49,8 +49,13 @@ public class RouteParameters {
             if (this.transitWaypoints == null) {
                 this.transitWaypoints = "";
             }
-            for (LatLng waypoint : transitWaypoints) {
-                 this.transitWaypoints = this.transitWaypoints + "via:"+waypoint.latitude + "," + waypoint.longitude+"|";
+            for (int index = 0; index < transitWaypoints.size(); index++) {
+                LatLng waypoint = transitWaypoints.get(index);
+                if (index == 0) {
+                    this.transitWaypoints = this.transitWaypoints + waypoint.latitude + "," + waypoint.longitude;
+                } else {
+                    this.transitWaypoints = this.transitWaypoints + "|" + waypoint.latitude + "," + waypoint.longitude;
+                }
             }
             return this;
         }
