@@ -12,15 +12,12 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 @Database(entities = {Checkpoint.class, RouteWaypoint.class, Route.class}, version = 1)
 public abstract class LocalStorageManager extends RoomDatabase {
 
     @NonNull
     private static final String DATABASE_NAME = "grand_tour_database";
-
-    @Nullable
     private static LocalStorageManager instance;
 
     public abstract CheckpointsDao checkpointsDao();

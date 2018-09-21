@@ -69,19 +69,23 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                         if (response != null) {
                             if (response.code() == 200) {
                                 RoutesResponse responseBody = response.body();
+                                responseBody.getStatus();
                                 if (responseBody != null) {
-                                    Route responseRoute = responseBody.getRoutes()
-                                            .get(0);
-                                    if (responseRoute != null) {
-                                        List<Leg> routeLegs = responseRoute.getLegs();
-                                        if (routeLegs != null) {
-                                            for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
-                                                int checkpointId = singleRouteRequestBatch.get(legIndex)
-                                                        .getCheckpointId();
-                                                storageManager.checkpointsDao()
-                                                        .updateCheckpointById(checkpointId, routeLegs.get(legIndex)
-                                                                .getDistance()
-                                                                .getValue());
+                                    List<Route> routes = responseBody.getRoutes();
+                                    if (routes != null && routes.size() != 0) {
+                                        Route responseRoute = responseBody.getRoutes()
+                                                .get(0);
+                                        if (responseRoute != null) {
+                                            List<Leg> routeLegs = responseRoute.getLegs();
+                                            if (routeLegs != null) {
+                                                for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
+                                                    int checkpointId = singleRouteRequestBatch.get(legIndex)
+                                                            .getCheckpointId();
+                                                    storageManager.checkpointsDao()
+                                                            .updateCheckpointById(checkpointId, routeLegs.get(legIndex)
+                                                                    .getDistance()
+                                                                    .getValue());
+                                                }
                                             }
                                         }
                                     }

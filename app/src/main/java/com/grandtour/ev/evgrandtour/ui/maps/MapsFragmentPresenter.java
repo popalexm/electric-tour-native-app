@@ -27,7 +27,7 @@ import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
-import com.grandtour.ev.evgrandtour.ui.utils.JSONUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.content.ComponentName;
@@ -143,23 +143,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             try {
                 ImportCheckpoint[] checkpoints = gson.fromJson(json, ImportCheckpoint[].class);
                 List<ImportCheckpoint> checkPointsFromJson = Arrays.asList(checkpoints);
-                List<Checkpoint> storedCheckpoints = new ArrayList<>();
-                for (ImportCheckpoint importCheckpoint : checkPointsFromJson) {
-                    try {
-                        double lat = JSONUtils.filterLatLngValues(importCheckpoint.getLatitude());
-                        double lng = JSONUtils.filterLatLngValues(importCheckpoint.getLongitude());
-
-                        Checkpoint checkpoint = new Checkpoint();
-                        checkpoint.setCheckpointId(importCheckpoint.getCheckpointId());
-                        checkpoint.setCheckpointName(importCheckpoint.getCheckpointName());
-                        checkpoint.setLatitude(lat);
-                        checkpoint.setLongitude(lng);
-                        storedCheckpoints.add(checkpoint);
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                }
-                saveCheckpoints(storedCheckpoints);
+                List<Checkpoint> toSaveCheckpoints = JSONParsingUtils.processImportedCheckpoints(checkPointsFromJson);
+                saveCheckpoints(toSaveCheckpoints);
             } catch (JsonSyntaxException e){
                 e.printStackTrace();
                 displayMessage(Injection.provideGlobalContext().getString(R.string.message_error_opening_file));
