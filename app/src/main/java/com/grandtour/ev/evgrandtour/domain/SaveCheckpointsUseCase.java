@@ -29,17 +29,6 @@ public class SaveCheckpointsUseCase extends BaseUseCase implements BaseUseCaseSi
     @Override
     public Single<long[]> perform() {
         return Single.fromCallable(() -> {
-            for (Checkpoint checkpoint : checkpoints) {
-                try {
-                    String latitude = checkpoint.getLatitude();
-                    String longitude = checkpoint.getLongitude();
-                    checkpoint.setLatitude(latitude);
-                    checkpoint.setLongitude(longitude);
-                } catch (NumberFormatException e) {
-                    checkpoints.remove(checkpoint);
-                    e.printStackTrace();
-                }
-            }
             return storageManager.checkpointsDao()
                     .insert(checkpoints);
         }).subscribeOn(postExecutionThread)

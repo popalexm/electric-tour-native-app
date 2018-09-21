@@ -10,8 +10,8 @@ public class Checkpoint {
     @PrimaryKey
     private Integer checkpointId;
     private String checkpointName;
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
     private Integer distanceToNextCheckpoint;
 
     public Integer getCheckpointId() {
@@ -30,19 +30,19 @@ public class Checkpoint {
         this.checkpointName = checkpointName;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 

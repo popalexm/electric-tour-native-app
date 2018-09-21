@@ -145,16 +145,19 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 List<ImportCheckpoint> checkPointsFromJson = Arrays.asList(checkpoints);
                 List<Checkpoint> storedCheckpoints = new ArrayList<>();
                 for (ImportCheckpoint importCheckpoint : checkPointsFromJson) {
+                    try {
+                        double lat = JSONUtils.filterLatLngValues(importCheckpoint.getLatitude());
+                        double lng = JSONUtils.filterLatLngValues(importCheckpoint.getLongitude());
 
-                    String lat = JSONUtils.filterLatLngValues(importCheckpoint.getLatitude());
-                    String lng = JSONUtils.filterLatLngValues(importCheckpoint.getLongitude());
-
-                    Checkpoint checkpoint = new Checkpoint();
-                    checkpoint.setCheckpointId(importCheckpoint.getCheckpointId());
-                    checkpoint.setCheckpointName(importCheckpoint.getCheckpointName());
-                    checkpoint.setLatitude(lat);
-                    checkpoint.setLongitude(lng);
-                    storedCheckpoints.add(checkpoint);
+                        Checkpoint checkpoint = new Checkpoint();
+                        checkpoint.setCheckpointId(importCheckpoint.getCheckpointId());
+                        checkpoint.setCheckpointName(importCheckpoint.getCheckpointName());
+                        checkpoint.setLatitude(lat);
+                        checkpoint.setLongitude(lng);
+                        storedCheckpoints.add(checkpoint);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
                 }
                 saveCheckpoints(storedCheckpoints);
             } catch (JsonSyntaxException e){

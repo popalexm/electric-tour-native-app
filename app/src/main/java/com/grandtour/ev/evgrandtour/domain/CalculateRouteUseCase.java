@@ -59,7 +59,7 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
 
             for (int j = 0; j < singleRouteRequestBatch.size(); j++) {
                 Checkpoint checkpoint = singleRouteRequestBatch.get(j);
-                checkpointCoordinateList.add(new LatLng(Double.valueOf(checkpoint.getLatitude()), Double.valueOf(checkpoint.getLongitude())));
+                checkpointCoordinateList.add(new LatLng(checkpoint.getLatitude(), checkpoint.getLongitude()));
             }
 
             RouteParameters routeParameters = MapUtils.generateRouteRequestParams(checkpointCoordinateList);

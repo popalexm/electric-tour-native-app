@@ -64,8 +64,8 @@ public final class MapUtils {
         List<Pair<Integer, MarkerOptions>> markerInfoList = new ArrayList<>();
         for (Checkpoint checkpoint : checkpoints) {
             try {
-                double latitude = Double.valueOf(checkpoint.getLatitude());
-                double longitude = Double.valueOf(checkpoint.getLongitude());
+                double latitude = checkpoint.getLatitude();
+                double longitude = checkpoint.getLongitude();
                 IconGenerator iconGenerator = new IconGenerator(Injection.provideGlobalContext());
                 iconGenerator.setStyle(IconGenerator.STYLE_BLUE);
                 Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getCheckpointId()));
