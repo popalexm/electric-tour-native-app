@@ -46,10 +46,14 @@ public final class MapUtils {
     }
 
     @NonNull
-    public static RouteParameters generateRouteRequestParams(@NonNull List<LatLng> routeCheckpoints) {
-        return new RouteParameters.RouteParametersBuilder().setStartWaypoint(routeCheckpoints.get(0))
-                .setEndWaypoint(routeCheckpoints.get(routeCheckpoints.size() - 1))
-                .setTransitWaypoints(routeCheckpoints)
+    public static RouteParameters generateRouteRequestParams(@NonNull List<LatLng> checkpoints) {
+        LatLng startCheckpoint = checkpoints.get(0);
+        LatLng endCheckpoint = checkpoints.get(checkpoints.size() - 1);
+        checkpoints.remove(startCheckpoint);
+        checkpoints.remove(endCheckpoint);
+        return new RouteParameters.RouteParametersBuilder().setStartWaypoint(startCheckpoint)
+                .setEndWaypoint(endCheckpoint)
+                .setTransitWaypoints(checkpoints)
                 .setMode(MapUtils.DIRECTIONS_REQUEST_MODE)
                 .setAPIKey(Injection.provideGlobalContext().getString(R.string.google_maps_key))
                 .createRouteParameters();

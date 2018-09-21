@@ -25,21 +25,18 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
     private final LocalStorageManager storageManager;
     @NonNull
     private final List<LatLng> routeMapPoints;
-    private final int routeDistance;
 
     public SaveRouteToDatabaseUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
-            @NonNull LocalStorageManager localStorageManager, @NonNull List<LatLng> routeMapPoints, int routeDistance) {
+            @NonNull LocalStorageManager localStorageManager, @NonNull List<LatLng> routeMapPoints) {
         super(executorThread, postExecutionThread);
         this.storageManager = localStorageManager;
         this.routeMapPoints = routeMapPoints;
-        this.routeDistance = routeDistance;
     }
 
     @Override
     public Single<Long[]> perform() {
         Single<Long> insertRoute = Single.fromCallable(() -> {
             Route route = new Route();
-            route.setDistance(routeDistance);
             return storageManager.routeDao()
                     .insert(route);
         }).subscribeOn(executorThread).observeOn(executorThread);

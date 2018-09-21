@@ -15,7 +15,6 @@ import com.grandtour.ev.evgrandtour.ui.utils.ArrayUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,13 +54,12 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
         List<List<Checkpoint>> totalBatchedRouteRequests = ArrayUtils.split(checkpoints, CalculateRouteUseCase.NUMBER_OF_MAX_WAYPOINTS_PER_ROUTE_REQUEST);
 
         for (int i = 0; i < totalBatchedRouteRequests.size(); i++) {
-
             List<Checkpoint> singleRouteRequestBatch = totalBatchedRouteRequests.get(i);
             List<LatLng> checkpointCoordinateList = new ArrayList<>();
 
             for (int j = 0; j < singleRouteRequestBatch.size(); j++) {
-                Checkpoint transitWaypoint = singleRouteRequestBatch.get(j);
-                checkpointCoordinateList.add(new LatLng(Double.valueOf(transitWaypoint.getLatitude()), Double.valueOf(transitWaypoint.getLongitude())));
+                Checkpoint checkpoint = singleRouteRequestBatch.get(j);
+                checkpointCoordinateList.add(new LatLng(Double.valueOf(checkpoint.getLatitude()), Double.valueOf(checkpoint.getLongitude())));
             }
 
             RouteParameters routeParameters = MapUtils.generateRouteRequestParams(checkpointCoordinateList);
@@ -77,11 +75,14 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                                     if (responseRoute != null) {
                                         List<Leg> routeLegs = responseRoute.getLegs();
                                         if (routeLegs != null) {
-                                            //  for (int legIndex = 0; legIndex < routeLegs.size(); legIndex ++) {
-                                            Log.w("TAG", "Returning route legs " + routeLegs.size());
-                                            //Integer checkpointId = routeBatch.get(legIndex).getCheckpointId();
-                                            //Log.e("Legs response" , "for " + checkpointId);
-                                            // }
+                                            for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
+                                                int checkpointId = singleRouteRequestBatch.get(legIndex)
+                                                        .getCheckpointId();
+                                                storageManager.checkpointsDao()
+                                                        .updateCheckpointById(checkpointId, routeLegs.get(legIndex)
+                                                                .getDistance()
+                                                                .getValue());
+                                            }
                                         }
                                     }
                                 }

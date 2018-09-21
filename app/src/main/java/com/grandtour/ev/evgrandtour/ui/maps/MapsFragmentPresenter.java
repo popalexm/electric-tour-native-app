@@ -66,8 +66,6 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     private LocationUpdatesService locationUpdatesService;
     @Nullable
     private Disposable routesCalculationRequests;
-    @Nullable
-    private Disposable distanceCalculationRequests;
     private boolean areRouteRequestsInProgress;
 
     @NonNull
@@ -217,6 +215,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                                     if (routesCalculationRequests != null) {
                                         routesCalculationRequests.dispose();
                                     }
+                                    loadAvailableCheckpoints();
                                 })
                                 .doOnSubscribe(subscription -> {
                                     if (isViewAttached) {
@@ -251,17 +250,15 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                             .get(0)
                             .getOverviewPolyline()
                             .getPoints();
-
-                    // TODO UPDATE DISTANCE TO NEXT CHECKPOINT VIA RETURNED LONGITUDE / LATITUTDE FROM EACH LEG , NOT VIA id SiNCE we don't have it
                     List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(poly);
                     drawRouteFromPoints(mapPoints);
-                    // saveRouteToDatabase(mapPoints, routeDistance); */
+                    saveRouteToDatabase(mapPoints);
                 }
           }
     }
 
-    private void saveRouteToDatabase(@NonNull List<LatLng> mapPoints, int routeDistance) {
-        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints, routeDistance).perform()
+    private void saveRouteToDatabase(@NonNull List<LatLng> mapPoints) {
+        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints).perform()
                 .subscribe(new SingleObserver<Long[]>() {
             @Override
             public void onSubscribe(Disposable d) { }
