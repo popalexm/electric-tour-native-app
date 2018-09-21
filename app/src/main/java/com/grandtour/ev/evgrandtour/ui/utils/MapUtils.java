@@ -10,13 +10,13 @@ import com.google.maps.android.ui.IconGenerator;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
-import com.grandtour.ev.evgrandtour.data.network.models.request.DistanceRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,44 +46,46 @@ public final class MapUtils {
     }
 
     @NonNull
-    public static RouteParameters generateRouteParams(@NonNull LatLng startPosition , @NonNull LatLng endPosition, List<LatLng> transitWaypoints) {
-        return new RouteParameters.RouteParametersBuilder()
-                .setStartWaypoint(startPosition)
-                .setEndWaypoint(endPosition)
-                .setTransitWaypoints(transitWaypoints)
+    public static RouteParameters generateRouteRequestParams(@NonNull List<LatLng> routeCheckpoints) {
+        return new RouteParameters.RouteParametersBuilder().setStartWaypoint(routeCheckpoints.get(0))
+                .setEndWaypoint(routeCheckpoints.get(routeCheckpoints.size() - 1))
+                .setTransitWaypoints(routeCheckpoints)
                 .setMode(MapUtils.DIRECTIONS_REQUEST_MODE)
                 .setAPIKey(Injection.provideGlobalContext().getString(R.string.google_maps_key))
                 .createRouteParameters();
     }
 
     @NonNull
-    public static DistanceRequest generateDistanceRequest(@NonNull LatLng startCheckpoint, @NonNull LatLng endCheckpoint) {
-        return new DistanceRequest.DistanceRequestBuilder().setStartWaypoint(startCheckpoint)
-                .setEndWaypoint(endCheckpoint)
-                .setApiKey(Injection.provideGlobalContext()
-                        .getString(R.string.google_maps_key))
-                .createDistanceRequest();
-    }
-
-    @NonNull
-    public static List<MarkerOptions> convertWaypointsToMarkers(@NonNull Iterable<Checkpoint> waypoints) {
-        List<MarkerOptions> markerOptions = new ArrayList<>();
-        for (Checkpoint checkpoint : waypoints) {
+    public static List<Pair<Integer, MarkerOptions>> convertCheckpointsToMarkers(@NonNull Iterable<Checkpoint> checkpoints) {
+        List<Pair<Integer, MarkerOptions>> markerInfoList = new ArrayList<>();
+        for (Checkpoint checkpoint : checkpoints) {
             try {
                 double latitude = Double.valueOf(checkpoint.getLatitude());
                 double longitude = Double.valueOf(checkpoint.getLongitude());
                 IconGenerator iconGenerator = new IconGenerator(Injection.provideGlobalContext());
                 iconGenerator.setStyle(IconGenerator.STYLE_BLUE);
                 Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getCheckpointId()));
-                markerOptions.add(new MarkerOptions()
+
+                Integer distanceToNext = checkpoint.getDistanceToNextCheckpoint();
+                if (distanceToNext != null) {
+                    distanceToNext = distanceToNext / 1000;
+                } else {
+                    distanceToNext = 0;
+                }
+
+                MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .icon(BitmapDescriptorFactory.fromBitmap(icon))
-                        .title(checkpoint.getCheckpointName()));
+                        .snippet("Distance to the next checkpoint : " + String.valueOf(distanceToNext) + " Km")
+                        .title(checkpoint.getCheckpointName());
+
+                Pair<Integer, MarkerOptions> markerInfo = new Pair<>(checkpoint.getCheckpointId(), markerOptions);
+                markerInfoList.add(markerInfo);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         }
-        return markerOptions;
+        return markerInfoList;
     }
 
     @NonNull

@@ -1,7 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -11,6 +10,7 @@ import android.content.Context;
 import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class MapsFragmentContract {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
-        void loadCheckpoints(@NonNull List<MarkerOptions> checkpoints);
+        void loadCheckpoints(@NonNull List<Pair<Integer, MarkerOptions>> checkpoints);
 
         void openFileExplorer();
 
@@ -29,7 +29,6 @@ public class MapsFragmentContract {
         void clearMapRoutes();
 
         void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions);
-
     }
 
     public interface Presenter extends BaseContract.Presenter {
@@ -46,7 +45,7 @@ public class MapsFragmentContract {
 
         void onClearCheckpointsClicked();
 
-        void onCalculateRoutesClicked(@NonNull List<Marker> waypoints);
+        void onCalculateRoutesClicked();
 
         void onStopCalculatingRoutesClicked();
     }

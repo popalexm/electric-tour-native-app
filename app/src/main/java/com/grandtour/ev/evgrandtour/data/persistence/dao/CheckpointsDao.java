@@ -17,6 +17,9 @@ public interface CheckpointsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insert(List<Checkpoint> checkpoints);
 
+    @Query("UPDATE Checkpoint SET distanceToNextCheckpoint= :distanceToNext WHERE checkpointId = :checkpointId")
+    void updateCheckpointById(int checkpointId, Integer distanceToNext);
+
     @Query("DELETE FROM Checkpoint")
     int deleteAll();
 

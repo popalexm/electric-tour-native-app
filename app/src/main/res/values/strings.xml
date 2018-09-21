@@ -12,6 +12,7 @@
     <string name="message_added">Added </string>
     <string name="message_checkpoints">Checkpoints !</string>
     <string name="message_no_checkpoint_selected">Please select a checkpoint to start Navigation Mode</string>
+    <string name="message_loading_checpoints">Loading checkpoints !</string>
     <string name="lorem_ipsum">Lorem Ipsun</string>
     <string name="btn_cancel">Cancel</string>
 

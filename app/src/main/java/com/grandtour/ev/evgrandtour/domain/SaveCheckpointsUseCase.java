@@ -4,7 +4,6 @@ import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
-import com.grandtour.ev.evgrandtour.ui.utils.JSONUtils;
 
 import android.support.annotation.NonNull;
 
@@ -32,8 +31,8 @@ public class SaveCheckpointsUseCase extends BaseUseCase implements BaseUseCaseSi
         return Single.fromCallable(() -> {
             for (Checkpoint checkpoint : checkpoints) {
                 try {
-                    String latitude = JSONUtils.filterLatLngValues(checkpoint.getLatitude());
-                    String longitude = JSONUtils.filterLatLngValues(checkpoint.getLongitude());
+                    String latitude = checkpoint.getLatitude();
+                    String longitude = checkpoint.getLongitude();
                     checkpoint.setLatitude(latitude);
                     checkpoint.setLongitude(longitude);
                 } catch (NumberFormatException e) {
