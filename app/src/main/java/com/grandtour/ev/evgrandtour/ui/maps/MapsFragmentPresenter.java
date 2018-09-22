@@ -200,10 +200,10 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                                 .doOnComplete(() -> {
                                     areRouteRequestsInProgress = false;
                                     view.showLoadingView(false, true, "");
+                                    loadAvailableCheckpoints();
                                     if (routesCalculationRequests != null) {
                                         routesCalculationRequests.dispose();
                                     }
-                                    loadAvailableCheckpoints();
                                 })
                                 .doOnSubscribe(subscription -> {
                                     if (isViewAttached) {

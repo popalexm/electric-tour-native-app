@@ -4,13 +4,12 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
-import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Leg;
-import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
+import com.grandtour.ev.evgrandtour.domain.handlers.RoutesResponseHandler;
 import com.grandtour.ev.evgrandtour.ui.utils.ArrayUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
@@ -69,26 +68,8 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                         if (response != null) {
                             if (response.code() == 200) {
                                 RoutesResponse responseBody = response.body();
-                                responseBody.getStatus();
                                 if (responseBody != null) {
-                                    List<Route> routes = responseBody.getRoutes();
-                                    if (routes != null && routes.size() != 0) {
-                                        Route responseRoute = responseBody.getRoutes()
-                                                .get(0);
-                                        if (responseRoute != null) {
-                                            List<Leg> routeLegs = responseRoute.getLegs();
-                                            if (routeLegs != null) {
-                                                for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
-                                                    int checkpointId = singleRouteRequestBatch.get(legIndex)
-                                                            .getCheckpointId();
-                                                    storageManager.checkpointsDao()
-                                                            .updateCheckpointById(checkpointId, routeLegs.get(legIndex)
-                                                                    .getDistance()
-                                                                    .getValue());
-                                                }
-                                            }
-                                        }
-                                    }
+                                    new RoutesResponseHandler(storageManager).handleRouteResponse(responseBody, singleRouteRequestBatch);
                                 }
                             }
                         }
