@@ -53,17 +53,9 @@ public class LocationUpdatesService extends Service {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-
     private void createLocationCallback(){
         locationCallback = new LocationUpdateCallback();
     }
-
-    public class LocalBinder extends Binder {
-        public LocationUpdatesService getService() {
-            return LocationUpdatesService.this;
-        }
-    }
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -100,6 +92,20 @@ public class LocationUpdatesService extends Service {
         }
     }
 
+    private void broadCastNewLocation(@NonNull Location location) {
+        Intent intent = new Intent(LocationUpdatesService.ACTION_LOCATION_INFO_BROADCAST);
+        intent.putExtra(LocationUpdatesService.LOCATION_EXTRA_INFORMATION, location);
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent);
+    }
+
+    public class LocalBinder extends Binder {
+
+        public LocationUpdatesService getService() {
+            return LocationUpdatesService.this;
+        }
+    }
+
     private class LocationUpdateCallback extends LocationCallback {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -108,11 +114,5 @@ public class LocationUpdatesService extends Service {
                 broadCastNewLocation(location);
             }
         }
-    }
-
-    private void broadCastNewLocation(@NonNull Location location) {
-        Intent intent = new Intent(LocationUpdatesService.ACTION_LOCATION_INFO_BROADCAST);
-        intent.putExtra(LocationUpdatesService.LOCATION_EXTRA_INFORMATION, location);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

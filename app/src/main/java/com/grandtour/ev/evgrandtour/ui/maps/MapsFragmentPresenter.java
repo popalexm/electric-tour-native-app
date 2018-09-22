@@ -310,6 +310,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        if (isViewAttached) {
+                            view.showLoadingView(false, false, "");
+                        }
                     }
 
                     @Override
