@@ -137,7 +137,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
             json = DocumentUtils.readJSONFromUri(Injection.provideGlobalContext(), fileUri);
         } catch (IOException e) {
             e.printStackTrace();
-            displayMessage(Injection.provideGlobalContext().getString(R.string.message_error_format_invalid));
+            displayShortMessage(Injection.provideGlobalContext()
+                    .getString(R.string.message_error_format_invalid));
         }
         if (!TextUtils.isEmpty(json)) {
             Gson gson = new GsonBuilder().create();
@@ -148,7 +149,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 saveCheckpoints(toSaveCheckpoints);
             } catch (JsonSyntaxException e){
                 e.printStackTrace();
-                displayMessage(Injection.provideGlobalContext().getString(R.string.message_error_opening_file));
+                displayShortMessage(Injection.provideGlobalContext()
+                        .getString(R.string.message_error_opening_file));
             }
         }
     }
@@ -189,7 +191,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                     public void onSuccess(Integer totalRoutesLength) {
                         totalRoutesLength = totalRoutesLength / 1000;
                         if (isViewAttached) {
-                            view.showMessage("Total length of the route is " + totalRoutesLength + " kilometers !");
+                            view.showTotalRouteLength(totalRoutesLength);
                         }
                     }
 
@@ -204,7 +206,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 });
     }
 
-    private void displayMessage(@NonNull String msg){
+    private void displayShortMessage(@NonNull String msg) {
         if (isViewAttached) {
             view.showMessage(msg);
         }
@@ -304,7 +306,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 Context ctx = Injection.provideGlobalContext();
                 String message = ctx.getString(R.string.format_start_number_end_message, ctx.getString(R.string.message_added), longs.length,
                         ctx.getString(R.string.message_checkpoints));
-                displayMessage(message);
+                displayShortMessage(message);
                 loadAvailableCheckpoints();
             }
 

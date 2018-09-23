@@ -292,6 +292,19 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         routes.add(route);
     }
 
+    @Override
+    public void showTotalRouteLength(int length) {
+        Context context = getContext();
+        if (context != null) {
+            String msg = getString(R.string.format_start_number_end_message, getString(R.string.message_total_route_lenght_is_estimated_at), length,
+                    getString(R.string.suffix_kilometers));
+            DialogUtils.getAlertDialogBuilder(context, msg, getString(R.string.title_route_length))
+                    .setPositiveButton(getString(R.string.btn_dimiss), (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        }
+    }
+
     public void openNavigationForSelectedMarker() {
         if (currentSelectedCheckpoint != null) {
             startNavigation(currentSelectedCheckpoint);

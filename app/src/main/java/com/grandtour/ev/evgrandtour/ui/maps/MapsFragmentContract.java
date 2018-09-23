@@ -29,6 +29,8 @@ public class MapsFragmentContract {
         void clearMapRoutes();
 
         void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions);
+
+        void showTotalRouteLength(int length);
     }
 
     public interface Presenter extends BaseContract.Presenter {
