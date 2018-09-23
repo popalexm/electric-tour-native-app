@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.maps.MapsViewModel" />
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.maps.MapsFragmentContract.Presenter" />
+    </data>
+
+    <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -9,8 +24,9 @@
         android:layout_gravity="top"
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
         android:background="@color/colorPrimary"
-        android:layout_height="?actionBarSize">
+        android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}">
 
         <ProgressBar
             android:layout_width="0dp"
@@ -24,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textAlignment="center"
-            android:text="@string/lorem_ipsum"/>
+            android:text="@={viewModel.progressMessage}" />
 
         <Button
             android:id="@+id/btn_cancel_route_calculations"
@@ -33,6 +49,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.3"
+            android:onClick="@{() -> presenter.onStopCalculatingRoutesClicked()}"
+            android:visibility="@{viewModel.isCancelEnabled == true ? View.VISIBLE: View.GONE}"
             android:text="@string/btn_cancel" />
 
     </LinearLayout>
@@ -43,3 +61,4 @@
         android:layout_height="wrap_content" />
 
 </LinearLayout>
+</layout>

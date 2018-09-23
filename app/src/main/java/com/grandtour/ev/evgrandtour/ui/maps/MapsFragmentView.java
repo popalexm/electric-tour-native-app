@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.databinding.MapFragmentBinding;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
@@ -27,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,9 +40,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -59,14 +58,16 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     private static final String MAPS_PACKECGE_NAME = "com.google.android.apps.maps";
 
     @NonNull
+    private final MapsViewModel mapsViewModel = new MapsViewModel();
+    @NonNull
     private GoogleMap googleMap;
     @NonNull
     private MapView mapView;
-    @Nullable
-    private LinearLayout loadingLayout;
-
     @NonNull
-    private MapsFragmentPresenter presenter;
+    private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
+    ;
+
+
     @NonNull
     private final LocationUpdatesReceiver locationUpdatesReceiver = new LocationUpdatesReceiver();
     @Nullable
@@ -87,21 +88,20 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @Override
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.map_fragment, container, false);
-        mapView = view.findViewById(R.id.mapView);
+        MapFragmentBinding mapFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.map_fragment, container, false);
+        mapFragmentBinding.setViewModel(mapsViewModel);
+        mapFragmentBinding.setPresenter(presenter);
+        mapView = mapFragmentBinding.getRoot()
+                .findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-        loadingLayout = view.findViewById(R.id.info_layout);
-        loadingLayout.setVisibility(View.GONE);
-        Button cancelBtn = view.findViewById(R.id.btn_cancel_route_calculations);
-        cancelBtn.setOnClickListener(this);
-        return view;
+        return mapFragmentBinding.getRoot();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        presenter = new MapsFragmentPresenter(this);
+        presenter.onAttach();
     }
 
     @Override
@@ -179,20 +179,16 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg) {
-        if (loadingLayout != null) {
-            if (isLoading) {
-                loadingLayout.setVisibility(View.VISIBLE);
-                ((TextView) loadingLayout.getChildAt(1)).setText(msg);
-                if (isCancelable) {
-                    loadingLayout.getChildAt(2)
-                            .setVisibility(View.VISIBLE);
-                } else {
-                    loadingLayout.getChildAt(2)
-                            .setVisibility(View.GONE);
-                }
+        if (isLoading) {
+            mapsViewModel.isLoadingInProgress.set(true);
+            mapsViewModel.progressMessage.set(msg);
+            if (isCancelable) {
+                mapsViewModel.isCancelEnabled.set(true);
             } else {
-                loadingLayout.setVisibility(View.GONE);
+                mapsViewModel.isCancelEnabled.set(false);
             }
+        } else {
+            mapsViewModel.isLoadingInProgress.set(false);
         }
     }
 
