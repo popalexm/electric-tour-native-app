@@ -43,10 +43,12 @@ public class MapsFragmentContract {
 
         void onLocalFileOpened(@NonNull Uri fileUri);
 
-        void onClearCheckpointsClicked();
+        void onClearCheckpointsAndRoutesClicked();
 
         void onCalculateRoutesClicked();
 
         void onStopCalculatingRoutesClicked();
+
+        void onTotalRouteInfoClicked();
     }
 }

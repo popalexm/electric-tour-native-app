@@ -15,11 +15,14 @@ import android.support.v4.app.NotificationCompat;
 
 public final class NotificationsUtils {
 
+    @NonNull
     private static final String NOTIFICATION_CHANNEL_ID = "10001";
+    @NonNull
     private static final String NOTIFICATION_DESCRIPTION = "GrandTourChannel";
 
     private NotificationsUtils() { }
 
+    @NonNull
     public static Notification createNotification(@NonNull Context context, @NonNull CharSequence notificationMessage, @NonNull CharSequence notificationTitle) {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -28,8 +31,7 @@ public final class NotificationsUtils {
             NotificationsUtils.setOreoNotificationChannel(notificationManager);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationsUtils.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_location_searching_indigo_600_24dp)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationsUtils.NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.ic_location_searching_indigo_600_24dp)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationMessage))

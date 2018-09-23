@@ -13,7 +13,10 @@
     <string name="message_checkpoints">Checkpoints !</string>
     <string name="message_no_checkpoint_selected">Please select a checkpoint to start Navigation Mode</string>
     <string name="message_loading_checpoints">Loading checkpoints !</string>
+    <string name="message_are_you_sure_you_want_to_delete_all_data">Are you sure you want to delete all the imported checkpoints and routes?</string>
+    <string name="title_are_you_sure">Are you sure ?</string>
     <string name="lorem_ipsum">Lorem Ipsun</string>
     <string name="btn_cancel">Cancel</string>
+
 
 </resources>

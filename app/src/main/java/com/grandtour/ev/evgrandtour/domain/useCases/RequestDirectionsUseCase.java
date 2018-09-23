@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain;
+package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;

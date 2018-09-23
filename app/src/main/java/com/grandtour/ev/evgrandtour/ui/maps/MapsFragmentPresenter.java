@@ -16,14 +16,15 @@ import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWithWaypoints;
-import com.grandtour.ev.evgrandtour.domain.CalculateRouteUseCase;
-import com.grandtour.ev.evgrandtour.domain.DeleteRoutesUseCase;
-import com.grandtour.ev.evgrandtour.domain.DeleteStoredCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.GetAvailableRoutesUseCase;
-import com.grandtour.ev.evgrandtour.domain.LoadCheckpointsFromStorageAsMarkersUseCase;
-import com.grandtour.ev.evgrandtour.domain.LoadCheckpointsFromStorageUseCase;
-import com.grandtour.ev.evgrandtour.domain.SaveCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.SaveRouteToDatabaseUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLength;
+import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAsMarkersUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
@@ -153,7 +154,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     }
 
     @Override
-    public void onClearCheckpointsClicked() {
+    public void onClearCheckpointsAndRoutesClicked() {
         deleteAllCheckpointsAndRoutes();
     }
 
@@ -176,6 +177,32 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         deletedAllStoredRoutes();
     }
 
+    @Override
+    public void onTotalRouteInfoClicked() {
+        new CalculateTotalRoutesLength(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe(new MaybeObserver<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onSuccess(Integer totalRoutesLength) {
+                        totalRoutesLength = totalRoutesLength / 1000;
+                        if (isViewAttached) {
+                            view.showMessage("Total length of the route is " + totalRoutesLength + " kilometers !");
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
+    }
 
     private void displayMessage(@NonNull String msg){
         if (isViewAttached) {

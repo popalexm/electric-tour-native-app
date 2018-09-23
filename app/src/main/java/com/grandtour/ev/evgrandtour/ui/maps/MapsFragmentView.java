@@ -15,6 +15,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
@@ -313,12 +314,26 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     /** Delegated methods from the main activity
      */
-    public void clearWaypointsClicked(){
-        presenter.onClearCheckpointsClicked();
+    public void clearMapDataClicked() {
+        Context context = getContext();
+        if (context != null) {
+            DialogUtils.getAlertDialogBuilder(context, getString(R.string.message_are_you_sure_you_want_to_delete_all_data),
+                    getString(R.string.title_are_you_sure))
+                    .setPositiveButton("Yes", (dialog, which) -> presenter.onClearCheckpointsAndRoutesClicked())
+                    .setNegativeButton("No", (dialog, which) -> {
+                        dialog.dismiss();
+                    })
+                    .create()
+                    .show();
+        }
     }
 
     public void calculateRoutesClicked(){
         presenter.onCalculateRoutesClicked();
+    }
+
+    public void onTotalRouteLenghtClicked() {
+        presenter.onTotalRouteInfoClicked();
     }
 
     @Override

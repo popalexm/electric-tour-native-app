@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain;
+package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;

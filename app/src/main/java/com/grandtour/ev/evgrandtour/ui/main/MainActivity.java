@@ -52,12 +52,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.action_delete_waypoints :
                 if (mapsFragmentView != null) {
-                    mapsFragmentView.clearWaypointsClicked();
+                    mapsFragmentView.clearMapDataClicked();
                 }
                 break;
             case R.id.action_calculate_routes:
                 if (mapsFragmentView != null) {
                     mapsFragmentView.calculateRoutesClicked();
+                }
+                break;
+
+            case R.id.action_route_lenght_info:
+                if (mapsFragmentView != null) {
+                    mapsFragmentView.onTotalRouteLenghtClicked();
                 }
                 break;
         }

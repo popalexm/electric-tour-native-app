@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain;
+package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.gms.maps.model.LatLng;
