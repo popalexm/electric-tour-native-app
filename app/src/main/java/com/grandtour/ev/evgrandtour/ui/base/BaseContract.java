@@ -12,7 +12,6 @@ public class BaseContract {
 
     }
 
-
     public interface Presenter {
 
         void onAttach();
@@ -20,5 +19,4 @@ public class BaseContract {
         void onDetach();
 
     }
-
 }
