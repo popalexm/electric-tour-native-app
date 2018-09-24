@@ -65,8 +65,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     private MapView mapView;
     @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
-    ;
-
 
     @NonNull
     private final LocationUpdatesReceiver locationUpdatesReceiver = new LocationUpdatesReceiver();
@@ -268,8 +266,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void clearMapCheckpoints() {
-        for (Marker waypoint : checkpoints) {
-            waypoint.remove();
+        for (Marker checkpoint : checkpoints) {
+            checkpoint.remove();
         }
         checkpoints.clear();
     }
@@ -329,9 +327,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
      * Starts the google maps Navigation Mode for the selected marker
      */
     private void startNavigation(@NonNull LatLng latLng) {
-        double latitude = latLng.latitude;
-        double longitude = latLng.longitude;
-        String navUri = getString(R.string.format_navigation_directions, MapsFragmentView.OPEN_NAVIGATION_URI, latitude, longitude);
+        String navUri = getString(R.string.format_navigation_directions, MapsFragmentView.OPEN_NAVIGATION_URI, latLng.latitude, latLng.longitude);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navUri));
         mapIntent.setPackage(MapsFragmentView.MAPS_PACKECGE_NAME);
         startActivity(mapIntent);

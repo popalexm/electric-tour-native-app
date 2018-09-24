@@ -57,34 +57,19 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
-public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
+public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
-
-    @NonNull
-    private final MapsFragmentContract.View view;
-    private boolean isViewAttached;
     @Nullable
     private LocationUpdatesService locationUpdatesService;
     @Nullable
     private Disposable routesCalculationRequests;
     private boolean areRouteRequestsInProgress;
-
     @NonNull
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
-            locationUpdatesService = binder.getService();
-            locationUpdatesService.requestLocationUpdates();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            locationUpdatesService = null;
-        }
-    };
+    private final ServiceConnection serviceConnection = this;
+    @NonNull
+    private final MapsFragmentContract.View view;
+    private boolean isViewAttached;
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -355,6 +340,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                     public void onSuccess(List<Pair<Integer, MarkerOptions>> markerOptionsList) {
                         if (isViewAttached) {
                             if (markerOptionsList.size() > 0) {
+                                view.clearMapCheckpoints();
                                 view.loadCheckpoints(markerOptionsList);
                             }
                             view.showLoadingView(false, false, "");
@@ -456,5 +442,17 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
         if (isViewAttached) {
             view.drawCheckpointsRoute(routePolyline);
         }
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
+        locationUpdatesService = binder.getService();
+        locationUpdatesService.requestLocationUpdates();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        locationUpdatesService = null;
     }
 }
