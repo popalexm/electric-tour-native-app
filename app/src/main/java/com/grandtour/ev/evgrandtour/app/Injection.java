@@ -1,9 +1,8 @@
 package com.grandtour.ev.evgrandtour.app;
 
-
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
 
 import android.content.Context;
 import android.content.SharedPreferences;

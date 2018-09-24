@@ -1,5 +1,4 @@
-
-package com.grandtour.ev.evgrandtour.data.persistence.models;
+package com.grandtour.ev.evgrandtour.data.database.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

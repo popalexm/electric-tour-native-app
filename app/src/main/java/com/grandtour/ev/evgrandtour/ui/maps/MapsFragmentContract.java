@@ -31,6 +31,8 @@ public class MapsFragmentContract {
         void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions);
 
         void showTotalRouteLength(int length);
+
+        void showRouteReCalculationsDialog();
     }
 
     public interface Presenter extends BaseContract.Presenter {
@@ -48,6 +50,8 @@ public class MapsFragmentContract {
         void onClearCheckpointsAndRoutesClicked();
 
         void onCalculateRoutesClicked();
+
+        void onRecalculateRoutesConfirmation();
 
         void onStopCalculatingRoutesClicked();
 

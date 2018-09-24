@@ -1,7 +1,7 @@
-package com.grandtour.ev.evgrandtour.data.persistence.dao;
+package com.grandtour.ev.evgrandtour.data.database.dao;
 
-import com.grandtour.ev.evgrandtour.data.persistence.models.Route;
-import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWithWaypoints;
+import com.grandtour.ev.evgrandtour.data.database.models.Route;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
@@ -11,6 +11,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 @Dao
 public interface RouteDao {
@@ -23,4 +24,7 @@ public interface RouteDao {
 
     @Query("DELETE FROM ROUTE")
     int deleteAll();
+
+    @Query("Select count(*) from ROUTE")
+    Single<Integer> getTotalAvailableRoutes();
 }

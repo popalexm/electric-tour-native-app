@@ -1,11 +1,11 @@
-package com.grandtour.ev.evgrandtour.data.persistence;
+package com.grandtour.ev.evgrandtour.data.database;
 
-import com.grandtour.ev.evgrandtour.data.persistence.dao.CheckpointsDao;
-import com.grandtour.ev.evgrandtour.data.persistence.dao.RouteDao;
-import com.grandtour.ev.evgrandtour.data.persistence.dao.RouteWaypointsDao;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Route;
-import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
+import com.grandtour.ev.evgrandtour.data.database.dao.CheckpointsDao;
+import com.grandtour.ev.evgrandtour.data.database.dao.RouteDao;
+import com.grandtour.ev.evgrandtour.data.database.dao.RouteWaypointsDao;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.Route;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;

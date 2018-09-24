@@ -2,11 +2,11 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
 import com.grandtour.ev.evgrandtour.domain.handlers.RoutesResponseHandler;

@@ -1,6 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.utils;
 
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 
 import android.support.annotation.NonNull;

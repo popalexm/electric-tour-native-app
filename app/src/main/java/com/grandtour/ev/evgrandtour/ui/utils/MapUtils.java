@@ -10,8 +10,8 @@ import com.google.maps.android.ui.IconGenerator;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;

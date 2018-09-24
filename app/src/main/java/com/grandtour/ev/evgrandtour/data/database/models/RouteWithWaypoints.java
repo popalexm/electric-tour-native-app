@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.data.persistence.models;
+package com.grandtour.ev.evgrandtour.data.database.models;
 
 import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Relation;

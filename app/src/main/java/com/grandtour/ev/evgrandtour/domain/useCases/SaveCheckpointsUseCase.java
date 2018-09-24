@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
 

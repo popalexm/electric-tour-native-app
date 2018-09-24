@@ -301,6 +301,22 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         }
     }
 
+    @Override
+    public void showRouteReCalculationsDialog() {
+        Context context = getContext();
+        if (context != null) {
+            String msg = getString(R.string.message_are_you_sure_you_want_to_recalculate);
+            DialogUtils.getAlertDialogBuilder(context, msg, getString(R.string.title_route_recalculation))
+                    .setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> {
+                        presenter.onRecalculateRoutesConfirmation();
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss())
+                    .create()
+                    .show();
+        }
+    }
+
     public void openNavigationForSelectedMarker() {
         if (currentSelectedCheckpoint != null) {
             startNavigation(currentSelectedCheckpoint);

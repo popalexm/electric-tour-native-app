@@ -9,13 +9,13 @@ import com.google.gson.JsonSyntaxException;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
-import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLength;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
@@ -25,6 +25,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAs
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
@@ -163,8 +164,32 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
     @Override
     public void onCalculateRoutesClicked() {
         if (!areRouteRequestsInProgress) {
-            requestDirectionsForCheckpoints();
+            new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                    .subscribe(new SingleObserver<Integer>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+                        }
+
+                        @Override
+                        public void onSuccess(Integer integer) {
+                            if (integer > 0) {
+                                view.showRouteReCalculationsDialog();
+                            } else {
+                                requestDirectionsForCheckpoints();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
+                    });
         }
+    }
+
+    @Override
+    public void onRecalculateRoutesConfirmation() {
+        requestDirectionsForCheckpoints();
     }
 
     @Override
@@ -242,7 +267,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                                 })
                                 .subscribe(response -> {
                                     if (response != null) {
-                                        processDirectionsResponse(response);
+                                        drawAndSaveMapPoints(response);
                                     }
                                 });
                     }
@@ -258,7 +283,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter {
                 });
     }
 
-    private void processDirectionsResponse(@NonNull Response<RoutesResponse> response){
+    private void drawAndSaveMapPoints(@NonNull Response<RoutesResponse> response) {
             RoutesResponse routesResponse = response.body();
             if (routesResponse != null) {
                 List<Route> routes = routesResponse.getRoutes();

@@ -1,6 +1,6 @@
-package com.grandtour.ev.evgrandtour.data.persistence.dao;
+package com.grandtour.ev.evgrandtour.data.database.dao;
 
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;

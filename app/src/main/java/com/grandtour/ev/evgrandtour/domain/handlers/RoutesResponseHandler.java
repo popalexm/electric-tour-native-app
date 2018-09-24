@@ -1,10 +1,10 @@
 package com.grandtour.ev.evgrandtour.domain.handlers;
 
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Leg;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
 
 import android.support.annotation.NonNull;
 import android.util.Log;

@@ -2,8 +2,8 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;

@@ -3,9 +3,9 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.gms.maps.model.LatLng;
 
-import com.grandtour.ev.evgrandtour.data.persistence.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.persistence.models.Route;
-import com.grandtour.ev.evgrandtour.data.persistence.models.RouteWaypoint;
+import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.Route;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
 
