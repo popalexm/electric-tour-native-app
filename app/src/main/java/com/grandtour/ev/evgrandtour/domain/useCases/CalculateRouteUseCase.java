@@ -75,6 +75,7 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                         }
                     })
                     .doOnError(Throwable::printStackTrace);
+
             calculateRouteTasks.add(calculateRouteUseCase);
         }
         return calculateRouteTasks;

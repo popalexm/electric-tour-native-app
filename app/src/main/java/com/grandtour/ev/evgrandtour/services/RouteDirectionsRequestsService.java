@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
@@ -21,12 +22,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.internal.http2.StreamResetException;
 
 public class RouteDirectionsRequestsService extends Service {
 
@@ -35,6 +38,8 @@ public class RouteDirectionsRequestsService extends Service {
     public static final String ROUTE_MAP_POINTS_BUNDLE = "routeMapPointsParcelable";
     @NonNull
     public static final String ROUTE_START_REQUESTS_BUNDLE = "routeDirectionsRequestsStart";
+    @NonNull
+    public static final String REQUEST_ERROR_CODE = "requestErrorCode";
     @NonNull
     public static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
     @NonNull
@@ -79,15 +84,21 @@ public class RouteDirectionsRequestsService extends Service {
                 Injection.provideStorageManager()).perform()
                 .doOnComplete(() -> {
                     broadcastDirectionRequestProgress(false);
-                    if (directionsRequestsDisposable != null && !directionsRequestsDisposable.isDisposed()) {
+                    if (directionsRequestsDisposable != null) {
                         directionsRequestsDisposable.dispose();
-                        stopSelf();
                     }
+                    stopSelf();
                 })
                 .doOnSubscribe(subscription -> {
                     broadcastDirectionRequestProgress(true);
                 })
-                .doOnError(Throwable::printStackTrace)
+                .doOnError(throwable -> {
+                    if (throwable instanceof UnknownHostException) {
+                        broadcastRequestError(NetworkExceptions.UNKNOWN_HOST);
+                    } else if (throwable instanceof StreamResetException) {
+                        broadcastRequestError(NetworkExceptions.STREAM_RESET_EXCEPTION);
+                    }
+                })
                 .subscribe(response -> {
                     RoutesResponse routesResponse = response.body();
                     if (routesResponse != null) {
@@ -120,6 +131,13 @@ public class RouteDirectionsRequestsService extends Service {
     private void broadcastDirectionRequestProgress(boolean areDirectionsRequestsInProgress) {
         Intent intent = new Intent(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST);
         intent.putExtra(RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE, areDirectionsRequestsInProgress);
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent);
+    }
+
+    private void broadcastRequestError(@NonNull NetworkExceptions exceptions) {
+        Intent intent = new Intent(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST);
+        intent.putExtra(RouteDirectionsRequestsService.REQUEST_ERROR_CODE, exceptions.name());
         LocalBroadcastManager.getInstance(this)
                 .sendBroadcast(intent);
     }

@@ -12,6 +12,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.databinding.MapFragmentBinding;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
@@ -35,6 +36,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -378,6 +380,17 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
                                     presenter.drawRouteFromPoints(mapPoints);
                                 }
                                 break;
+
+                            case RouteDirectionsRequestsService.REQUEST_ERROR_CODE:
+                                String errorType = bundleContent.getString(RouteDirectionsRequestsService.REQUEST_ERROR_CODE);
+                                if (TextUtils.equals(errorType, NetworkExceptions.UNKNOWN_HOST.name())) {
+                                    showMessage(getString(R.string.error_message_no_internet_connection));
+                                } else if (TextUtils.equals(errorType, NetworkExceptions.STREAM_RESET_EXCEPTION.name())) {
+                                    showMessage(getString(R.string.error_message_internet_connection_intrerupted));
+                                }
+                                presenter.onStopCalculatingRoutesClicked();
+                                break;
+
                             case RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE:
                                 boolean areRoutesRequestsInProgress = bundleContent.getBoolean(RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE);
                                 if (areRoutesRequestsInProgress) {
