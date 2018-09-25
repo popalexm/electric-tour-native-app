@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.MapFragmentBinding;
-import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
+import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
@@ -29,7 +29,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -67,7 +66,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
 
     @NonNull
-    private final LocationUpdatesReceiver locationUpdatesReceiver = new LocationUpdatesReceiver();
+    private final DirectionsRequestsReceiver routeDirectionsRequestsService = new DirectionsRequestsReceiver();
+
     @Nullable
     private UserLocation currentUserLocation;
     @Nullable
@@ -111,10 +111,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @Override
     public void onStart() {
         super.onStart();
-        Activity activity = getActivity();
-        if (activity != null) {
-            presenter.onStartLocationService(activity);
-        }
     }
 
     @Override
@@ -122,7 +118,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         super.onStop();
         Activity activity = getActivity();
         if (activity != null) {
-            presenter.onStopLocationService(activity);
+            presenter.onUnBindDirectionsRequestService();
         }
     }
 
@@ -132,8 +128,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         mapView.onResume();
         Activity activity = getActivity();
         if (activity != null) {
-            LocalBroadcastManager.getInstance(activity).registerReceiver(locationUpdatesReceiver,
-                    new IntentFilter(LocationUpdatesService.ACTION_LOCATION_INFO_BROADCAST));
+            LocalBroadcastManager.getInstance(activity)
+                    .registerReceiver(routeDirectionsRequestsService, new IntentFilter(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST));
         }
     }
 
@@ -141,7 +137,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void onPause() {
         Activity activity = getActivity();
         if (activity != null) {
-            LocalBroadcastManager.getInstance(activity).unregisterReceiver(locationUpdatesReceiver);
+            LocalBroadcastManager.getInstance(activity)
+                    .unregisterReceiver(routeDirectionsRequestsService);
         }
         mapView.onPause();
         super.onPause();
@@ -353,7 +350,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         presenter.onCalculateRoutesClicked();
     }
 
-    public void onTotalRouteLenghtClicked() {
+    public void onTotalRouteLengthClicked() {
         presenter.onTotalRouteInfoClicked();
     }
 
@@ -366,14 +363,32 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         }
     }
 
-    class LocationUpdatesReceiver extends BroadcastReceiver {
+    class DirectionsRequestsReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
-                Location location = intent.getParcelableExtra(LocationUpdatesService.LOCATION_EXTRA_INFORMATION);
-                if (location != null) {
-                    presenter.onCurrentLocationChanged(location);
+                Bundle bundleContent = intent.getExtras();
+                if (bundleContent != null) {
+                    for (String keySet : bundleContent.keySet()) {
+                        switch (keySet) {
+                            case RouteDirectionsRequestsService.ROUTE_MAP_POINTS_BUNDLE:
+                                ArrayList<LatLng> mapPoints = bundleContent.getParcelableArrayList(RouteDirectionsRequestsService.ROUTE_MAP_POINTS_BUNDLE);
+                                if (mapPoints != null) {
+                                    presenter.drawRouteFromPoints(mapPoints);
+                                }
+                                break;
+                            case RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE:
+                                boolean areRoutesRequestsInProgress = bundleContent.getBoolean(RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE);
+                                if (areRoutesRequestsInProgress) {
+                                    showLoadingView(true, true, getString(R.string.message_calculating_routes));
+                                } else {
+                                    showLoadingView(false, false, "");
+                                    presenter.onCalculatingRoutesDone();
+                                }
+                                break;
+                        }
+                    }
                 }
             }
         }

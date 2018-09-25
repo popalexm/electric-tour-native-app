@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.action_route_lenght_info:
                 if (mapsFragmentView != null) {
-                    mapsFragmentView.onTotalRouteLenghtClicked();
+                    mapsFragmentView.onTotalRouteLengthClicked();
                 }
                 break;
         }

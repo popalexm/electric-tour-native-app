@@ -6,7 +6,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 
-import android.content.Context;
 import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -39,9 +38,9 @@ public class MapsFragmentContract {
 
         void onMapReady();
 
-        void onStartLocationService(@NonNull Context context);
+        void onUnBindDirectionsRequestService();
 
-        void onStopLocationService(@NonNull Context context);
+        void onCalculatingRoutesDone();
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 

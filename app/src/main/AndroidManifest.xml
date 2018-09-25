@@ -32,9 +32,7 @@
         </activity>
 
         <service
-            android:name=".services.LocationUpdatesService"
+            android:name=".services.RouteDirectionsRequestsService"
             android:enabled="true" />
-
     </application>
-
 </manifest>

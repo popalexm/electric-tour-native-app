@@ -12,19 +12,14 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
-import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
-import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
-import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLength;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAsMarkersUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
-import com.grandtour.ev.evgrandtour.services.LocationUpdatesService;
+import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
@@ -50,18 +45,15 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
     @Nullable
-    private LocationUpdatesService locationUpdatesService;
-    @Nullable
-    private Disposable routesCalculationRequests;
-    private boolean areRouteRequestsInProgress;
+    private RouteDirectionsRequestsService routeDirectionsRequestsService;
     @NonNull
     private final ServiceConnection serviceConnection = this;
+    private boolean isServiceBound;
     @NonNull
     private final MapsFragmentContract.View view;
     private boolean isViewAttached;
@@ -83,24 +75,25 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     @Override
     public void onMapReady() {
         if (isViewAttached) {
-            if (locationUpdatesService != null) {
-                locationUpdatesService.requestLocationUpdates();
-            }
             loadAvailableCheckpoints();
             loadAvailableRoutes();
         }
     }
 
     @Override
-    public void onStartLocationService(@NonNull Context context) {
-        Intent intent = new Intent(context, LocationUpdatesService.class);
-        context.startService(intent);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    public void onUnBindDirectionsRequestService() {
+        if (isServiceBound) {
+            Injection.provideGlobalContext()
+                    .unbindService(serviceConnection);
+            isServiceBound = false;
+        }
     }
 
     @Override
-    public void onStopLocationService(@NonNull Context context) {
-        context.unbindService(serviceConnection);
+    public void onCalculatingRoutesDone() {
+        if (isViewAttached) {
+            loadAvailableCheckpoints();
+        }
     }
 
     @Override
@@ -143,14 +136,14 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onCalculateRoutesClicked() {
-        if (!areRouteRequestsInProgress) {
+        {
             Disposable disposable = new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                     Injection.provideStorageManager()).perform()
                     .subscribe(numberOfAvailableRoutes -> {
                         if (numberOfAvailableRoutes > 0) {
                             view.showRouteReCalculationsDialog();
                         } else {
-                            requestDirectionsForCheckpoints();
+                            startRouteDirectionsRequests();
                         }
                     }, Throwable::printStackTrace);
         }
@@ -158,14 +151,13 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onRecalculateRoutesConfirmation() {
-        requestDirectionsForCheckpoints();
+        startRouteDirectionsRequests();
     }
 
     @Override
     public void onStopCalculatingRoutesClicked() {
-        if (routesCalculationRequests != null && !routesCalculationRequests.isDisposed()) {
-            routesCalculationRequests.dispose();
-            areRouteRequestsInProgress = false;
+        if (routeDirectionsRequestsService != null) {
+            routeDirectionsRequestsService.stopSelf();
         }
         if (isViewAttached) {
             view.showLoadingView(false, false, "");
@@ -185,56 +177,12 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
         }
     }
 
-    private void requestDirectionsForCheckpoints() {
-        areRouteRequestsInProgress = true;
-        Disposable disposable = new LoadCheckpointsFromStorageUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                Injection.provideStorageManager()).perform()
-                .subscribe(this::startRouteDirectionsRequests);
-    }
-
-    private void startRouteDirectionsRequests(@NonNull List<Checkpoint> checkpoints) {
-        routesCalculationRequests = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), checkpoints, Injection.provideNetworkApi(),
-                Injection.provideStorageManager()).perform()
-                .doOnComplete(() -> {
-                    areRouteRequestsInProgress = false;
-                    view.showLoadingView(false, true, "");
-                    loadAvailableCheckpoints();
-                    if (routesCalculationRequests != null) {
-                        routesCalculationRequests.dispose();
-                    }
-                })
-                .doOnSubscribe(subscription -> {
-                    if (isViewAttached) {
-                        view.showLoadingView(true, true, Injection.provideGlobalContext()
-                                .getString(R.string.message_calculating_routes));
-                    }
-                })
-                .subscribe(response -> {
-                    if (response != null) {
-                        drawAndSaveMapPoints(response);
-                    }
-                });
-    }
-
-    private void drawAndSaveMapPoints(@NonNull Response<RoutesResponse> response) {
-            RoutesResponse routesResponse = response.body();
-            if (routesResponse != null) {
-                List<Route> routes = routesResponse.getRoutes();
-                if (routes != null && routes.size() > 0) {
-                    String poly = routesResponse.getRoutes()
-                            .get(0)
-                            .getOverviewPolyline()
-                            .getPoints();
-                    List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(poly);
-                    drawRouteFromPoints(mapPoints);
-                    MapsFragmentPresenter.saveRouteToDatabase(mapPoints);
-                }
-          }
-    }
-
-    private static void saveRouteToDatabase(@NonNull List<LatLng> mapPoints) {
-        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints).perform()
-                .subscribe();
+    private void startRouteDirectionsRequests() {
+        Context context = Injection.provideGlobalContext();
+        Intent intent = new Intent(context, RouteDirectionsRequestsService.class);
+        context.startService(intent);
+        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        isServiceBound = true;
     }
 
     private void saveCheckpoints(@NonNull List<Checkpoint> checkpoints) {
@@ -320,7 +268,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                 });
     }
 
-    private void drawRouteFromPoints(List<LatLng> routeMapPoints) {
+    public void drawRouteFromPoints(List<LatLng> routeMapPoints) {
         PolylineOptions routePolyline = MapUtils.generateRoute(routeMapPoints);
         if (isViewAttached) {
             view.drawCheckpointsRoute(routePolyline);
@@ -329,13 +277,12 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        LocationUpdatesService.LocalBinder binder = (LocationUpdatesService.LocalBinder) service;
-        locationUpdatesService = binder.getService();
-        locationUpdatesService.requestLocationUpdates();
+        RouteDirectionsRequestsService.LocalBinder binder = (RouteDirectionsRequestsService.LocalBinder) service;
+        routeDirectionsRequestsService = binder.getService();
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        locationUpdatesService = null;
+        routeDirectionsRequestsService = null;
     }
 }
