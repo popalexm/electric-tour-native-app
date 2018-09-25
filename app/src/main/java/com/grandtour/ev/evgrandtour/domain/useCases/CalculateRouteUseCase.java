@@ -74,7 +74,17 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                             }
                         }
                     })
+                    /*  .onErrorResumeNext(new Function<Throwable, MaybeSource<? extends Response<RoutesResponse>>>() {
+                          @Override
+                          public MaybeSource<? extends Response<RoutesResponse>> apply(Throwable throwable) throws Exception {
+                              if (throwable instanceof UnknownHostException) {
+                                  return Maybe.error();
+                              }
+                              return Maybe.error(throwable);
+                          }
+                      }) */
                     .doOnError(Throwable::printStackTrace);
+
             calculateRouteTasks.add(calculateRouteUseCase);
         }
         return calculateRouteTasks;

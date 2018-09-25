@@ -9,7 +9,6 @@ public class BaseContract {
         void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg);
 
         void showMessage(@NonNull String msg);
-
     }
 
     public interface Presenter {

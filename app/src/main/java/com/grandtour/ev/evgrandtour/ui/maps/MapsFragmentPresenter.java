@@ -25,6 +25,7 @@ import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +51,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
     @Nullable
-    private RouteDirectionsRequestsService routeDirectionsRequestsService;
+    private Service routeDirectionsRequestService;
     @NonNull
     private final ServiceConnection serviceConnection = this;
     private boolean isServiceBound;
@@ -136,8 +137,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onCalculateRoutesClicked() {
-        {
-            Disposable disposable = new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        Disposable disposable = new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                     Injection.provideStorageManager()).perform()
                     .subscribe(numberOfAvailableRoutes -> {
                         if (numberOfAvailableRoutes > 0) {
@@ -146,7 +146,6 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                             startRouteDirectionsRequests();
                         }
                     }, Throwable::printStackTrace);
-        }
     }
 
     @Override
@@ -156,8 +155,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onStopCalculatingRoutesClicked() {
-        if (routeDirectionsRequestsService != null) {
-            routeDirectionsRequestsService.stopSelf();
+        if (routeDirectionsRequestService != null) {
+            routeDirectionsRequestService.stopSelf();
         }
         if (isViewAttached) {
             view.showLoadingView(false, false, "");
@@ -168,7 +167,10 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     @Override
     public void onTotalRouteInfoClicked() {
         Disposable disposable = new CalculateTotalRoutesLength(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .subscribe(view::showTotalRouteLength, Throwable::printStackTrace);
+                .subscribe(Integer -> {
+                    int lengthInKm = Integer / 1000;
+                    view.showTotalRouteLength(lengthInKm);
+                }, Throwable::printStackTrace);
     }
 
     private void displayShortMessage(@NonNull String msg) {
@@ -179,9 +181,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     private void startRouteDirectionsRequests() {
         Context context = Injection.provideGlobalContext();
-        Intent intent = new Intent(context, RouteDirectionsRequestsService.class);
-        context.startService(intent);
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        Intent serviceIntent = new Intent(context, RouteDirectionsRequestsService.class);
+        context.startService(serviceIntent);
+        context.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         isServiceBound = true;
     }
 
@@ -278,11 +280,11 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         RouteDirectionsRequestsService.LocalBinder binder = (RouteDirectionsRequestsService.LocalBinder) service;
-        routeDirectionsRequestsService = binder.getService();
+        routeDirectionsRequestService = binder.getService();
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        routeDirectionsRequestsService = null;
+        routeDirectionsRequestService = null;
     }
 }
