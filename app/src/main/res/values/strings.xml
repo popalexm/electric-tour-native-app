@@ -7,6 +7,7 @@
     <string name="title_marker_current_location">Current location</string>
     <string name="message_calculating_routes">Calculating routes in progress !</string>
     <string name="message_loading_checkpoints">Loading checkpoints in progress !</string>
+    <string name="message_loading_available_checkpoints_and_routes">Loading all available checkpoints and routes !</string>
     <string name="message_done">Done</string>
     <string name="message_all_waypoints_removed">All Waypoints have been removed !</string>
     <string name="message_added">Added </string>

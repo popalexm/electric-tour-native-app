@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,12 +38,14 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Maybe;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -78,8 +81,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     @Override
     public void onMapReady() {
         if (isViewAttached) {
-            loadAvailableCheckpoints();
-            loadAvailableRoutes();
+            reloadAvailableCheckpointsAndRoutes();
         }
     }
 
@@ -105,10 +107,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
         if (isViewAttached) {
             view.showLoadingView(false, false, "");
         }
-        if (isViewAttached) {
-            loadAvailableCheckpoints();
-        }
-        loadAvailableCheckpoints();
+        reloadAvailableCheckpointsAndRoutes();
     }
 
     @Override
@@ -267,9 +266,14 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                 }, Throwable::printStackTrace);
     }
 
-    private void loadAvailableRoutes() {
-        Disposable disposable = new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .subscribe(routeWithWaypoints -> {
+    private void reloadAvailableCheckpointsAndRoutes() {
+        if (isViewAttached) {
+            view.showLoadingView(true, false, Injection.provideGlobalContext()
+                    .getString(R.string.message_loading_available_checkpoints_and_routes));
+        }
+        Maybe<List<RouteWithWaypoints>> getAvailableRoutes = new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+                Injection.provideStorageManager()).perform()
+                .doOnSuccess(routeWithWaypoints -> {
                     for (RouteWithWaypoints route : routeWithWaypoints) {
                         List<RouteWaypoint> routes = route.routeWaypoints;
                         List<LatLng> routeMapPoints = new ArrayList<>();
@@ -279,7 +283,27 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                         }
                         drawRouteFromMapPoints(routeMapPoints);
                     }
-                }, Throwable::printStackTrace);
+                })
+                .doOnError(Throwable::printStackTrace);
+
+        Maybe<List<Pair<Integer, MarkerOptions>>> getAvailableCheckpoints = new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(),
+                AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .doOnSuccess(checkpoints -> {
+                    if (isViewAttached) {
+                        if (checkpoints.size() > 0) {
+                            view.clearMapCheckpoints();
+                            view.loadCheckpoints(checkpoints);
+                        }
+                    }
+                })
+                .doOnError(Throwable::printStackTrace);
+        Maybe.concat(getAvailableCheckpoints, getAvailableRoutes)
+                .doOnComplete(() -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(false, false, "");
+                    }
+                })
+                .subscribe();
     }
 
     private void deleteAllCheckpointsAndRoutes() {
