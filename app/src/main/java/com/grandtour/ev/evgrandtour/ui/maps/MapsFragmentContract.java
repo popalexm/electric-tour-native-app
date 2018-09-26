@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentContract {
@@ -40,7 +41,11 @@ public class MapsFragmentContract {
 
         void onUnBindDirectionsRequestService();
 
+        void onCalculatingRoutesStarted();
+
         void onCalculatingRoutesDone();
+
+        void onRoutesRequestsError(@NonNull String errorType);
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
@@ -55,5 +60,7 @@ public class MapsFragmentContract {
         void onStopCalculatingRoutesClicked();
 
         void onTotalRouteInfoClicked();
+
+        void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints);
     }
 }

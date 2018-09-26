@@ -12,7 +12,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.databinding.MapFragmentBinding;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
@@ -24,7 +23,6 @@ import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -36,14 +34,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
@@ -56,29 +52,23 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @NonNull
     private static final String OPEN_NAVIGATION_URI = "google.navigation:q=";
     @NonNull
-    private static final String MAPS_PACKECGE_NAME = "com.google.android.apps.maps";
+    private static final String OPEN_NAVIGATION_MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
 
-    @NonNull
-    private final MapsViewModel mapsViewModel = new MapsViewModel();
     @NonNull
     private GoogleMap googleMap;
     @NonNull
     private MapView mapView;
     @NonNull
-    private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
-
+    private final MapsViewModel mapsViewModel = new MapsViewModel();
     @NonNull
-    private final DirectionsRequestsReceiver routeDirectionsRequestsService = new DirectionsRequestsReceiver();
+    private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
+    @NonNull
+    private final DirectionsRequestsReceiver routeDirectionsRequestsService = new DirectionsRequestsReceiver(presenter);
 
     @Nullable
     private UserLocation currentUserLocation;
     @Nullable
     private LatLng currentSelectedCheckpoint;
-
-    @NonNull
-    private final List<Marker> checkpoints = new ArrayList<>();
-    @NonNull
-    private final List<Polyline> routes = new ArrayList<>();
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -151,8 +141,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-        checkpoints.clear();
-        routes.clear();
+        mapsViewModel.checkpoints.clear();
+        mapsViewModel.routes.clear();
     }
 
     @Override
@@ -198,7 +188,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         this.googleMap.setOnMarkerClickListener(this);
-
         presenter.onAttach();
         Activity activity = getActivity();
         if (activity != null) {
@@ -247,7 +236,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         for (Pair<Integer, MarkerOptions> checkpoint : checkpoints) {
             Marker checkpointMarker = googleMap.addMarker(checkpoint.second);
             checkpointMarker.setTag(checkpoint.first);
-            this.checkpoints.add(checkpointMarker);
+            mapsViewModel.checkpoints.add(checkpointMarker);
         }
     }
 
@@ -265,24 +254,24 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void clearMapCheckpoints() {
-        for (Marker checkpoint : checkpoints) {
+        for (Marker checkpoint : mapsViewModel.checkpoints) {
             checkpoint.remove();
         }
-        checkpoints.clear();
+        mapsViewModel.checkpoints.clear();
     }
 
     @Override
     public void clearMapRoutes() {
-        for (Polyline route : routes) {
+        for (Polyline route : mapsViewModel.routes) {
             route.remove();
         }
-        routes.clear();
+        mapsViewModel.routes.clear();
     }
 
     @Override
     public void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions) {
         Polyline route = googleMap.addPolyline(routePolyOptions);
-        routes.add(route);
+        mapsViewModel.routes.add(route);
     }
 
     @Override
@@ -328,7 +317,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     private void startNavigation(@NonNull LatLng latLng) {
         String navUri = getString(R.string.format_navigation_directions, MapsFragmentView.OPEN_NAVIGATION_URI, latLng.latitude, latLng.longitude);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navUri));
-        mapIntent.setPackage(MapsFragmentView.MAPS_PACKECGE_NAME);
+        mapIntent.setPackage(MapsFragmentView.OPEN_NAVIGATION_MAPS_PACKAGE_NAME);
         startActivity(mapIntent);
     }
 
@@ -362,48 +351,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
             case R.id.btn_cancel_route_calculations:
                 presenter.onStopCalculatingRoutesClicked();
                 break;
-        }
-    }
-
-    class DirectionsRequestsReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent != null) {
-                Bundle bundleContent = intent.getExtras();
-                if (bundleContent != null) {
-                    for (String keySet : bundleContent.keySet()) {
-                        switch (keySet) {
-                            case RouteDirectionsRequestsService.ROUTE_MAP_POINTS_BUNDLE:
-                                ArrayList<LatLng> mapPoints = bundleContent.getParcelableArrayList(RouteDirectionsRequestsService.ROUTE_MAP_POINTS_BUNDLE);
-                                if (mapPoints != null) {
-                                    presenter.drawRouteFromPoints(mapPoints);
-                                }
-                                break;
-
-                            case RouteDirectionsRequestsService.REQUEST_ERROR_CODE:
-                                String errorType = bundleContent.getString(RouteDirectionsRequestsService.REQUEST_ERROR_CODE);
-                                if (TextUtils.equals(errorType, NetworkExceptions.UNKNOWN_HOST.name())) {
-                                    showMessage(getString(R.string.error_message_no_internet_connection));
-                                } else if (TextUtils.equals(errorType, NetworkExceptions.STREAM_RESET_EXCEPTION.name())) {
-                                    showMessage(getString(R.string.error_message_internet_connection_intrerupted));
-                                }
-                                presenter.onStopCalculatingRoutesClicked();
-                                break;
-
-                            case RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE:
-                                boolean areRoutesRequestsInProgress = bundleContent.getBoolean(RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE);
-                                if (areRoutesRequestsInProgress) {
-                                    showLoadingView(true, true, getString(R.string.message_calculating_routes));
-                                } else {
-                                    showLoadingView(false, false, "");
-                                    presenter.onCalculatingRoutesDone();
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
         }
     }
 }

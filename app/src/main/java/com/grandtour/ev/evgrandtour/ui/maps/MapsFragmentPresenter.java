@@ -12,6 +12,7 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
+import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLength;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
@@ -49,6 +50,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
+    @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
     @Nullable
     private Service routeDirectionsRequestService;
@@ -91,9 +93,35 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     }
 
     @Override
+    public void onCalculatingRoutesStarted() {
+        if (isViewAttached) {
+            view.showLoadingView(true, true, Injection.provideGlobalContext()
+                    .getString(R.string.message_calculating_routes));
+        }
+    }
+
+    @Override
     public void onCalculatingRoutesDone() {
         if (isViewAttached) {
+            view.showLoadingView(false, false, "");
+        }
+        if (isViewAttached) {
             loadAvailableCheckpoints();
+        }
+    }
+
+    @Override
+    public void onRoutesRequestsError(@NonNull String errorType) {
+        if (TextUtils.equals(errorType, NetworkExceptions.UNKNOWN_HOST.name())) {
+            view.showMessage(Injection.provideGlobalContext()
+                    .getString(R.string.error_message_no_internet_connection));
+        }
+        if (TextUtils.equals(errorType, NetworkExceptions.STREAM_RESET_EXCEPTION.name())) {
+            view.showMessage(Injection.provideGlobalContext()
+                    .getString(R.string.error_message_internet_connection_intrerupted));
+        }
+        if (isViewAttached) {
+            view.showLoadingView(false, false, "");
         }
     }
 
@@ -173,6 +201,11 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                 }, Throwable::printStackTrace);
     }
 
+    @Override
+    public void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints) {
+        drawRouteFromMapPoints(routeMapPoints);
+    }
+
     private void displayShortMessage(@NonNull String msg) {
         if (isViewAttached) {
             view.showMessage(msg);
@@ -242,7 +275,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                             LatLng routeMapPoint = new LatLng(routeWaypoint.getLat(), routeWaypoint.getLng());
                             routeMapPoints.add(routeMapPoint);
                         }
-                        drawRouteFromPoints(routeMapPoints);
+                        drawRouteFromMapPoints(routeMapPoints);
                     }
                 }, Throwable::printStackTrace);
     }
@@ -270,7 +303,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                 });
     }
 
-    public void drawRouteFromPoints(List<LatLng> routeMapPoints) {
+    private void drawRouteFromMapPoints(@NonNull List<LatLng> routeMapPoints) {
         PolylineOptions routePolyline = MapUtils.generateRoute(routeMapPoints);
         if (isViewAttached) {
             view.drawCheckpointsRoute(routePolyline);

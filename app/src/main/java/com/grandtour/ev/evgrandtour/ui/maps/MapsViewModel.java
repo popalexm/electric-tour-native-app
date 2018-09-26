@@ -1,5 +1,9 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+
+import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
@@ -12,5 +16,9 @@ public class MapsViewModel {
     public final ObservableBoolean isLoadingInProgress = new ObservableBoolean();
     @NonNull
     public final ObservableBoolean isCancelEnabled = new ObservableBoolean();
+    @NonNull
+    public final ObservableArrayList<Marker> checkpoints = new ObservableArrayList<>();
+    @NonNull
+    public final ObservableArrayList<Polyline> routes = new ObservableArrayList<>();
 
 }
