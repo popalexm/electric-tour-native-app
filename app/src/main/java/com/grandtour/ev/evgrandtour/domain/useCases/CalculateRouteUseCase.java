@@ -50,7 +50,8 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
     @NonNull
     private List<Maybe<Response<RoutesResponse>>> generateIndividualRouteUseCases(@NonNull List<Checkpoint> checkpoints) {
         List<Maybe<Response<RoutesResponse>>> calculateRouteTasks = new ArrayList<>();
-        List<List<Checkpoint>> totalBatchedRouteRequests = ArrayUtils.split(checkpoints, CalculateRouteUseCase.NUMBER_OF_MAX_WAYPOINTS_PER_ROUTE_REQUEST);
+        List<List<Checkpoint>> totalBatchedRouteRequests = ArrayUtils.splitCheckpointsIntoBatches(checkpoints,
+                CalculateRouteUseCase.NUMBER_OF_MAX_WAYPOINTS_PER_ROUTE_REQUEST);
 
         for (int i = 0; i < totalBatchedRouteRequests.size(); i++) {
             List<Checkpoint> singleRouteRequestBatch = totalBatchedRouteRequests.get(i);

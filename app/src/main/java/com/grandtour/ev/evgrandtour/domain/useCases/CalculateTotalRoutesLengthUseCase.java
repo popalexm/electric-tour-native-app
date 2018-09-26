@@ -9,12 +9,13 @@ import android.support.annotation.NonNull;
 import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
 
-public class CalculateTotalRoutesLength extends BaseUseCase implements BaseUseCaseMaybe {
+public class CalculateTotalRoutesLengthUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public CalculateTotalRoutesLength(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull LocalStorageManager storageManager) {
+    public CalculateTotalRoutesLengthUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+            @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
     }

@@ -13,7 +13,7 @@ import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
-import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLength;
+import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
@@ -195,7 +195,8 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onTotalRouteInfoClicked() {
-        Disposable disposable = new CalculateTotalRoutesLength(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        Disposable disposable = new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+                Injection.provideStorageManager()).perform()
                 .subscribe(Integer -> {
                     int lengthInKm = Integer / 1000;
                     view.showTotalRouteLength(lengthInKm);
