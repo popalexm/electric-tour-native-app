@@ -65,11 +65,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @NonNull
     private final DirectionsRequestsReceiver routeDirectionsRequestsService = new DirectionsRequestsReceiver(presenter);
 
-    @Nullable
-    private UserLocation currentUserLocation;
-    @Nullable
-    private LatLng currentSelectedCheckpoint;
-
     @NonNull
     public static MapsFragmentView createInstance() {
         return new MapsFragmentView();
@@ -210,12 +205,13 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        currentSelectedCheckpoint = marker.getPosition();
+        mapsViewModel.currentSelectedCheckpoint.set(marker.getPosition());
         return false;
     }
 
     @Override
     public void updateCurrentUserLocation(@NonNull LatLng latLng) {
+        UserLocation currentUserLocation = mapsViewModel.currentUserLocation.get();
         if (currentUserLocation != null) {
             currentUserLocation.getCurrentLocationMarker().setPosition(latLng);
             currentUserLocation.getCurrentLocationCircle().setCenter(latLng);
@@ -226,7 +222,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
             Marker currentUserMarker = googleMap.addMarker(markerOptions);
             Circle currentUserCircle = googleMap.addCircle(circleOptions);
 
-            currentUserLocation = new UserLocation(currentUserMarker , currentUserCircle);
+            mapsViewModel.currentUserLocation.set(new UserLocation(currentUserMarker, currentUserCircle));
             AnimationUtils.addAnimationToCircle(currentUserCircle);
         }
     }
@@ -304,8 +300,9 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     public void openNavigationForSelectedMarker() {
-        if (currentSelectedCheckpoint != null) {
-            startNavigation(currentSelectedCheckpoint);
+        LatLng navigateToLocation = mapsViewModel.currentSelectedCheckpoint.get();
+        if (navigateToLocation != null) {
+            startNavigation(navigateToLocation);
         } else {
             showMessage(getString(R.string.message_no_checkpoint_selected));
         }
@@ -328,8 +325,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         if (context != null) {
             DialogUtils.getAlertDialogBuilder(context, getString(R.string.message_are_you_sure_you_want_to_delete_all_data),
                     getString(R.string.title_are_you_sure))
-                    .setPositiveButton("Yes", (dialog, which) -> presenter.onClearCheckpointsAndRoutesClicked())
-                    .setNegativeButton("No", (dialog, which) -> {
+                    .setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> presenter.onClearCheckpointsAndRoutesClicked())
+                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
                         dialog.dismiss();
                     })
                     .create()

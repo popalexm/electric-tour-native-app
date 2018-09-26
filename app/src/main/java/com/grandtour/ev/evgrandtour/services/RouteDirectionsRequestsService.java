@@ -98,6 +98,7 @@ public class RouteDirectionsRequestsService extends Service {
                     } else if (throwable instanceof StreamResetException) {
                         broadcastRequestError(NetworkExceptions.STREAM_RESET_EXCEPTION);
                     }
+                    stopSelf();
                 })
                 .subscribe(response -> {
                     RoutesResponse routesResponse = response.body();

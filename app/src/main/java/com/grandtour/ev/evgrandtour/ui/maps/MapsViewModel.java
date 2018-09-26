@@ -1,7 +1,10 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
+
+import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
 
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
@@ -20,5 +23,8 @@ public class MapsViewModel {
     public final ObservableArrayList<Marker> checkpoints = new ObservableArrayList<>();
     @NonNull
     public final ObservableArrayList<Polyline> routes = new ObservableArrayList<>();
-
+    @NonNull
+    public final ObservableField<UserLocation> currentUserLocation = new ObservableField<>();
+    @NonNull
+    public final ObservableField<LatLng> currentSelectedCheckpoint = new ObservableField<>();
 }

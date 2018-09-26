@@ -108,6 +108,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
         if (isViewAttached) {
             loadAvailableCheckpoints();
         }
+        loadAvailableCheckpoints();
     }
 
     @Override
