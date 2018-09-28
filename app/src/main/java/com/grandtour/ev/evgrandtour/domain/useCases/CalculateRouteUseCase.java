@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
+import com.grandtour.ev.evgrandtour.data.network.NetworkStatusCodes;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
@@ -67,7 +68,7 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                     routeParameters).perform()
                     .doOnSuccess(response -> {
                         if (response != null) {
-                            if (response.code() == 200) {
+                            if (response.code() == NetworkStatusCodes.NETWORK_REPONSE_CODE_OK) {
                                 RoutesResponse responseBody = response.body();
                                 if (responseBody != null) {
                                     new RoutesResponseHandler(storageManager).handleRouteResponse(responseBody, singleRouteRequestBatch);

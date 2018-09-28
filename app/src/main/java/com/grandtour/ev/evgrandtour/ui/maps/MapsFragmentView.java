@@ -122,11 +122,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void onPause() {
-        Activity activity = getActivity();
-        if (activity != null) {
-            LocalBroadcastManager.getInstance(activity)
-                    .unregisterReceiver(routeDirectionsRequestsService);
-        }
         mapView.onPause();
         super.onPause();
     }
@@ -138,6 +133,11 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         mapView.onDestroy();
         mapsViewModel.checkpoints.clear();
         mapsViewModel.routes.clear();
+        Activity activity = getActivity();
+        if (activity != null) {
+            LocalBroadcastManager.getInstance(activity)
+                    .unregisterReceiver(routeDirectionsRequestsService);
+        }
     }
 
     @Override
