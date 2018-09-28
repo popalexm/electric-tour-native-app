@@ -22,6 +22,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAs
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
@@ -51,7 +52,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, ServiceConnection {
+public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
     @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
@@ -62,20 +63,9 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     private boolean isServiceBound;
     @NonNull
     private final MapsFragmentContract.View view;
-    private boolean isViewAttached;
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
-    }
-
-    @Override
-    public void onAttach() {
-        isViewAttached = true;
-    }
-
-    @Override
-    public void onDetach() {
-          isViewAttached = false;
     }
 
     @Override
@@ -165,7 +155,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onCalculateRoutesClicked() {
-        Disposable disposable = new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        addSubscription(new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                     Injection.provideStorageManager()).perform()
                     .subscribe(numberOfAvailableRoutes -> {
                         if (numberOfAvailableRoutes > 0) {
@@ -173,7 +163,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                         } else {
                             startRouteDirectionsRequests();
                         }
-                    }, Throwable::printStackTrace);
+                    }, Throwable::printStackTrace));
     }
 
     @Override
@@ -194,12 +184,12 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
 
     @Override
     public void onTotalRouteInfoClicked() {
-        Disposable disposable = new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
                 .subscribe(Integer -> {
                     int lengthInKm = Integer / 1000;
                     view.showTotalRouteLength(lengthInKm);
-                }, Throwable::printStackTrace);
+                }, Throwable::printStackTrace));
     }
 
     @Override
@@ -252,7 +242,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
             view.showLoadingView(true, false, Injection.provideGlobalContext()
                     .getString(R.string.message_loading_checkpoints));
         }
-        Disposable disposable = new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        addSubscription(new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
                 .subscribe(List -> {
                     if (isViewAttached) {
@@ -263,7 +253,7 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
                         view.showLoadingView(false, false, "");
                     }
 
-                }, Throwable::printStackTrace);
+                }, Throwable::printStackTrace));
     }
 
     private void reloadAvailableCheckpointsAndRoutes() {
@@ -310,23 +300,23 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
         DeleteRoutesUseCase deleteRoutesUseCase = new DeleteRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager());
         DeleteStoredCheckpointsUseCase deleteStoredCheckpointsUseCase = new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager());
-        Disposable disposable = deleteStoredCheckpointsUseCase.perform()
+        addSubscription(deleteStoredCheckpointsUseCase.perform()
                 .andThen(deleteRoutesUseCase.perform())
                 .subscribe(() -> {
                     if (isViewAttached) {
                         view.clearMapCheckpoints();
                         view.clearMapRoutes();
                     }
-                });
+                }));
     }
 
     private void deletedAllStoredRoutes() {
-        Disposable disposable = new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        addSubscription(new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .subscribe(() -> {
                     if (isViewAttached) {
                         view.clearMapRoutes();
                     }
-                });
+                }));
     }
 
     private void drawRouteFromMapPoints(@NonNull List<LatLng> routeMapPoints) {
@@ -346,4 +336,5 @@ public class MapsFragmentPresenter implements MapsFragmentContract.Presenter, Se
     public void onServiceDisconnected(ComponentName name) {
         routeDirectionsRequestService = null;
     }
+
 }

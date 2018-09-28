@@ -138,6 +138,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
             LocalBroadcastManager.getInstance(activity)
                     .unregisterReceiver(routeDirectionsRequestsService);
         }
+        presenter.onDestroy();
     }
 
     @Override

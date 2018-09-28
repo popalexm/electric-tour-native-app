@@ -17,5 +17,6 @@ public class BaseContract {
 
         void onDetach();
 
+        void onDestroy();
     }
 }
