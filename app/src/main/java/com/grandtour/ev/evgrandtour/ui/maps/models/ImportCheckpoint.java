@@ -8,18 +8,15 @@ public class ImportCheckpoint {
     @SerializedName("ID")
     @Expose
     private Integer checkpointId;
-    @SerializedName("NAME")
+    @SerializedName("Description")
     @Expose
     private String checkpointName;
-    @SerializedName("LAT")
+    @SerializedName("Latitude")
     @Expose
     private String latitude;
-    @SerializedName("LONG")
+    @SerializedName("Longitude")
     @Expose
     private String longitude;
-    @SerializedName("DISTANCE TO THE NEXT LOCALITY (meters)")
-    @Expose
-    private Integer distanceToNext;
 
     public Integer getCheckpointId() {
         return checkpointId;
@@ -53,11 +50,4 @@ public class ImportCheckpoint {
         this.longitude = longitude;
     }
 
-    public Integer getDistanceToNext() {
-        return distanceToNext;
-    }
-
-    public void setDistanceToNext(Integer distanceToNext) {
-        this.distanceToNext = distanceToNext;
-    }
 }
