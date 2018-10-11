@@ -26,5 +26,5 @@ public class MapsViewModel {
     @NonNull
     public final ObservableField<UserLocation> currentUserLocation = new ObservableField<>();
     @NonNull
-    public final ObservableField<LatLng> currentSelectedCheckpoint = new ObservableField<>();
+    public final ObservableField<Marker> currentSelectedMarker = new ObservableField<>();
 }

@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -60,6 +61,8 @@ public class MapsFragmentContract {
         void onStopCalculatingRoutesClicked();
 
         void onTotalRouteInfoClicked();
+
+        void onNavigationClicked(@NonNull Marker originMarker);
 
         void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints);
     }

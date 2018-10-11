@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
@@ -18,6 +19,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUs
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAsMarkersUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
@@ -39,6 +41,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import java.io.IOException;
@@ -47,6 +50,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Maybe;
+import io.reactivex.Scheduler;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -193,6 +197,29 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
+    public void onNavigationClicked(@NonNull Marker originMarker) {
+        Integer checkpointId = (Integer) originMarker.getTag();
+        if (checkpointId != null) {
+            addSubscription(new GetFollowingWaypointsFromOrigin(Schedulers.io(),
+                    AndroidSchedulers.mainThread(), Injection.provideStorageManager(), checkpointId)
+                    .perform()
+                    .subscribe(checkpoints -> {
+                        if (checkpoints.size() != 0){
+                            for (Checkpoint checkpoint : checkpoints) {
+                                Log.e(TAG , "Checkpoint " + checkpoint.getCheckpointId());
+
+                            }
+                        }
+                    }));
+        }
+    }
+
+    private String composeUri (List<Checkpoint> designatedCheckpoins) {
+
+        return null;
+    }
+
+    @Override
     public void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints) {
         drawRouteFromMapPoints(routeMapPoints);
     }
@@ -324,6 +351,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (isViewAttached) {
             view.drawCheckpointsRoute(routePolyline);
         }
+    }
+
+    private void getNextNineWaypointsFromOrigin(@NonNull Marker originMarker) {
+
     }
 
     @Override

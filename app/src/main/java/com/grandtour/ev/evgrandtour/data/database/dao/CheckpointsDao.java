@@ -10,6 +10,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 import io.reactivex.Maybe;
+import io.reactivex.Single;
 
 @Dao
 public interface CheckpointsDao {
@@ -25,6 +26,9 @@ public interface CheckpointsDao {
 
     @Query("SELECT * FROM Checkpoint")
     Maybe<List<Checkpoint>> getAllCheckpoints();
+
+    @Query("SELECT * FROM Checkpoint WHERE checkpointId > :checkpointId LIMIT 10")
+    Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);
 
     @Query("SELECT DISTINCT SUM(distanceToNextCheckpoint) FROM Checkpoint")
     Maybe<Integer> getAllDistances();
