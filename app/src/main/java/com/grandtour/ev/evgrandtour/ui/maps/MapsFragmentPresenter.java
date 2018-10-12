@@ -50,7 +50,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Maybe;
-import io.reactivex.Scheduler;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -205,18 +204,40 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     .perform()
                     .subscribe(checkpoints -> {
                         if (checkpoints.size() != 0){
-                            for (Checkpoint checkpoint : checkpoints) {
-                                Log.e(TAG , "Checkpoint " + checkpoint.getCheckpointId());
-
+                            String navUri = composeUriForMaps(originMarker.getPosition(), checkpoints);
+                            if (isViewAttached) {
+                                view.startGoogleMapsDirections(navUri);
                             }
                         }
                     }));
         }
     }
 
-    private String composeUri (List<Checkpoint> designatedCheckpoins) {
+    private String composeUriForMaps(LatLng origin, List<Checkpoint> designatedCheckpoins ) {
+        String prefix = "https://www.google.com/maps/dir/?api=1&origin=";
+        String prefixOrigin = prefix + origin.latitude + "," + origin.longitude;
+        Checkpoint lastCheckpoint = designatedCheckpoins.get(designatedCheckpoins.size() -1);
+        String prefixOriginDestionation = prefixOrigin + "&destination=" + lastCheckpoint.getLatitude() + "," + lastCheckpoint.getLongitude();
+        StringBuilder originDestionationDaypoints = new StringBuilder(prefixOriginDestionation + "&waypoints=");
 
-        return null;
+        designatedCheckpoins.remove(designatedCheckpoins.remove(designatedCheckpoins.size() -1 ));
+        for (int i = 0; i < designatedCheckpoins.size(); i ++) {
+            if (i < designatedCheckpoins.size() - 1) {
+                Checkpoint checkpoint = designatedCheckpoins.get(i);
+                originDestionationDaypoints.append(checkpoint.getLatitude())
+                        .append(",")
+                        .append(checkpoint.getLongitude()).append("|");
+            } else {
+                Checkpoint checkpoint = designatedCheckpoins.get(i);
+                originDestionationDaypoints.append(checkpoint.getLatitude())
+                        .append(",")
+                        .append(checkpoint.getLongitude());
+            }
+
+        }
+        String resultedUrl = originDestionationDaypoints.toString();
+        Log.e(TAG, "Resulted url " + resultedUrl);
+        return resultedUrl;
     }
 
     @Override
@@ -353,9 +374,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         }
     }
 
-    private void getNextNineWaypointsFromOrigin(@NonNull Marker originMarker) {
-
-    }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {

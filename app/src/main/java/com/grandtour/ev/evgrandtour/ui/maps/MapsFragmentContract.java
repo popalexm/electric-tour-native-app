@@ -34,6 +34,8 @@ public class MapsFragmentContract {
         void showTotalRouteLength(int length);
 
         void showRouteReCalculationsDialog();
+
+        void startGoogleMapsDirections(@NonNull String navigationUri);
     }
 
     public interface Presenter extends BaseContract.Presenter {
