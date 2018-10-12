@@ -16,6 +16,7 @@ import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -23,8 +24,9 @@ import java.util.List;
 
 public final class MapUtils {
 
+    @NonNull
+    private static final String TAG = MapUtils.class.getSimpleName();
     private static final int LOCATION_CIRCLE_RADIUS = 1000;
-
     @NonNull
     private static final String DIRECTIONS_REQUEST_MODE = "driving";
 
@@ -57,6 +59,36 @@ public final class MapUtils {
                 .setMode(MapUtils.DIRECTIONS_REQUEST_MODE)
                 .setAPIKey(Injection.provideGlobalContext().getString(R.string.google_maps_key))
                 .createRouteParameters();
+    }
+
+    @NonNull
+    public static String composeUriForMapsIntentRequest(@NonNull LatLng originLatLng, @NonNull List<Checkpoint> designatedCheckpoints ) {
+        StringBuilder navUriBuilder = new StringBuilder();
+        navUriBuilder.append(MapConstant.MAP_URI_PREFIX);
+        String originString = originLatLng.latitude + "," + originLatLng.longitude;
+        navUriBuilder.append(originString);
+        navUriBuilder.append(MapConstant.MAP_URI_DESTINATION_PREFIX);
+        int checkpointsSize = designatedCheckpoints.size();
+        Checkpoint destinationCheckpoint = designatedCheckpoints.get(checkpointsSize -1);
+        String destinationString = destinationCheckpoint.getLatitude() + "," + destinationCheckpoint.getLongitude();
+        navUriBuilder.append(destinationString);
+        navUriBuilder.append(MapConstant.MAP_URI_WAYPOINTS_PREFX);
+        designatedCheckpoints.remove(designatedCheckpoints.remove(checkpointsSize -1));
+        for (int i = 0; i < designatedCheckpoints.size(); i ++) {
+            Checkpoint checkpoint = designatedCheckpoints.get(i);
+            if (i < designatedCheckpoints.size() - 1) {
+                navUriBuilder.append(checkpoint.getLatitude())
+                        .append(",")
+                        .append(checkpoint.getLongitude()).append("|");
+            } else {
+                navUriBuilder.append(checkpoint.getLatitude())
+                        .append(",")
+                        .append(checkpoint.getLongitude());
+            }
+
+        }
+        Log.e(MapUtils.TAG, "Resulted uri : " + navUriBuilder);
+        return navUriBuilder.toString();
     }
 
     @NonNull
