@@ -28,6 +28,7 @@ import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.MapConstant;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.app.Service;
@@ -204,41 +205,16 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     .perform()
                     .subscribe(checkpoints -> {
                         if (checkpoints.size() != 0){
-                            String navUri = composeUriForMaps(originMarker.getPosition(), checkpoints);
+                            String navUri = MapUtils.composeUriForMapsIntentRequest(originMarker.getPosition(), checkpoints);
                             if (isViewAttached) {
                                 view.startGoogleMapsDirections(navUri);
                             }
                         }
                     }));
-        }
+          }
     }
 
-    private String composeUriForMaps(LatLng origin, List<Checkpoint> designatedCheckpoins ) {
-        String prefix = "https://www.google.com/maps/dir/?api=1&origin=";
-        String prefixOrigin = prefix + origin.latitude + "," + origin.longitude;
-        Checkpoint lastCheckpoint = designatedCheckpoins.get(designatedCheckpoins.size() -1);
-        String prefixOriginDestionation = prefixOrigin + "&destination=" + lastCheckpoint.getLatitude() + "," + lastCheckpoint.getLongitude();
-        StringBuilder originDestionationDaypoints = new StringBuilder(prefixOriginDestionation + "&waypoints=");
 
-        designatedCheckpoins.remove(designatedCheckpoins.remove(designatedCheckpoins.size() -1 ));
-        for (int i = 0; i < designatedCheckpoins.size(); i ++) {
-            if (i < designatedCheckpoins.size() - 1) {
-                Checkpoint checkpoint = designatedCheckpoins.get(i);
-                originDestionationDaypoints.append(checkpoint.getLatitude())
-                        .append(",")
-                        .append(checkpoint.getLongitude()).append("|");
-            } else {
-                Checkpoint checkpoint = designatedCheckpoins.get(i);
-                originDestionationDaypoints.append(checkpoint.getLatitude())
-                        .append(",")
-                        .append(checkpoint.getLongitude());
-            }
-
-        }
-        String resultedUrl = originDestionationDaypoints.toString();
-        Log.e(TAG, "Resulted url " + resultedUrl);
-        return resultedUrl;
-    }
 
     @Override
     public void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints) {

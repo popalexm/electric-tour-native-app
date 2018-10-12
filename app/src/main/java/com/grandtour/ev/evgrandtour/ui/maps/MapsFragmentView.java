@@ -330,7 +330,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void startGoogleMapsDirections(@NonNull String navigationUri) {
-       // String navUri = "https://www.google.com/maps/dir/?api=1&origin=22.553600,88.409969&destination=22.569272,88.406490&waypoints=22.558090,88.411363|22.561650,88.408066|22.561955,88.407858";
+       //"https://www.google.com/maps/dir/?api=1&origin=22.553600,88.409969&destination=22.569272,88.406490&waypoints=22.558090,88.411363|22.561650,88.408066|22.561955,88.407858";
          Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUri));
          startActivity(mapIntent);
     }

@@ -1,6 +1,5 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
-import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
@@ -52,9 +51,19 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
             }
             long[] waypoints = storageManager.routeWaypointsDao()
                     .insert(routeWaypointList);
-            return Single.just(ArrayUtils.toWrapperArray(waypoints));
+            return Single.just(convert(waypoints));
         })
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
+    }
+
+    private Long[] convert(long[] argument) {
+        Long Largument[] = new Long[argument.length];
+        int i = 0;
+
+        for (long temp : (long[]) argument) {
+            Largument[i++] = temp;
+        }
+        return Largument;
     }
 }

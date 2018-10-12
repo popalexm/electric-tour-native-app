@@ -34,5 +34,9 @@
         <service
             android:name=".services.RouteDirectionsRequestsService"
             android:enabled="true" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="54c0051eb6d5a4d8f8be1b99d693578c69c7b14f" />
     </application>
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
