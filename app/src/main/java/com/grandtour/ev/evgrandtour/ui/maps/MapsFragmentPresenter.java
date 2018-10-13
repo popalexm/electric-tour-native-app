@@ -21,6 +21,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCa
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAsMarkersUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
@@ -28,7 +29,6 @@ import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
-import com.grandtour.ev.evgrandtour.ui.utils.MapConstant;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.app.Service;
@@ -42,7 +42,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 
 import java.io.IOException;
@@ -219,6 +218,17 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints) {
         drawRouteFromMapPoints(routeMapPoints);
+    }
+
+    @Override
+    public void onCalculateDistanceBetweenTwoCheckpointsClicked() {
+        addSubscription(new LoadCheckpointsFromStorageUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe(checkpoints -> {
+                    if (checkpoints.size() != 0) {
+                        view.showCalculateDistanceDialog(checkpoints);
+                    }
+                }));
+
     }
 
     private void displayShortMessage(@NonNull String msg) {

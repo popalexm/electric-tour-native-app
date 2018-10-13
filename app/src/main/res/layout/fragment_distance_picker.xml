@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.maps.dialog.DistancePickerViewModel" />
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.maps.dialog.DistancePickerContract.Presenter" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="Start Checkpoint"
+            android:textAlignment="center" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinnerFirstCheckpoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:entries="@{viewModel.totalCheckpoints}"
+            android:selectedItemPosition="@={viewModel.selectedStartCheckpoint}" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="End Checkpoint"
+            android:textAlignment="center" />
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinnerSecondCheckpoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:entries="@{viewModel.totalCheckpoints}"
+            android:selectedItemPosition="@={viewModel.selectedEndCheckpoint}" />
+
+        <Button
+            android:id="@+id/button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:onClick="@{() -> presenter.onCalculateDistanceBetweenCheckpoints()}"
+            android:text="Calculate Distance" />
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:hint="Distance between .."
+            android:text="@={viewModel.calculatedDistance}"
+            android:textAlignment="center"
+            android:textColor="@android:color/holo_red_light" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorAccent" />
+
+
+        <Button
+            android:id="@+id/btnDismiss"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="@dimen/margin_extra_large"
+            android:layout_marginStart="@dimen/margin_extra_large"
+            android:layout_marginTop="8dp"
+            android:onClick="@{() -> presenter.onDismissButtonClicked()}"
+            android:text="Dismiss" />
+
+    </LinearLayout>
+
+</layout>
+

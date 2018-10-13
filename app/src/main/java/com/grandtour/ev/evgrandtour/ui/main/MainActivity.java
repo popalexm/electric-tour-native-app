@@ -66,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mapsFragmentView.onTotalRouteLengthClicked();
                 }
                 break;
+            case R.id.action_distance_between_2_checkpoints:
+                if (mapsFragmentView != null) {
+                    mapsFragmentView.onCalculateDistanceBetweenCheckpoints();
+                }
+                break;
         }
         return true;
     }

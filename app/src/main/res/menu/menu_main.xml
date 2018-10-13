@@ -29,4 +29,11 @@
         android:title="Delete Waypoints"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_distance_between_2_checkpoints"
+        android:icon="@drawable/ic_playlist_add_black_24dp"
+        android:orderInCategory="4"
+        android:title="Calculate distance between 2 points"
+        app:showAsAction="always" />
+
 </menu>

@@ -58,6 +58,11 @@ public class Checkpoint implements Parcelable {
     public Checkpoint() {
     }
 
+    @Override
+    public String toString() {
+        return checkpointName;
+    }
+
     protected Checkpoint(Parcel in) {
         this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.checkpointName = in.readString();

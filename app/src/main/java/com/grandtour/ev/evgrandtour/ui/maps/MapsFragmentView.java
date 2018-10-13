@@ -12,9 +12,10 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.databinding.MapFragmentBinding;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.ui.maps.dialog.DistancePickerDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
@@ -34,6 +35,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -74,7 +77,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @Override
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        MapFragmentBinding mapFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.map_fragment, container, false);
+        FragmentMainMapViewBinding mapFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_map_view, container, false);
         mapFragmentBinding.setViewModel(mapsViewModel);
         mapFragmentBinding.setPresenter(presenter);
         mapView = mapFragmentBinding.getRoot()
@@ -202,6 +205,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
             @NonNull int[] grantResults) {
         if (requestCode == PermissionUtils.LOCATION_REQUEST_PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mapView.getMapAsync(this);
+            this.googleMap.setMyLocationEnabled(true);
         }
     }
 
@@ -304,7 +308,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void openNavigationForSelectedMarker() {
         Marker navigateToMarker = mapsViewModel.currentSelectedMarker.get();
         if (navigateToMarker != null) {
-            startNavigationViaURL(navigateToMarker);
+            startMapsNavigationViaURL(navigateToMarker);
         } else {
             showMessage(getString(R.string.message_no_checkpoint_selected));
         }
@@ -323,9 +327,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     /**
      * Starts the google maps Navigation Mode for the selected marker
      */
-    private void startNavigationViaURL(@NonNull Marker navigationOriginMarker) {
+    private void startMapsNavigationViaURL(@NonNull Marker navigationOriginMarker) {
         presenter.onNavigationClicked(navigationOriginMarker);
-
     }
 
     @Override
@@ -333,6 +336,22 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
        //"https://www.google.com/maps/dir/?api=1&origin=22.553600,88.409969&destination=22.569272,88.406490&waypoints=22.558090,88.411363|22.561650,88.408066|22.561955,88.407858";
          Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUri));
          startActivity(mapIntent);
+    }
+
+    @Override
+    public void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints) {
+        FragmentManager fManager = getFragmentManager();
+        if (fManager != null) {
+            FragmentTransaction fragmentTransaction = fManager.beginTransaction();
+            Fragment previousDialog = getFragmentManager().findFragmentByTag(DistancePickerDialogFragment.TAG);
+            if (previousDialog != null) {
+                fragmentTransaction.remove(previousDialog);
+            }
+            fragmentTransaction.addToBackStack(null);
+            DistancePickerDialogFragment dialogFragment = new DistancePickerDialogFragment();
+            dialogFragment.setTotalCheckpoints(checkpoints);
+            dialogFragment.show(fragmentTransaction, DistancePickerDialogFragment.TAG);
+        }
     }
 
     /** Delegated methods from the main activity
@@ -357,6 +376,10 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     public void onTotalRouteLengthClicked() {
         presenter.onTotalRouteInfoClicked();
+    }
+
+    public void onCalculateDistanceBetweenCheckpoints() {
+        presenter.onCalculateDistanceBetweenTwoCheckpointsClicked();
     }
 
     @Override

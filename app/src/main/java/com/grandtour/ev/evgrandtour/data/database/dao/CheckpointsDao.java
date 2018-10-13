@@ -27,9 +27,15 @@ public interface CheckpointsDao {
     @Query("SELECT * FROM Checkpoint")
     Maybe<List<Checkpoint>> getAllCheckpoints();
 
+    @Query("SELECT * FROM Checkpoint WHERE checkpointName= :checkpointName")
+    Single<Checkpoint> getCheckpointByName(String checkpointName);
+
     @Query("SELECT * FROM Checkpoint WHERE checkpointId > :checkpointId LIMIT 10")
     Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);
 
     @Query("SELECT DISTINCT SUM(distanceToNextCheckpoint) FROM Checkpoint")
     Maybe<Integer> getAllDistances();
+
+    @Query("SELECT SUM(distanceToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
+    Single<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
 }
