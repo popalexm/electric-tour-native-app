@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 public final class PermissionUtils {
@@ -26,7 +27,11 @@ public final class PermissionUtils {
         return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public static void requestPermissions(@NonNull Activity activity, int permissionId, @NonNull String... permissions) {
+    public static void requestPermissionsInActivity(@NonNull Activity activity, int permissionId, @NonNull String... permissions) {
         ActivityCompat.requestPermissions(activity, permissions, permissionId);
+    }
+
+    public static void requestPermissionsInFragment(@NonNull Fragment fragment, int permissionId, @NonNull String... permissions) {
+        fragment.requestPermissions(permissions, permissionId);
     }
 }

@@ -195,7 +195,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
                 this.googleMap.setMyLocationEnabled(true);
                 presenter.onMapReady();
             } else {
-                PermissionUtils.requestPermissions(activity, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
+                PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
             }
         }
     }
@@ -205,7 +205,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
             @NonNull int[] grantResults) {
         if (requestCode == PermissionUtils.LOCATION_REQUEST_PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mapView.getMapAsync(this);
-            this.googleMap.setMyLocationEnabled(true);
         }
     }
 
