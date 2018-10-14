@@ -15,16 +15,13 @@ public final class AnimationUtils {
         ValueAnimator animator = new ValueAnimator();
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setRepeatMode(ValueAnimator.RESTART);
-        animator.setIntValues(0, 100);
+        animator.setIntValues(0, MapUtils.LOCATION_CIRCLE_RADIUS);
         animator.setDuration(1000);
         animator.setEvaluator(new IntEvaluator());
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float animatedFraction = valueAnimator.getAnimatedFraction();
-                circle.setRadius(animatedFraction * 50);
-            }
+        animator.addUpdateListener(valueAnimator -> {
+            float animatedFraction = valueAnimator.getAnimatedFraction();
+            circle.setRadius(animatedFraction * MapUtils.LOCATION_CIRCLE_RADIUS);
         });
         animator.start();
     }

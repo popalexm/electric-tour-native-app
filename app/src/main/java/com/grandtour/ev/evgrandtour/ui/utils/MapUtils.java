@@ -26,7 +26,7 @@ public final class MapUtils {
 
     @NonNull
     private static final String TAG = MapUtils.class.getSimpleName();
-    private static final int LOCATION_CIRCLE_RADIUS = 1000;
+    public static final int LOCATION_CIRCLE_RADIUS = 1000;
     @NonNull
     private static final String DIRECTIONS_REQUEST_MODE = "driving";
 

@@ -1,5 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.maps;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -14,6 +16,7 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
+import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
@@ -31,17 +34,21 @@ import com.grandtour.ev.evgrandtour.ui.utils.DocumentUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.JSONParsingUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Pair;
 
 import java.io.IOException;
@@ -66,6 +73,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     private boolean isServiceBound;
     @NonNull
     private final MapsFragmentContract.View view;
+    @NonNull
+    private final GpsLocationManager gpsLocationManager = GpsLocationManager.getInstance();
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -75,6 +84,16 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onMapReady() {
         if (isViewAttached) {
             reloadAvailableCheckpointsAndRoutes();
+            startLocationUpdates();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            gpsLocationManager.stopRequestingLocationUpdates();
         }
     }
 
@@ -143,7 +162,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 List<ImportCheckpoint> checkPointsFromJson = Arrays.asList(checkpoints);
                 List<Checkpoint> toSaveCheckpoints = JSONParsingUtils.processImportedCheckpoints(checkPointsFromJson);
                 saveCheckpoints(toSaveCheckpoints);
-            } catch (JsonSyntaxException e){
+            } catch (JsonSyntaxException e) {
                 e.printStackTrace();
                 displayShortMessage(Injection.provideGlobalContext()
                         .getString(R.string.message_error_opening_file));
@@ -158,15 +177,14 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onCalculateRoutesClicked() {
-        addSubscription(new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                    Injection.provideStorageManager()).perform()
-                    .subscribe(numberOfAvailableRoutes -> {
-                        if (numberOfAvailableRoutes > 0) {
-                            view.showRouteReCalculationsDialog();
-                        } else {
-                            startRouteDirectionsRequests();
-                        }
-                    }, Throwable::printStackTrace));
+        addSubscription(new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe(numberOfAvailableRoutes -> {
+                    if (numberOfAvailableRoutes > 0) {
+                        view.showRouteReCalculationsDialog();
+                    } else {
+                        startRouteDirectionsRequests();
+                    }
+                }, Throwable::printStackTrace));
     }
 
     @Override
@@ -187,8 +205,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onTotalRouteInfoClicked() {
-        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                Injection.provideStorageManager()).perform()
+        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .subscribe(Integer -> {
                     int lengthInKm = Integer / 1000;
                     view.showTotalRouteLength(lengthInKm);
@@ -199,21 +216,18 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onNavigationClicked(@NonNull Marker originMarker) {
         Integer checkpointId = (Integer) originMarker.getTag();
         if (checkpointId != null) {
-            addSubscription(new GetFollowingWaypointsFromOrigin(Schedulers.io(),
-                    AndroidSchedulers.mainThread(), Injection.provideStorageManager(), checkpointId)
-                    .perform()
+            addSubscription(new GetFollowingWaypointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+                    checkpointId).perform()
                     .subscribe(checkpoints -> {
-                        if (checkpoints.size() != 0){
+                        if (checkpoints.size() != 0) {
                             String navUri = MapUtils.composeUriForMapsIntentRequest(originMarker.getPosition(), checkpoints);
                             if (isViewAttached) {
                                 view.startGoogleMapsDirections(navUri);
                             }
                         }
                     }));
-          }
+        }
     }
-
-
 
     @Override
     public void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints) {
@@ -254,21 +268,24 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         deleteStoredCheckpointsUseCase.perform()
                 .andThen(saveCheckpointsUseCase.perform())
                 .subscribe(new SingleObserver<long[]>() {
-            @Override
-            public void onSubscribe(Disposable d) {}
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
 
-            @Override
-            public void onSuccess(long[] longs) {
-                Context ctx = Injection.provideGlobalContext();
-                String message = ctx.getString(R.string.format_start_number_end_message, ctx.getString(R.string.message_added), longs.length,
-                        ctx.getString(R.string.message_checkpoints));
-                displayShortMessage(message);
-                loadAvailableCheckpoints();
-            }
+                    @Override
+                    public void onSuccess(long[] longs) {
+                        Context ctx = Injection.provideGlobalContext();
+                        String message = ctx.getString(R.string.format_start_number_end_message, ctx.getString(R.string.message_added), longs.length,
+                                ctx.getString(R.string.message_checkpoints));
+                        displayShortMessage(message);
+                        loadAvailableCheckpoints();
+                    }
 
-            @Override
-            public void onError(Throwable e) { e.printStackTrace(); }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 
     private void loadAvailableCheckpoints() {
@@ -276,8 +293,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.showLoadingView(true, false, Injection.provideGlobalContext()
                     .getString(R.string.message_loading_checkpoints));
         }
-        addSubscription(new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                Injection.provideStorageManager()).perform()
+        addSubscription(
+                new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .subscribe(List -> {
                     if (isViewAttached) {
                         if (List.size() > 0) {
@@ -360,6 +377,15 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         }
     }
 
+    private void startLocationUpdates() {
+        gpsLocationManager.initLocationClient();
+        gpsLocationManager.createLocationRequest();
+        gpsLocationManager.setCallback(new LocationUpdateCallback());
+        if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            gpsLocationManager.startRequestingLocationUpdates();
+        }
+    }
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -370,6 +396,18 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onServiceDisconnected(ComponentName name) {
         routeDirectionsRequestService = null;
+    }
+
+    private class LocationUpdateCallback extends LocationCallback {
+
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            if (locationResult != null) {
+                Location location = locationResult.getLastLocation();
+                Log.d(TAG, "Current user location is at  " + location.getLatitude() + "," + location.getLongitude());
+                onCurrentLocationChanged(location);
+            }
+        }
     }
 
 }
