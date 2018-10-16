@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
+import com.facebook.stetho.inspector.protocol.module.Network;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
@@ -18,6 +19,8 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
+import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.EntireTourResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.Point;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
@@ -26,6 +29,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOri
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAsMarkersUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SyncEntireTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
@@ -42,6 +46,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.LinkAddress;
 import android.net.Uri;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -57,10 +62,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.Maybe;
+import io.reactivex.MaybeObserver;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 
 public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
@@ -244,6 +252,46 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 }));
 
     }
+
+    @Override
+    public void onSyncEntireTourClicked() {
+        if (isViewAttached) {
+            view.showLoadingView(true , false , "Synchronising checkpoints !");
+        }
+        SyncEntireTourUseCase syncEntireTourUseCase = new SyncEntireTourUseCase( Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi());
+        addSubscription(syncEntireTourUseCase.perform()
+                .doOnSuccess(this::handleResponse)
+                .doOnError(Throwable::printStackTrace)
+                .subscribe());
+    }
+
+    private void handleResponse(@NonNull Response<EntireTourResponse> response){
+        if (isViewAttached) {
+            view.showLoadingView(false , false , "");
+        }
+        if (response.isSuccessful() && response.body() != null){
+           List<Point> points = response.body().getPoints();
+            List<Checkpoint> checkpoints = new ArrayList<>();
+           for (Point point : points) {
+               Checkpoint checkpoint = new Checkpoint();
+               checkpoint.setCheckpointId(point.getID());
+               checkpoint.setLongitude(point.getLongitude());
+               checkpoint.setLatitude(point.getLatitude());
+               checkpoint.setCheckpointName(point.getDescription());
+               checkpoints.add(checkpoint);
+           }
+           new SaveCheckpointsUseCase(Schedulers.io(),
+                   AndroidSchedulers.mainThread(),
+                   Injection.provideStorageManager(), checkpoints)
+                   .perform().doOnSuccess(longs -> loadAvailableCheckpoints())
+                   .subscribe();
+
+        } else {
+
+        }
+    }
+
+
 
     private void displayShortMessage(@NonNull String msg) {
         if (isViewAttached) {
