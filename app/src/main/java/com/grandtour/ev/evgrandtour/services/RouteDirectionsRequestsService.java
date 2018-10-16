@@ -80,7 +80,7 @@ public class RouteDirectionsRequestsService extends Service {
     }
 
     private void startRouteDirectionsRequests(@NonNull List<Checkpoint> checkpoints) {
-        directionsRequestsDisposable = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), checkpoints, Injection.provideNetworkApi(),
+        directionsRequestsDisposable = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), checkpoints, Injection.provideDirectionsApi(),
                 Injection.provideStorageManager()).perform()
                 .doOnComplete(() -> {
                     broadcastDirectionRequestProgress(false);

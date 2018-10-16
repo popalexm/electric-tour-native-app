@@ -72,5 +72,9 @@ public class MapsFragmentContract {
         void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints);
 
         void onCalculateDistanceBetweenTwoCheckpointsClicked();
+
+        void onSyncEntireTourClicked();
+
+        void onSyncNextDayTourClicked();
     }
 }

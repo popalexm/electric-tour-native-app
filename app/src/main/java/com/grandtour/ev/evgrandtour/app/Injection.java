@@ -1,7 +1,8 @@
 package com.grandtour.ev.evgrandtour.app;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
+import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
+import com.grandtour.ev.evgrandtour.data.network.DirectionsAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
 
 import android.content.Context;
@@ -18,7 +19,9 @@ public class Injection {
     @NonNull
     private static final String SHARED_PREFERENCES = "app_status";
     @NonNull
-    private static final String baseUrl = "https://maps.googleapis.com/maps/api/";
+    private static final String directionsBaseUrl = "https://maps.googleapis.com/maps/api/";
+    @NonNull
+    private static final String baseBackendUrl = "https://wenwere.com/";
 
     public static void initialize(@NonNull Context context) {
         Injection.context = context;
@@ -35,7 +38,10 @@ public class Injection {
     }
 
     @NonNull
-    public static NetworkAPI provideNetworkApi() {return NetworkManager.getNetworkService(Injection.baseUrl);}
+    public static DirectionsAPI provideDirectionsApi() {return NetworkManager.getDirectionsAPIService(Injection.directionsBaseUrl);}
+
+    @NonNull
+    public static BackendAPI provideBackendApi() {return NetworkManager.getBackendAPIService(Injection.baseBackendUrl);}
 
     @NonNull
     public static SharedPreferences provideSharedPreferences () {return Injection.context.getSharedPreferences(Injection.SHARED_PREFERENCES, Context.MODE_PRIVATE);}

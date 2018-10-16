@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.network.NetworkAPI;
+import com.grandtour.ev.evgrandtour.data.network.DirectionsAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkStatusCodes;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
@@ -30,16 +30,16 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
     @NonNull
     private final List<Checkpoint> checkpoints;
     @NonNull
-    private final NetworkAPI networkAPI;
+    private final DirectionsAPI directionsAPI;
     @NonNull
     private final LocalStorageManager storageManager;
 
     public CalculateRouteUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull List<Checkpoint> checkpoints,
-            @NonNull NetworkAPI networkAPI, @NonNull LocalStorageManager storageManager) {
+            @NonNull DirectionsAPI directionsAPI, @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.checkpoints = checkpoints;
         this.storageManager = storageManager;
-        this.networkAPI = networkAPI;
+        this.directionsAPI = directionsAPI;
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
             }
 
             RouteParameters routeParameters = MapUtils.generateRouteRequestParams(checkpointCoordinateList);
-            Maybe<Response<RoutesResponse>> calculateRouteUseCase = new RequestDirectionsUseCase(executorThread, postExecutionThread, networkAPI,
+            Maybe<Response<RoutesResponse>> calculateRouteUseCase = new RequestDirectionsUseCase(executorThread, postExecutionThread, directionsAPI,
                     routeParameters).perform()
                     .doOnSuccess(response -> {
                         if (response != null) {

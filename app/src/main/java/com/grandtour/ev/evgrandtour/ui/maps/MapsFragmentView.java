@@ -369,6 +369,14 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         }
     }
 
+    public void onSyncNextDayTourClicked() {
+        presenter.onSyncNextDayTourClicked();
+    }
+
+    public void onSyncEntireTourClicked(){
+        presenter.onSyncEntireTourClicked();
+    }
+
     public void calculateRoutesClicked(){
         presenter.onCalculateRoutesClicked();
     }

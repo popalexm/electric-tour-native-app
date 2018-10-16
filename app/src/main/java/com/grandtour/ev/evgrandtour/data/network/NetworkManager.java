@@ -12,19 +12,31 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class NetworkManager {
 
-    private static NetworkAPI networkAPI;
+    private static DirectionsAPI directionsAPI;
+    private static BackendAPI backendAPI;
 
     private NetworkManager() { }
 
     @Nonnull
-    public static NetworkAPI getNetworkService(@NonNull String baseUrl) {
-        if (NetworkManager.networkAPI == null) {
+    public static DirectionsAPI getDirectionsAPIService(@NonNull String baseUrl) {
+        if (NetworkManager.directionsAPI == null) {
              OkHttpClient okHttpClient = NetworkManager.buildOkHttpClient();
              Retrofit retrofit = NetworkManager.buildRetrofit(baseUrl, okHttpClient);
-             NetworkManager.networkAPI = retrofit.create(NetworkAPI.class);
-             return NetworkManager.networkAPI;
+             NetworkManager.directionsAPI = retrofit.create(DirectionsAPI.class);
+             return NetworkManager.directionsAPI;
         }
-        return NetworkManager.networkAPI;
+        return NetworkManager.directionsAPI;
+    }
+
+    @Nonnull
+    public static BackendAPI getBackendAPIService(@NonNull String baseUrl) {
+        if (NetworkManager.backendAPI == null) {
+            OkHttpClient okHttpClient = NetworkManager.buildOkHttpClient();
+            Retrofit retrofit = NetworkManager.buildRetrofit(baseUrl, okHttpClient);
+            NetworkManager.backendAPI = retrofit.create(BackendAPI.class);
+            return NetworkManager.backendAPI;
+        }
+        return NetworkManager.backendAPI;
     }
 
     @NonNull
@@ -40,7 +52,7 @@ public final class NetworkManager {
     @NonNull
     private static OkHttpClient buildOkHttpClient() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
         return new OkHttpClient.Builder().addInterceptor(logging)
                 .build();
     }

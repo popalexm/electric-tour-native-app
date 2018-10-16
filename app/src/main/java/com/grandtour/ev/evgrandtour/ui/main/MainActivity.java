@@ -2,6 +2,7 @@ package com.grandtour.ev.evgrandtour.ui.main;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.ui.maps.MapsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -47,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (item.getItemId()) {
             case R.id.action_add_waypoints :
                 if (mapsFragmentView != null) {
-                    mapsFragmentView.openFileExplorer();
+                    showChoicesDialog(mapsFragmentView);
+                   // mapsFragmentView.openFileExplorer();
                 }
                 break;
             case R.id.action_delete_waypoints :
@@ -73,6 +75,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         return true;
+    }
+
+    private void showChoicesDialog(@NonNull MapsFragmentView mapsFragmentView) {
+        String CHOICE_UPLOAD = "Upload checkpoints from a local file";
+        String CHOICE_SYNC_NEXT_DAY = "Sync checkpoints for the next day";
+        String CHOICE_SYNC_ALL = "Sync all available checkpoints";
+
+        String[] choices = {CHOICE_UPLOAD, CHOICE_SYNC_ALL ,CHOICE_SYNC_NEXT_DAY};
+        DialogUtils.getMultipleChoicesAlertDialogBuilder(this, choices, "Choose an option", new DialogUtils.DialogChoiceCallback() {
+            @Override
+            public void onDialogChoiceSelected(String choice) {
+               if (choice.equals(CHOICE_UPLOAD)) {
+                   mapsFragmentView.openFileExplorer();
+               }
+               if (choice.equals(CHOICE_SYNC_NEXT_DAY)) {
+
+               }
+               if (choice.equals(CHOICE_SYNC_ALL)){
+                   mapsFragmentView.onSyncEntireTourClicked();
+               }
+            }
+        }).show();
     }
 
     @Override

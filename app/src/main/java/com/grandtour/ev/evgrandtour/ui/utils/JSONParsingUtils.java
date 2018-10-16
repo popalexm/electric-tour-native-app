@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.utils;
 import com.google.gson.JsonParseException;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.ui.maps.models.ImportCheckpoint;
+import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.ImportCheckpoint;
 
 import android.support.annotation.NonNull;
 
