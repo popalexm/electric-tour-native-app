@@ -18,17 +18,20 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
-import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.EntireTourResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.ImportCheckpoint;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteStoredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableTourIDsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageAsMarkersUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForCurrentSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SyncEntireTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveEachTourDetailsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
@@ -63,7 +66,6 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
@@ -249,57 +251,49 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onSyncEntireTourClicked() {
+    public void onChooseTourClicked() {
         if (isViewAttached) {
-            view.showLoadingView(true , false , "Synchronising checkpoints !");
+            view.showLoadingView(true, false, "Retrieving all available tours!");
         }
-        SyncEntireTourUseCase syncEntireTourUseCase = new SyncEntireTourUseCase( Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi());
-        addSubscription(syncEntireTourUseCase.perform()
+        SyncAndSaveAllAvailableToursUseCase syncAndSaveAllAvailableToursUseCase = new SyncAndSaveAllAvailableToursUseCase(Schedulers.io(),
+                AndroidSchedulers.mainThread(), Injection.provideBackendApi(), Injection.provideStorageManager());
+        addSubscription(syncAndSaveAllAvailableToursUseCase.perform()
                 .doOnSuccess(entireTourResponseResponse -> {
-                    if (isViewAttached) {
-                        view.showLoadingView(false, false, "");
+                    if (entireTourResponseResponse.length > 0) {
+                        syncAllAvailableToursDetails();
                     }
-                    handleResponse(entireTourResponseResponse);
                 })
                 .doOnError(Throwable::printStackTrace)
                 .subscribe());
     }
 
     @Override
-    public void onSyncNextDayTourClicked() {
-
+    public void onTourSelected(@NonNull String tourId) {
+        new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
+                .doOnComplete(this::loadAvailableCheckpoints)
+                .subscribe();
     }
 
-    private void handleResponse(@NonNull Response<EntireTourResponse> response){
-        if (response.isSuccessful() && response.body() != null){
-            List<ImportCheckpoint> points = response.body()
-                    .getPoints();
-            List<Checkpoint> toSaveCheckpoints = JSONParsingUtils.processImportedCheckpoints(points);
-            deletePreviousCheckpointsAndSaveNewOnes(toSaveCheckpoints);
-        } else {
-            Log.e(TAG, response.message());
-        }
-    }
-
-    private void deletePreviousCheckpointsAndSaveNewOnes(@NonNull List<Checkpoint> checkpoints) {
-        SaveCheckpointsUseCase saveCheckpointsUseCase = new SaveCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                Injection.provideStorageManager(), checkpoints);
-        DeleteRoutesUseCase deleteRoutesUseCase = new DeleteRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager());
-        DeleteStoredCheckpointsUseCase deleteStoredCheckpointsUseCase = new DeleteStoredCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                Injection.provideStorageManager());
-        addSubscription(deleteStoredCheckpointsUseCase.perform()
-                .andThen(deleteRoutesUseCase.perform()
-                        .doOnComplete(() -> {
-                            if (isViewAttached) {
-                                view.clearMapCheckpoints();
-                                view.clearMapRoutes();
-                            }
-                        })
-                        .doOnError(Throwable::printStackTrace))
-                .andThen(saveCheckpointsUseCase.perform()
-                        .doOnSuccess(longs -> loadAvailableCheckpoints()))
-                .doOnError(Throwable::printStackTrace)
+    private void syncAllAvailableToursDetails() {
+        addSubscription(new GetAvailableTourIDsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .doOnSuccess(tours -> {
+                    new SyncAndSaveEachTourDetailsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi(),
+                            Injection.provideStorageManager(), tours).perform()
+                            .doOnComplete(() -> {
+                                if (isViewAttached) {
+                                    view.showLoadingView(false, false, "");
+                                }
+                                openTourPicker();
+                            })
+                            .subscribe();
+                })
                 .subscribe());
+    }
+
+    private void openTourPicker() {
+        new GetAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .doOnSuccess(view::showTourPickerDialog)
+                .subscribe();
     }
 
     private void displayShortMessage(@NonNull String msg) {
@@ -350,8 +344,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.showLoadingView(true, false, Injection.provideGlobalContext()
                     .getString(R.string.message_loading_checkpoints));
         }
-        addSubscription(
-                new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        addSubscription(new LoadCheckpointMarkersForCurrentSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+                Injection.provideStorageManager()).perform()
                 .subscribe(List -> {
                     if (isViewAttached) {
                         if (List.size() > 0) {
@@ -384,7 +378,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 })
                 .doOnError(Throwable::printStackTrace);
 
-        Maybe<List<Pair<Integer, MarkerOptions>>> getAvailableCheckpoints = new LoadCheckpointsFromStorageAsMarkersUseCase(Schedulers.io(),
+        Maybe<List<Pair<Integer, MarkerOptions>>> getAvailableCheckpoints = new LoadCheckpointMarkersForCurrentSelectedTourUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(checkpoints -> {
                     if (isViewAttached) {

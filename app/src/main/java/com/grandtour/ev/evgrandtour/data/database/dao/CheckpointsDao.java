@@ -24,11 +24,11 @@ public interface CheckpointsDao {
     @Query("DELETE FROM Checkpoint")
     int deleteAll();
 
+    @Query("SELECT * FROM Checkpoint WHERE tourId= :tourId")
+    Maybe<List<Checkpoint>> getAllCheckpointsForTourId(String tourId);
+
     @Query("SELECT * FROM Checkpoint")
     Maybe<List<Checkpoint>> getAllCheckpoints();
-
-    @Query("SELECT * FROM Checkpoint WHERE checkpointName= :checkpointName")
-    Single<Checkpoint> getCheckpointByName(String checkpointName);
 
     @Query("SELECT * FROM Checkpoint WHERE checkpointId > :checkpointId LIMIT 10")
     Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);

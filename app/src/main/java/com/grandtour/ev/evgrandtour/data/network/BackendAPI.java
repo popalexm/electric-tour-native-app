@@ -1,7 +1,8 @@
 package com.grandtour.ev.evgrandtour.data.network;
+
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.AvailableToursResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.EntireTourResponse;
-import com.grandtour.ev.evgrandtour.data.network.models.response.tour.TourDataResponse;
-import com.grandtour.ev.evgrandtour.data.network.models.response.tour.TourResponse;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ public interface BackendAPI {
     Maybe<Response<EntireTourResponse>> getEntireTourCheckpoints();
 
     @GET("tours/")
-    Maybe<Response<List<TourResponse>>> getAllTours();
+    Maybe<Response<List<AvailableToursResponse>>> getAllTours();
 
-    @GET("tours/")
+    @GET("tours/{id}")
     Maybe<Response<TourDataResponse>> getTourById(@Path("id") String tourId);
 }

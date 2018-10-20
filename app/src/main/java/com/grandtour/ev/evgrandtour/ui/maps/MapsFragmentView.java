@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.Tour;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.maps.dialog.DistancePickerDialogFragment;
@@ -353,6 +354,19 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         }
     }
 
+    @Override
+    public void showTourPickerDialog(@NonNull List<Tour> tours) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            final String[] selectedTourId = new String[1];
+            DialogUtils.getMultipleChoicesAlertDialogBuilder(getActivity(), tours, "Select a tour!", tourId -> selectedTourId[0] = tourId)
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        presenter.onTourSelected(selectedTourId[0]);
+                    })
+                    .show();
+        }
+    }
+
     /** Delegated methods from the main activity
      */
     public void clearMapDataClicked() {
@@ -369,12 +383,8 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         }
     }
 
-    public void onSyncNextDayTourClicked() {
-        presenter.onSyncNextDayTourClicked();
-    }
-
-    public void onSyncEntireTourClicked(){
-        presenter.onSyncEntireTourClicked();
+    public void onChooseTourClicked() {
+        presenter.onChooseTourClicked();
     }
 
     public void calculateRoutesClicked(){
