@@ -26,12 +26,12 @@ import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableTourIDsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForCurrentSelectedTourUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveAllAvailableToursUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveEachTourDetailsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveTourDetailsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
@@ -241,7 +241,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onCalculateDistanceBetweenTwoCheckpointsClicked() {
-        addSubscription(new LoadCheckpointsFromStorageUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        addSubscription(new LoadCheckpointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .subscribe(checkpoints -> {
                     if (checkpoints.size() != 0) {
                         view.showCalculateDistanceDialog(checkpoints);
@@ -252,18 +252,26 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onChooseTourClicked() {
-        if (isViewAttached) {
-            view.showLoadingView(true, false, "Retrieving all available tours!");
-        }
         SyncAndSaveAllAvailableToursUseCase syncAndSaveAllAvailableToursUseCase = new SyncAndSaveAllAvailableToursUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideBackendApi(), Injection.provideStorageManager());
         addSubscription(syncAndSaveAllAvailableToursUseCase.perform()
+                .doOnSubscribe(disposable -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(true, false, "Retrieving all available tours !");
+                    }
+                })
                 .doOnSuccess(entireTourResponseResponse -> {
                     if (entireTourResponseResponse.length > 0) {
                         syncAllAvailableToursDetails();
                     }
                 })
-                .doOnError(Throwable::printStackTrace)
+                .doOnError(throwable -> {
+                    throwable.printStackTrace();
+                    if (isViewAttached) {
+                        view.showLoadingView(false, false, "");
+                    }
+                    displayShortMessage("An error occurred while retrieving the tours !");
+                })
                 .subscribe());
     }
 
@@ -271,26 +279,33 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onTourSelected(@NonNull String tourId) {
         new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
                 .doOnComplete(this::loadAvailableCheckpoints)
+                .doOnError(Throwable::printStackTrace)
                 .subscribe();
     }
 
     private void syncAllAvailableToursDetails() {
         addSubscription(new GetAvailableTourIDsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(tours -> {
-                    new SyncAndSaveEachTourDetailsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi(),
+                    new SyncAndSaveTourDetailsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi(),
                             Injection.provideStorageManager(), tours).perform()
                             .doOnComplete(() -> {
                                 if (isViewAttached) {
                                     view.showLoadingView(false, false, "");
                                 }
-                                openTourPicker();
+                                openTourPickerDialog();
+                            })
+                            .doOnError(throwable -> {
+                                throwable.printStackTrace();
+                                if (isViewAttached) {
+                                    view.showLoadingView(false, false, "");
+                                }
                             })
                             .subscribe();
                 })
                 .subscribe());
     }
 
-    private void openTourPicker() {
+    private void openTourPickerDialog() {
         new GetAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(view::showTourPickerDialog)
                 .subscribe();
@@ -344,7 +359,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.showLoadingView(true, false, Injection.provideGlobalContext()
                     .getString(R.string.message_loading_checkpoints));
         }
-        addSubscription(new LoadCheckpointMarkersForCurrentSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        addSubscription(new LoadCheckpointMarkersForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
                 .subscribe(List -> {
                     if (isViewAttached) {
@@ -378,7 +393,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 })
                 .doOnError(Throwable::printStackTrace);
 
-        Maybe<List<Pair<Integer, MarkerOptions>>> getAvailableCheckpoints = new LoadCheckpointMarkersForCurrentSelectedTourUseCase(Schedulers.io(),
+        Maybe<List<Pair<Integer, MarkerOptions>>> getAvailableCheckpoints = new LoadCheckpointMarkersForSelectedTourUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(checkpoints -> {
                     if (isViewAttached) {

@@ -22,13 +22,13 @@ public class SyncAndSaveAllAvailableToursUseCase extends BaseUseCase implements 
     @NonNull
     private final BackendAPI backendAPI;
     @NonNull
-    private final LocalStorageManager localStorageManager;
+    private final LocalStorageManager storageManager;
 
     public SyncAndSaveAllAvailableToursUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull BackendAPI backendAPI,
-            @NonNull LocalStorageManager localStorageManager) {
+            @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.backendAPI = backendAPI;
-        this.localStorageManager = localStorageManager;
+        this.storageManager = storageManager;
     }
 
     @Override
@@ -39,24 +39,38 @@ public class SyncAndSaveAllAvailableToursUseCase extends BaseUseCase implements 
                 .flatMap(new Function<Response<List<AvailableToursResponse>>, Maybe<long[]>>() {
                     @Override
                     public Maybe<long[]> apply(Response<List<AvailableToursResponse>> response) {
-                        List<AvailableToursResponse> availableToursResponses = response.body();
-                        List<Tour> tours = new ArrayList<>();
-                        for (AvailableToursResponse availableToursResponse : availableToursResponses) {
-                            Tour tour = new Tour();
-                            tour.setTourId(availableToursResponse.getId());
-                            tour.setName(availableToursResponse.getName());
-                            tours.add(tour);
-                        }
-                        return Maybe.create(emitter -> {
-                            try {
-                                long[] ids = localStorageManager.tourDao()
-                                        .insert(tours);
-                                emitter.onSuccess(ids);
-                            } catch (Throwable t) {
-                                emitter.onError(t);
+                        List<AvailableToursResponse> toursResponses = response.body();
+                        if (toursResponses != null) {
+                            storageManager.checkpointsDao()
+                                    .deleteAll();
+                            storageManager.tourDao()
+                                    .deleteAll();
+                            storageManager.routeDao()
+                                    .deleteAll();
+                            storageManager.routeWaypointsDao()
+                                    .deleteAll();
+
+                            List<Tour> tours = new ArrayList<>();
+                            for (AvailableToursResponse tourResponse : toursResponses) {
+                                Tour tour = new Tour();
+                                tour.setTourId(tourResponse.getId());
+                                tour.setName(tourResponse.getName());
+                                tours.add(tour);
                             }
-                        });
+                            return Maybe.create(emitter -> {
+                                try {
+                                    long[] ids = storageManager.tourDao()
+                                            .insert(tours);
+                                    emitter.onSuccess(ids);
+                                } catch (Throwable t) {
+                                    emitter.onError(t);
+                                }
+                            });
+                        } else {
+                            return null;
+                        }
                     }
                 });
     }
+
 }

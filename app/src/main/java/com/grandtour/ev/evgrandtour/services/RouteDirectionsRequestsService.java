@@ -9,7 +9,7 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsFromStorageUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
@@ -74,7 +74,7 @@ public class RouteDirectionsRequestsService extends Service {
     }
 
     private void requestDirectionsForAvailableCheckpoints() {
-        Disposable disposable = new LoadCheckpointsFromStorageUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        Disposable disposable = new LoadCheckpointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
                 .subscribe(this::startRouteDirectionsRequests);
     }

@@ -10,14 +10,16 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
+import io.reactivex.functions.Function;
 
-public class LoadCheckpointsFromStorageUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadCheckpointsForSelectedTourUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public LoadCheckpointsFromStorageUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public LoadCheckpointsForSelectedTourUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
@@ -25,9 +27,13 @@ public class LoadCheckpointsFromStorageUseCase extends BaseUseCase implements Ba
 
     @Override
     public Maybe<List<Checkpoint>> perform() {
-        return storageManager.checkpointsDao()
-                .getAllCheckpoints()
+        return storageManager.tourDao()
+                .getCurrentlySelectedTour()
                 .subscribeOn(executorThread)
-                .observeOn(postExecutionThread);
+                .observeOn(postExecutionThread)
+                .flatMap((Function<String, MaybeSource<List<Checkpoint>>>) tourId -> storageManager.checkpointsDao()
+                        .getAllCheckpointsForTourId(tourId)
+                        .subscribeOn(executorThread)
+                        .observeOn(postExecutionThread));
     }
 }

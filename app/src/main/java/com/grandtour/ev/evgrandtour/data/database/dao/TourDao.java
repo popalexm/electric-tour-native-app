@@ -29,4 +29,6 @@ public interface TourDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insert(List<Tour> toursList);
 
+    @Query("DELETE FROM TOUR")
+    int deleteAll();
 }

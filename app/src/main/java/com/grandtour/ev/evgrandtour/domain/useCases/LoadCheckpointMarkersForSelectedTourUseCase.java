@@ -18,12 +18,12 @@ import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class LoadCheckpointMarkersForCurrentSelectedTourUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadCheckpointMarkersForSelectedTourUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public LoadCheckpointMarkersForCurrentSelectedTourUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public LoadCheckpointMarkersForSelectedTourUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
@@ -35,16 +35,11 @@ public class LoadCheckpointMarkersForCurrentSelectedTourUseCase extends BaseUseC
                 .getCurrentlySelectedTour()
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread)
-                .flatMap(new Function<String, MaybeSource<List<Pair<Integer, MarkerOptions>>>>() {
-                    @Override
-                    public MaybeSource<List<Pair<Integer, MarkerOptions>>> apply(String tourId) {
-                        return storageManager.checkpointsDao()
-                                .getAllCheckpointsForTourId(tourId)
-                                .flatMap((Function<List<Checkpoint>, MaybeSource<List<Pair<Integer, MarkerOptions>>>>) checkpoints -> Maybe.fromCallable(
-                                        () -> MapUtils.convertCheckpointsToMarkers(checkpoints)))
-                                .subscribeOn(executorThread)
-                                .observeOn(postExecutionThread);
-                    }
-                });
+                .flatMap((Function<String, MaybeSource<List<Pair<Integer, MarkerOptions>>>>) tourId -> storageManager.checkpointsDao()
+                        .getAllCheckpointsForTourId(tourId)
+                        .flatMap((Function<List<Checkpoint>, MaybeSource<List<Pair<Integer, MarkerOptions>>>>) checkpoints -> Maybe.fromCallable(
+                                () -> MapUtils.convertCheckpointsToMarkers(checkpoints)))
+                        .subscribeOn(executorThread)
+                        .observeOn(postExecutionThread));
     }
 }

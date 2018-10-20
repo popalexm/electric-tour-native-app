@@ -18,7 +18,7 @@ import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
 import retrofit2.Response;
 
-public class SyncAndSaveEachTourDetailsUseCase extends BaseUseCase implements BaseUseCaseFlowable {
+public class SyncAndSaveTourDetailsUseCase extends BaseUseCase implements BaseUseCaseFlowable {
 
     @NonNull
     private final BackendAPI backendAPI;
@@ -27,7 +27,7 @@ public class SyncAndSaveEachTourDetailsUseCase extends BaseUseCase implements Ba
     @NonNull
     private final List<String> tourIdList;
 
-    public SyncAndSaveEachTourDetailsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull BackendAPI backendAPI,
+    public SyncAndSaveTourDetailsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull BackendAPI backendAPI,
             @NonNull LocalStorageManager localStorageManager, @NonNull List<String> tourIdList) {
         super(executorThread, postExecutionThread);
         this.backendAPI = backendAPI;
@@ -44,24 +44,34 @@ public class SyncAndSaveEachTourDetailsUseCase extends BaseUseCase implements Ba
                     .observeOn(postExecutionThread)
                     .doOnError(Throwable::printStackTrace)
                     .doOnSuccess(tourDataResponseResponse -> {
-                        List<TourCheckpoint> tourDataResponses = tourDataResponseResponse.body()
-                                .getTourCheckpoints();
-                        List<Checkpoint> checkpoints = new ArrayList<>();
-                        for (TourCheckpoint tourCheckpoint : tourDataResponses) {
-                            {
-                                Checkpoint checkpoint = new Checkpoint();
-                                checkpoint.setCheckpointName(tourCheckpoint.getDescription());
-                                checkpoint.setTourId(tourId);
-                                checkpoint.setLatitude(tourCheckpoint.getLatitude());
-                                checkpoint.setLongitude(tourCheckpoint.getLongitude());
-                                checkpoints.add(checkpoint);
+                        TourDataResponse response = tourDataResponseResponse.body();
+                        if (response != null) {
+                            List<TourCheckpoint> importedCheckpoints = response.getTourCheckpoints();
+                            try {
+                                List<Checkpoint> toSaveCheckpoints = convertToCheckpointObjects(importedCheckpoints, tourId);
+                                localStorageManager.checkpointsDao()
+                                        .insert(toSaveCheckpoints);
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
                             }
                         }
-                        localStorageManager.checkpointsDao()
-                                .insert(checkpoints);
                     });
             tourRequests.add(tourRequest);
         }
         return Maybe.concat(tourRequests);
+    }
+
+    private List<Checkpoint> convertToCheckpointObjects(@NonNull Iterable<TourCheckpoint> importedCheckpoints, @NonNull String tourId)
+            throws NullPointerException {
+        List<Checkpoint> toSaveCheckpoints = new ArrayList<>();
+        for (TourCheckpoint tourCheckpoint : importedCheckpoints) {
+            Checkpoint checkpoint = new Checkpoint();
+            checkpoint.setCheckpointName(tourCheckpoint.getDescription());
+            checkpoint.setTourId(tourId);
+            checkpoint.setLatitude(tourCheckpoint.getLatitude());
+            checkpoint.setLongitude(tourCheckpoint.getLongitude());
+            toSaveCheckpoints.add(checkpoint);
+        }
+        return toSaveCheckpoints;
     }
 }
