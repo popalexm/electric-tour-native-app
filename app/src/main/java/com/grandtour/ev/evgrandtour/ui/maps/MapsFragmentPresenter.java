@@ -375,6 +375,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (isViewAttached) {
             view.showLoadingView(true, false, Injection.provideGlobalContext()
                     .getString(R.string.message_loading_available_checkpoints_and_routes));
+            view.clearMapCheckpoints();
+            view.clearMapRoutes();
         }
         Maybe<List<Route>> getAvailableRoutes = new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
