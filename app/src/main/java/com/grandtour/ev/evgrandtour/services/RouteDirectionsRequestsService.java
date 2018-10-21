@@ -111,14 +111,14 @@ public class RouteDirectionsRequestsService extends Service {
                                     .getPoints();
                             List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(poly);
                             broadcastNewRouteMapPoints((ArrayList) mapPoints);
-                            RouteDirectionsRequestsService.saveRouteToDatabase(mapPoints);
+                            RouteDirectionsRequestsService.saveRouteToDatabase(poly);
                         }
                     }
                 });
     }
 
-    private static void saveRouteToDatabase(@NonNull List<LatLng> mapPoints) {
-        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), mapPoints).perform()
+    private static void saveRouteToDatabase(@NonNull String routePolyline) {
+        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), routePolyline).perform()
                 .subscribe();
     }
 

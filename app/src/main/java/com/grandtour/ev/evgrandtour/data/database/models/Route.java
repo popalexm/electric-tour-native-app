@@ -1,13 +1,15 @@
 package com.grandtour.ev.evgrandtour.data.database.models;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = Tour.class, parentColumns = "tourId", childColumns = "tourId"))
 public class Route {
 
     @PrimaryKey(autoGenerate = true)
     private int routeId;
-    // Route distance in meters
+    private String tourId;
+    private String routePolyline;
     private int distance;
 
     public int getRouteId() {
@@ -24,5 +26,21 @@ public class Route {
 
     public void setDistance(int distance) {
         this.distance = distance;
+    }
+
+    public String getTourId() {
+        return tourId;
+    }
+
+    public void setTourId(String tourId) {
+        this.tourId = tourId;
+    }
+
+    public String getRoutePolyline() {
+        return routePolyline;
+    }
+
+    public void setRoutePolyline(String routePolyline) {
+        this.routePolyline = routePolyline;
     }
 }

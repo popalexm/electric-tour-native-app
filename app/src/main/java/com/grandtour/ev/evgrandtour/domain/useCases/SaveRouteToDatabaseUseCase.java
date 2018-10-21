@@ -1,69 +1,53 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Route;
-import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
+import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.Callable;
 
+import io.reactivex.Maybe;
+import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
-import io.reactivex.Single;
-import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
 
-public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCaseSingle {
+public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
     @NonNull
-    private final List<LatLng> routeMapPoints;
+    private final String routePolyline;
 
     public SaveRouteToDatabaseUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
-            @NonNull LocalStorageManager localStorageManager, @NonNull List<LatLng> routeMapPoints) {
+            @NonNull LocalStorageManager localStorageManager, @NonNull String routePolyline) {
         super(executorThread, postExecutionThread);
         this.storageManager = localStorageManager;
-        this.routeMapPoints = routeMapPoints;
+        this.routePolyline = routePolyline;
     }
 
     @Override
-    public Single<Long[]> perform() {
-        Single<Long> insertRoute = Single.fromCallable(() -> {
-            Route route = new Route();
-            return storageManager.routeDao()
-                    .insert(route);
-        }).subscribeOn(executorThread).observeOn(executorThread);
-
-        return insertRoute.flatMap((Function<Long, SingleSource<Long[]>>) routeId -> {
-            List<RouteWaypoint> routeWaypointList = new ArrayList<>();
-            for (LatLng waypoint : routeMapPoints) {
-                RouteWaypoint routeWaypoint = new RouteWaypoint();
-                routeWaypoint.setLat(waypoint.latitude);
-                routeWaypoint.setLng(waypoint.longitude);
-                routeWaypoint.setRouteId(routeId.intValue());
-                routeWaypointList.add(routeWaypoint);
-            }
-            long[] waypoints = storageManager.routeWaypointsDao()
-                    .insert(routeWaypointList);
-            return Single.just(convert(waypoints));
-        })
+    public Maybe<Long> perform() {
+        return storageManager.tourDao()
+                .getCurrentlySelectedTour()
                 .subscribeOn(executorThread)
-                .observeOn(postExecutionThread);
-    }
-
-    private Long[] convert(long[] argument) {
-        Long Largument[] = new Long[argument.length];
-        int i = 0;
-
-        for (long temp : (long[]) argument) {
-            Largument[i++] = temp;
-        }
-        return Largument;
+                .observeOn(executorThread)
+                .flatMap(new Function<String, MaybeSource<Long>>() {
+                    @Override
+                    public MaybeSource<Long> apply(String tourId) {
+                        return Maybe.fromCallable(new Callable<Long>() {
+                            @Override
+                            public Long call() {
+                                Route route = new Route();
+                                route.setTourId(tourId);
+                                route.setRoutePolyline(routePolyline);
+                                return storageManager.routeDao()
+                                        .insert(route);
+                            }
+                        });
+                    }
+                });
     }
 }

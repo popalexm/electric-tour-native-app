@@ -22,8 +22,6 @@ public class DeleteRoutesUseCase extends BaseUseCase implements BaseUseCaseCompl
     @Override
     public Completable perform() {
         return Completable.fromAction(() -> {
-            localStorageManager.routeWaypointsDao()
-                    .deleteAll();
             localStorageManager.routeDao()
                     .deleteAll();
         })

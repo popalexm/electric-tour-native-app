@@ -29,8 +29,6 @@ public class DeleteAllSavedDataUseCase extends BaseUseCase implements BaseUseCas
                     .deleteAll();
             storageManager.routeDao()
                     .deleteAll();
-            storageManager.routeWaypointsDao()
-                    .deleteAll();
         });
     }
 }

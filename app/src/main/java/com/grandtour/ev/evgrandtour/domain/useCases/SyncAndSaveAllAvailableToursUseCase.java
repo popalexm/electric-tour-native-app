@@ -43,11 +43,9 @@ public class SyncAndSaveAllAvailableToursUseCase extends BaseUseCase implements 
                         if (toursResponses != null) {
                             storageManager.checkpointsDao()
                                     .deleteAll();
-                            storageManager.tourDao()
-                                    .deleteAll();
                             storageManager.routeDao()
                                     .deleteAll();
-                            storageManager.routeWaypointsDao()
+                            storageManager.tourDao()
                                     .deleteAll();
 
                             List<Tour> tours = new ArrayList<>();

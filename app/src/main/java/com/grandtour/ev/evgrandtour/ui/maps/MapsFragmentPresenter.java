@@ -14,8 +14,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.database.models.RouteWaypoint;
-import com.grandtour.ev.evgrandtour.data.database.models.RouteWithWaypoints;
+import com.grandtour.ev.evgrandtour.data.database.models.Route;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.ImportCheckpoint;
@@ -247,7 +246,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                         view.showCalculateDistanceDialog(checkpoints);
                     }
                 }));
-
     }
 
     @Override
@@ -278,7 +276,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onTourSelected(@NonNull String tourId) {
         new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
-                .doOnComplete(this::loadAvailableCheckpoints)
+                .doOnComplete(this::startRouteDirectionsRequests)
                 .doOnError(Throwable::printStackTrace)
                 .subscribe();
     }
@@ -378,17 +376,12 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.showLoadingView(true, false, Injection.provideGlobalContext()
                     .getString(R.string.message_loading_available_checkpoints_and_routes));
         }
-        Maybe<List<RouteWithWaypoints>> getAvailableRoutes = new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        Maybe<List<Route>> getAvailableRoutes = new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
-                .doOnSuccess(routeWithWaypoints -> {
-                    for (RouteWithWaypoints route : routeWithWaypoints) {
-                        List<RouteWaypoint> routes = route.routeWaypoints;
-                        List<LatLng> routeMapPoints = new ArrayList<>();
-                        for (RouteWaypoint routeWaypoint : routes) {
-                            LatLng routeMapPoint = new LatLng(routeWaypoint.getLat(), routeWaypoint.getLng());
-                            routeMapPoints.add(routeMapPoint);
-                        }
-                        drawRouteFromMapPoints(routeMapPoints);
+                .doOnSuccess(routes -> {
+                    for (Route route : routes) {
+                        List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(route.getRoutePolyline());
+                        drawRouteFromMapPoints(mapPoints);
                     }
                 })
                 .doOnError(Throwable::printStackTrace);
