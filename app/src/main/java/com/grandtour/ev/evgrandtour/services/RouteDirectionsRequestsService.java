@@ -1,7 +1,5 @@
 package com.grandtour.ev.evgrandtour.services;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
@@ -11,7 +9,6 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesRe
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
-import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.app.Notification;
 import android.app.Service;
@@ -23,7 +20,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -109,8 +105,6 @@ public class RouteDirectionsRequestsService extends Service {
                                     .get(0)
                                     .getOverviewPolyline()
                                     .getPoints();
-                            List<LatLng> mapPoints = MapUtils.convertPolyLineToMapPoints(poly);
-                            broadcastNewRouteMapPoints((ArrayList) mapPoints);
                             RouteDirectionsRequestsService.saveRouteToDatabase(poly);
                         }
                     }
@@ -120,13 +114,6 @@ public class RouteDirectionsRequestsService extends Service {
     private static void saveRouteToDatabase(@NonNull String routePolyline) {
         new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), routePolyline).perform()
                 .subscribe();
-    }
-
-    private void broadcastNewRouteMapPoints(@NonNull ArrayList<LatLng> routeMapPoints) {
-        Intent intent = new Intent(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST);
-        intent.putParcelableArrayListExtra(RouteDirectionsRequestsService.ROUTE_MAP_POINTS_BUNDLE, routeMapPoints);
-        LocalBroadcastManager.getInstance(this)
-                .sendBroadcast(intent);
     }
 
     private void broadcastDirectionRequestProgress(boolean areDirectionsRequestsInProgress) {

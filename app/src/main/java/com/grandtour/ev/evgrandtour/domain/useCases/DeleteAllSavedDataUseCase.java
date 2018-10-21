@@ -14,7 +14,7 @@ public class DeleteAllSavedDataUseCase extends BaseUseCase implements BaseUseCas
     @NonNull
     private final LocalStorageManager storageManager;
 
-    protected DeleteAllSavedDataUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public DeleteAllSavedDataUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
@@ -29,6 +29,8 @@ public class DeleteAllSavedDataUseCase extends BaseUseCase implements BaseUseCas
                     .deleteAll();
             storageManager.routeDao()
                     .deleteAll();
-        });
+        })
+                .subscribeOn(executorThread)
+                .observeOn(postExecutionThread);
     }
 }

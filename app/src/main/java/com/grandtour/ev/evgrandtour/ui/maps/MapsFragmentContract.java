@@ -10,7 +10,6 @@ import com.grandtour.ev.evgrandtour.data.database.models.Tour;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 
 import android.location.Location;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
@@ -24,8 +23,6 @@ public class MapsFragmentContract {
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
         void loadCheckpoints(@NonNull List<Pair<Integer, MarkerOptions>> checkpoints);
-
-        void openFileExplorer();
 
         void clearMapCheckpoints();
 
@@ -58,8 +55,6 @@ public class MapsFragmentContract {
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
-        void onLocalFileOpened(@NonNull Uri fileUri);
-
         void onClearCheckpointsAndRoutesClicked();
 
         void onCalculateRoutesClicked();
@@ -79,6 +74,5 @@ public class MapsFragmentContract {
         void onChooseTourClicked();
 
         void onTourSelected(@NonNull String tourId);
-
     }
 }

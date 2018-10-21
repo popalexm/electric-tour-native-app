@@ -25,7 +25,6 @@ import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -47,17 +46,10 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import static android.app.Activity.RESULT_OK;
-
 public class MapsFragmentView extends Fragment implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener {
 
     @NonNull
     public static final String TAG = MapsFragmentView.class.getSimpleName();
-    private static final int OPEN_LOCAL_STORAGE_CODE = 100;
-    @NonNull
-    private static final String OPEN_NAVIGATION_URI = "google.navigation:q=";
-    @NonNull
-    private static final String OPEN_NAVIGATION_MAPS_PACKAGE_NAME = "com.google.android.apps.maps";
 
     @NonNull
     private GoogleMap googleMap;
@@ -68,7 +60,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
     @NonNull
-    private final DirectionsRequestsReceiver routeDirectionsRequestsService = new DirectionsRequestsReceiver(presenter);
+    private final RouteRequestsBroadcastReceiver routeDirectionsRequestsService = new RouteRequestsBroadcastReceiver(presenter);
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -153,19 +145,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MapsFragmentView.OPEN_LOCAL_STORAGE_CODE && resultCode == RESULT_OK) {
-            if (data!= null) {
-                Uri uri = data.getData();
-                if (uri != null) {
-                    presenter.onLocalFileOpened(uri);
-                }
-            }
-        }
-    }
-
-    @Override
     public void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg) {
         if (isLoading) {
             mapsViewModel.isLoadingInProgress.set(true);
@@ -243,18 +222,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     @Override
-    public void openFileExplorer() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        try {
-            startActivityForResult(intent, MapsFragmentView.OPEN_LOCAL_STORAGE_CODE);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void clearMapCheckpoints() {
         for (Marker checkpoint : mapsViewModel.checkpoints) {
             checkpoint.remove();
@@ -308,27 +275,10 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void openNavigationForSelectedMarker() {
         Marker navigateToMarker = mapsViewModel.currentSelectedMarker.get();
         if (navigateToMarker != null) {
-            startMapsNavigationViaURL(navigateToMarker);
+            presenter.onNavigationClicked(navigateToMarker);
         } else {
             showMessage(getString(R.string.message_no_checkpoint_selected));
         }
-    }
-
-    /**
-     * Starts the google maps Navigation Mode for the selected marker
-     */
-    private void startNavigation(@NonNull LatLng latLng) {
-       String navUri = getString(R.string.format_navigation_directions, MapsFragmentView.OPEN_NAVIGATION_URI, latLng.latitude, latLng.longitude);
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navUri));
-        mapIntent.setPackage(MapsFragmentView.OPEN_NAVIGATION_MAPS_PACKAGE_NAME);
-        startActivity(mapIntent);
-    }
-
-    /**
-     * Starts the google maps Navigation Mode for the selected marker
-     */
-    private void startMapsNavigationViaURL(@NonNull Marker navigationOriginMarker) {
-        presenter.onNavigationClicked(navigationOriginMarker);
     }
 
     @Override

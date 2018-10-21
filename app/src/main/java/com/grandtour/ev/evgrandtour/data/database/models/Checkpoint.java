@@ -6,7 +6,9 @@ import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-@Entity(foreignKeys = @ForeignKey(entity = Tour.class, parentColumns = "tourId", childColumns = "tourId"))
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
+@Entity(foreignKeys = @ForeignKey(entity = Tour.class, parentColumns = "tourId", childColumns = "tourId", onDelete = CASCADE))
 public class Checkpoint implements Parcelable {
 
     @PrimaryKey

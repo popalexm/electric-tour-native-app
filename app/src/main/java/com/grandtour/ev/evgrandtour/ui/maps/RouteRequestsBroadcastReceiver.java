@@ -12,12 +12,12 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
-public class DirectionsRequestsReceiver extends BroadcastReceiver {
+public class RouteRequestsBroadcastReceiver extends BroadcastReceiver {
 
     @NonNull
     private final MapsFragmentContract.Presenter presenter;
 
-    public DirectionsRequestsReceiver(@NonNull MapsFragmentContract.Presenter presenter) {
+    public RouteRequestsBroadcastReceiver(@NonNull MapsFragmentContract.Presenter presenter) {
         this.presenter = presenter;
     }
 
