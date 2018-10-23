@@ -32,8 +32,6 @@ public class MapsFragmentContract {
 
         void showTotalRouteLength(int length);
 
-        void showRouteReCalculationsDialog();
-
         void startGoogleMapsDirections(@NonNull String navigationUri);
 
         void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints);
@@ -57,13 +55,7 @@ public class MapsFragmentContract {
 
         void onClearCheckpointsAndRoutesClicked();
 
-        void onCalculateRoutesClicked();
-
-        void onRecalculateRoutesConfirmation();
-
         void onStopCalculatingRoutesClicked();
-
-        void onTotalRouteInfoClicked();
 
         void onNavigationClicked(@NonNull Marker originMarker);
 

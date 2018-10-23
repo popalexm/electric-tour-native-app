@@ -21,12 +21,13 @@ import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOri
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.RefreshAndSaveAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveTourDetailsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
+import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
 
 import android.Manifest;
 import android.app.Service;
@@ -49,6 +50,8 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
@@ -140,23 +143,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onCalculateRoutesClicked() {
-        addSubscription(new VerifyNumberOfAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .subscribe(numberOfAvailableRoutes -> {
-                    if (numberOfAvailableRoutes > 0) {
-                        view.showRouteReCalculationsDialog();
-                    } else {
-                        startRouteDirectionsRequests();
-                    }
-                }, Throwable::printStackTrace));
-    }
-
-    @Override
-    public void onRecalculateRoutesConfirmation() {
-        startRouteDirectionsRequests();
-    }
-
-    @Override
     public void onStopCalculatingRoutesClicked() {
         if (routeDirectionsRequestService != null) {
             routeDirectionsRequestService.stopSelf();
@@ -164,15 +150,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (isViewAttached) {
             view.showLoadingView(false, false, "");
         }
-    }
-
-    @Override
-    public void onTotalRouteInfoClicked() {
-        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .subscribe(Integer -> {
-                    int lengthInKm = Integer / 1000;
-                    view.showTotalRouteLength(lengthInKm);
-                }, Throwable::printStackTrace));
     }
 
     @Override
@@ -209,35 +186,43 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onChooseTourClicked() {
-        SyncAndSaveAllAvailableToursUseCase syncAndSaveAllAvailableToursUseCase = new SyncAndSaveAllAvailableToursUseCase(Schedulers.io(),
-                AndroidSchedulers.mainThread(), Injection.provideBackendApi(), Injection.provideStorageManager());
-        addSubscription(syncAndSaveAllAvailableToursUseCase.perform()
-                .doOnSubscribe(disposable -> {
-                    if (isViewAttached) {
-                        view.showLoadingView(true, false, "Retrieving all available tours !");
-                    }
-                })
-                .doOnSuccess(entireTourResponseResponse -> {
-                    if (entireTourResponseResponse.length > 0) {
-                        syncAllAvailableToursDetails();
-                    }
-                })
-                .doOnError(throwable -> {
-                    throwable.printStackTrace();
-                    if (isViewAttached) {
-                        view.showLoadingView(false, false, "");
-                    }
-                    displayShortMessage("An error occurred while retrieving the tours !");
-                })
-                .subscribe());
+        boolean isNetworkAvailable = NetworkUtils.isInternetConnectionAvailable(Injection.provideGlobalContext());
+        if (isNetworkAvailable){
+            addSubscription(new RefreshAndSaveAllAvailableToursUseCase(Schedulers.io(),
+                    AndroidSchedulers.mainThread(), Injection.provideBackendApi(), Injection.provideStorageManager()).perform()
+                    .doOnSubscribe(disposable -> {
+                        if (isViewAttached) {
+                            String msg = Injection.provideGlobalContext().getString(R.string.message_retrieving_available_tours);
+                            view.showLoadingView(true, false, msg);
+                        }
+                    })
+                    .doOnSuccess(entireTourResponseResponse -> {
+                        if (entireTourResponseResponse.length > 0) {
+                            syncAllAvailableToursDetails();
+                        }
+                    })
+                    .doOnError(throwable -> {
+                        throwable.printStackTrace();
+                        if (isViewAttached) {
+                            view.showLoadingView(false, false, "");
+                        }
+                        String errorMsg = Injection.provideGlobalContext().getString(R.string.message_error_occured);
+                        displayShortMessage(errorMsg);
+                    })
+                    .subscribe());
+        } else {
+            String errorMsg = Injection.provideGlobalContext().getString(R.string.message_no_internet_reloading_saved_tour);
+            displayShortMessage(errorMsg);
+            reloadAvailableCheckpointsAndRoutes();
+        }
     }
 
     @Override
     public void onTourSelected(@NonNull String tourId) {
-        new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
+        addSubscription(new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
                 .doOnComplete(this::startRouteDirectionsRequests)
                 .doOnError(Throwable::printStackTrace)
-                .subscribe();
+                .subscribe());
     }
 
     private void syncAllAvailableToursDetails() {
@@ -263,9 +248,9 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     private void openTourPickerDialog() {
-        new GetAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        addSubscription(new GetAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(view::showTourPickerDialog)
-                .subscribe();
+                .subscribe());
     }
 
     private void displayShortMessage(@NonNull String msg) {
@@ -316,6 +301,16 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     }
                 })
                 .subscribe();
+
+        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager())
+                .perform()
+                .doOnComplete(() -> {
+                    view.showTotalRouteLength(0);
+                })
+                .subscribe(Integer -> {
+                    int lengthInKm = Integer / 1000;
+                    view.showTotalRouteLength(lengthInKm);
+                }, Throwable::printStackTrace));
     }
 
     private void deleteAllCheckpointsAndRoutes() {

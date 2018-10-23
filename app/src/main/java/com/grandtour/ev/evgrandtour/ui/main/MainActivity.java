@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomAppBar bottomAppBar= findViewById(R.id.bottomAppBar);
+        BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
 
         FloatingActionButton calculateRoutesFab = findViewById(R.id.fab_calculate_routes);
         calculateRoutesFab.setOnClickListener(this);
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onMenuItemClick(MenuItem item) {
         MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
         switch (item.getItemId()) {
-            case R.id.action_add_waypoints :
+            case R.id.btn_sync_available_tours :
                 if (mapsFragmentView != null) {
                     mapsFragmentView.onChooseTourClicked();
                 }
@@ -53,17 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.action_delete_waypoints :
                 if (mapsFragmentView != null) {
                     mapsFragmentView.clearMapDataClicked();
-                }
-                break;
-            case R.id.action_calculate_routes:
-                if (mapsFragmentView != null) {
-                    mapsFragmentView.calculateRoutesClicked();
-                }
-                break;
-
-            case R.id.action_route_lenght_info:
-                if (mapsFragmentView != null) {
-                    mapsFragmentView.onTotalRouteLengthClicked();
                 }
                 break;
             case R.id.action_distance_between_2_checkpoints:

@@ -27,4 +27,9 @@ public class MapsViewModel {
     public final ObservableField<UserLocation> currentUserLocation = new ObservableField<>();
     @NonNull
     public final ObservableField<Marker> currentSelectedMarker = new ObservableField<>();
+    @NonNull
+    public final ObservableField<String> totalDistance = new ObservableField<>("");
+    @NonNull
+    public final ObservableBoolean isRouteLengthAvailable = new ObservableBoolean();
+
 }

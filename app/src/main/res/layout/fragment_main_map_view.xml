@@ -2,9 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
-
         <import type="android.view.View" />
-
         <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.maps.MapsViewModel" />
@@ -15,50 +13,74 @@
     </data>
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <LinearLayout
-        android:id="@+id/info_layout"
-        android:layout_gravity="top"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="@color/colorPrimary"
-        android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ProgressBar
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.2" />
+        <LinearLayout
+            android:id="@+id/info_layout"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/colorPrimary"
+            android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}">
 
-        <TextView
-            android:layout_weight="0.5"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textAlignment="center"
-            android:text="@={viewModel.progressMessage}" />
+            <ProgressBar
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.2" />
 
-        <Button
-            android:id="@+id/btn_cancel_route_calculations"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.3"
-            android:onClick="@{() -> presenter.onStopCalculatingRoutesClicked()}"
-            android:visibility="@{viewModel.isCancelEnabled == true ? View.VISIBLE: View.GONE}"
-            android:text="@string/btn_cancel" />
+            <TextView
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="center"
+                android:text="@={viewModel.progressMessage}" />
+
+            <Button
+                android:id="@+id/btn_cancel_route_calculations"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.3"
+                android:onClick="@{() -> presenter.onStopCalculatingRoutesClicked()}"
+                android:visibility="@{viewModel.isCancelEnabled == true ? View.VISIBLE: View.GONE}"
+                android:text="@string/btn_cancel" />
 
     </LinearLayout>
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-</LinearLayout>
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+             <LinearLayout
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@color/colorPrimaryTranslucent"
+                 android:layout_marginTop="@dimen/margin_map_top"
+                 android:layout_marginBottom="@dimen/margin_medium"
+                 android:layout_marginStart="@dimen/margin_map_deviation"
+                 android:layout_marginEnd="@dimen/margin_map_deviation">
+
+                 <TextView
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:text="@={viewModel.totalDistance}"
+                     android:visibility="@{viewModel.isRouteLengthAvailable == true ? View.VISIBLE: View.GONE}"
+                     android:gravity="center"
+                     android:padding="@dimen/margin_medium"
+                     android:textSize="20sp" />
+
+             </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 </layout>
