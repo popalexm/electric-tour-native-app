@@ -17,14 +17,14 @@ import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 import retrofit2.Response;
 
-public class SyncAndSaveAllAvailableToursUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class RefreshAndSaveAllAvailableToursUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final BackendAPI backendAPI;
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public SyncAndSaveAllAvailableToursUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull BackendAPI backendAPI,
+    public RefreshAndSaveAllAvailableToursUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull BackendAPI backendAPI,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.backendAPI = backendAPI;

@@ -39,6 +39,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,7 +162,9 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void showMessage(@NonNull String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     @Override
@@ -247,28 +250,15 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public void showTotalRouteLength(int length) {
         Context context = getContext();
         if (context != null) {
-            String msg = getString(R.string.format_start_number_end_message, getString(R.string.message_total_route_lenght_is_estimated_at), length,
-                    getString(R.string.suffix_kilometers));
-            DialogUtils.getAlertDialogBuilder(context, msg, getString(R.string.title_route_length))
-                    .setPositiveButton(getString(R.string.btn_dimiss), (dialog, which) -> dialog.dismiss())
-                    .create()
-                    .show();
-        }
-    }
-
-    @Override
-    public void showRouteReCalculationsDialog() {
-        Context context = getContext();
-        if (context != null) {
-            String msg = getString(R.string.message_are_you_sure_you_want_to_recalculate);
-            DialogUtils.getAlertDialogBuilder(context, msg, getString(R.string.title_route_recalculation))
-                    .setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> {
-                        presenter.onRecalculateRoutesConfirmation();
-                        dialog.dismiss();
-                    })
-                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss())
-                    .create()
-                    .show();
+            if (length > 0) {
+                String msg = getString(R.string.format_start_number_end_message, getString(R.string.message_total_route_lenght_is_estimated_at), length,
+                        getString(R.string.suffix_kilometers));
+                mapsViewModel.isRouteLengthAvailable.set(true);
+                mapsViewModel.totalDistance.set(msg);
+            } else {
+                mapsViewModel.totalDistance.set("0");
+                mapsViewModel.isRouteLengthAvailable.set(false);
+            }
         }
     }
 
@@ -309,7 +299,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         Activity activity = getActivity();
         if (activity != null) {
             final String[] selectedTourId = new String[1];
-            DialogUtils.getMultipleChoicesAlertDialogBuilder(getActivity(), tours, "Select a tour!", tourId -> selectedTourId[0] = tourId)
+            DialogUtils.getMultipleChoicesAlertDialogBuilder(getActivity(), tours, getString(R.string.title_select_tour), tourId -> selectedTourId[0] = tourId)
                     .setPositiveButton("OK", (dialog, which) -> {
                         presenter.onTourSelected(selectedTourId[0]);
                     })
@@ -335,14 +325,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     public void onChooseTourClicked() {
         presenter.onChooseTourClicked();
-    }
-
-    public void calculateRoutesClicked(){
-        presenter.onCalculateRoutesClicked();
-    }
-
-    public void onTotalRouteLengthClicked() {
-        presenter.onTotalRouteInfoClicked();
     }
 
     public void onCalculateDistanceBetweenCheckpoints() {
