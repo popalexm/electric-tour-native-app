@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps.dialog;
+package com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 

@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps.dialog;
+package com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog;
 
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateDistanceBetweenTwoCheckpointsUseCase;

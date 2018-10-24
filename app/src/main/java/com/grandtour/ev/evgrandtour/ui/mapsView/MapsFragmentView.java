@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps;
+package com.grandtour.ev.evgrandtour.ui.mapsView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -16,8 +16,9 @@ import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Tour;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
-import com.grandtour.ev.evgrandtour.ui.maps.dialog.DistancePickerDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
+import com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.mapsView.markerInfo.GoogleMapInfoWindow;
+import com.grandtour.ev.evgrandtour.ui.mapsView.models.UserLocation;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
@@ -176,6 +177,7 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 this.googleMap.setMyLocationEnabled(true);
+                this.googleMap.setInfoWindowAdapter(new GoogleMapInfoWindow(getActivity()));
                 presenter.onMapReady();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -247,16 +249,14 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     }
 
     @Override
-    public void showTotalRouteLength(int length) {
+    public void showTotalRouteInformation(@NonNull String infoMessage, boolean shouldShowInfoCard) {
         Context context = getContext();
         if (context != null) {
-            if (length > 0) {
-                String msg = getString(R.string.format_start_number_end_message, getString(R.string.message_total_route_lenght_is_estimated_at), length,
-                        getString(R.string.suffix_kilometers));
+            if (shouldShowInfoCard) {
                 mapsViewModel.isRouteLengthAvailable.set(true);
-                mapsViewModel.totalDistance.set(msg);
+                mapsViewModel.totalRouteInformation.set(infoMessage);
             } else {
-                mapsViewModel.totalDistance.set("0");
+                mapsViewModel.totalRouteInformation.set("");
                 mapsViewModel.isRouteLengthAvailable.set(false);
             }
         }

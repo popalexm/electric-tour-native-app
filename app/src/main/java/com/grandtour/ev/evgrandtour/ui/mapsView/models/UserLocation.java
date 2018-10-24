@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps.models;
+package com.grandtour.ev.evgrandtour.ui.mapsView.models;
 
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.Marker;

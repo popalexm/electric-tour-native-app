@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.main;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.ui.maps.MapsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.mapsView.MapsFragmentView;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

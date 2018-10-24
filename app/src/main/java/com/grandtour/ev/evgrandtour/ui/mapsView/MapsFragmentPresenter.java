@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps;
+package com.grandtour.ev.evgrandtour.ui.mapsView;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
@@ -20,10 +20,9 @@ import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.RefreshAndSaveAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveTourDetailsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.VerifyNumberOfAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
@@ -50,8 +49,6 @@ import java.util.List;
 
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
@@ -305,11 +302,12 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager())
                 .perform()
                 .doOnComplete(() -> {
-                    view.showTotalRouteLength(0);
+                    view.showTotalRouteInformation("", false);
                 })
-                .subscribe(Integer -> {
-                    int lengthInKm = Integer / 1000;
-                    view.showTotalRouteLength(lengthInKm);
+                .subscribe(distanceDurationPair -> {
+                    String infoMessage = MapUtils.generateInfoMessage(distanceDurationPair);
+                    view.showTotalRouteInformation(infoMessage, true);
+
                 }, Throwable::printStackTrace));
     }
 

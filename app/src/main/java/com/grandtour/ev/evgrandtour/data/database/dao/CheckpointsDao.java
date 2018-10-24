@@ -18,8 +18,8 @@ public interface CheckpointsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long[] insert(List<Checkpoint> checkpoints);
 
-    @Query("UPDATE Checkpoint SET distanceToNextCheckpoint= :distanceToNext WHERE checkpointId = :checkpointId")
-    void updateCheckpointById(int checkpointId, Integer distanceToNext);
+    @Query("UPDATE Checkpoint SET distanceToNextCheckpoint = :distanceToNext , durationToNextCheckpoint = :durationToNextCheckpoint  WHERE checkpointId = :checkpointId")
+    void updateCheckpointById(int checkpointId, Integer distanceToNext, Integer durationToNextCheckpoint);
 
     @Query("DELETE FROM Checkpoint")
     int deleteAll();
@@ -31,7 +31,10 @@ public interface CheckpointsDao {
     Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);
 
     @Query("SELECT DISTINCT SUM(distanceToNextCheckpoint) FROM Checkpoint")
-    Maybe<Integer> getAllDistances();
+    Maybe<Integer> getTotalDistanceForTour();
+
+    @Query("SELECT DISTINCT SUM(durationToNextCheckpoint) FROM Checkpoint")
+    Maybe<Integer> getTotalRouteTimeForTour();
 
     @Query("SELECT SUM(distanceToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
     Single<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);

@@ -45,10 +45,14 @@ public final class RoutesResponseHandler {
                         for (int legIndex = 0; legIndex < routeLegs.size(); legIndex++) {
                             int checkpointId = singleRouteRequestBatch.get(legIndex)
                                     .getCheckpointId();
+                            int distanceToNext = routeLegs.get(legIndex)
+                                    .getDistance()
+                                    .getValue();
+                            int durationToNext = routeLegs.get(legIndex)
+                                    .getDuration()
+                                    .getValue();
                             storageManager.checkpointsDao()
-                                    .updateCheckpointById(checkpointId, routeLegs.get(legIndex)
-                                            .getDistance()
-                                            .getValue());
+                                    .updateCheckpointById(checkpointId, distanceToNext, durationToNext);
                         }
                     }
                 }

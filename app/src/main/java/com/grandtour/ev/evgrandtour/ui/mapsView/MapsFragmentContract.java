@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps;
+package com.grandtour.ev.evgrandtour.ui.mapsView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -30,7 +30,7 @@ public class MapsFragmentContract {
 
         void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions);
 
-        void showTotalRouteLength(int length);
+        void showTotalRouteInformation(@NonNull String infoMessage, boolean shouldShowInfoCard);
 
         void startGoogleMapsDirections(@NonNull String navigationUri);
 

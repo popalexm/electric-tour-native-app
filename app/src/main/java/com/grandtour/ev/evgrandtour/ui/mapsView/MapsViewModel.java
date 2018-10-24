@@ -1,10 +1,9 @@
-package com.grandtour.ev.evgrandtour.ui.maps;
+package com.grandtour.ev.evgrandtour.ui.mapsView;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 
-import com.grandtour.ev.evgrandtour.ui.maps.models.UserLocation;
+import com.grandtour.ev.evgrandtour.ui.mapsView.models.UserLocation;
 
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
@@ -28,7 +27,7 @@ public class MapsViewModel {
     @NonNull
     public final ObservableField<Marker> currentSelectedMarker = new ObservableField<>();
     @NonNull
-    public final ObservableField<String> totalDistance = new ObservableField<>("");
+    public final ObservableField<String> totalRouteInformation = new ObservableField<>("");
     @NonNull
     public final ObservableBoolean isRouteLengthAvailable = new ObservableBoolean();
 

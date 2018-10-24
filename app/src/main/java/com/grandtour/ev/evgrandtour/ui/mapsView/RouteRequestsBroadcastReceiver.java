@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.maps;
+package com.grandtour.ev.evgrandtour.ui.mapsView;
 
 import com.google.android.gms.maps.model.LatLng;
 

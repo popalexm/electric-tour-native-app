@@ -13,6 +13,7 @@ import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -62,11 +63,21 @@ public final class MapUtils {
     }
 
     @NonNull
+    public static String generateInfoMessage(@NonNull Pair<Integer, Integer> distanceDurationPair) {
+        int lengthInKm = distanceDurationPair.first / 1000;
+        int duration = distanceDurationPair.second;
+        String convertedDuration = TimeUtils.convertFromSecondsToFormattedTime(duration);
+        Context ctx = Injection.provideGlobalContext();
+        return ctx.getString(R.string.format_route_inf_message, ctx.getString(R.string.message_total_route_lenght_is_estimated_at), lengthInKm,
+                ctx.getString(R.string.suffix_kilometers), convertedDuration);
+    }
+
+    @NonNull
     public static String composeUriForMapsIntentRequest(@NonNull LatLng originLatLng, @NonNull List<Checkpoint> designatedCheckpoints ) {
         StringBuilder navUriBuilder = new StringBuilder();
         navUriBuilder.append(MapConstant.MAP_URI_PREFIX);
-        String originString = originLatLng.latitude + "," + originLatLng.longitude;
-        navUriBuilder.append(originString);
+        //String originString = originLatLng.latitude + "," + originLatLng.longitude;
+        // navUriBuilder.append(originString);
         navUriBuilder.append(MapConstant.MAP_URI_DESTINATION_PREFIX);
         int checkpointsSize = designatedCheckpoints.size();
         Checkpoint destinationCheckpoint = designatedCheckpoints.get(checkpointsSize -1);
@@ -87,13 +98,14 @@ public final class MapUtils {
             }
 
         }
-        Log.e(MapUtils.TAG, "Resulted uri : " + navUriBuilder);
+        Log.i(MapUtils.TAG, "Resulted uri : " + navUriBuilder);
         return navUriBuilder.toString();
     }
 
     @NonNull
     public static List<Pair<Integer, MarkerOptions>> convertCheckpointsToMarkers(@NonNull Iterable<Checkpoint> checkpoints) {
         List<Pair<Integer, MarkerOptions>> markerInfoList = new ArrayList<>();
+        Context ctx = Injection.provideGlobalContext();
         for (Checkpoint checkpoint : checkpoints) {
             try {
                 double latitude = checkpoint.getLatitude();
@@ -103,22 +115,29 @@ public final class MapUtils {
                 Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getCheckpointId()));
 
                 Integer distanceToNext = checkpoint.getDistanceToNextCheckpoint();
+                Integer durationToNext = checkpoint.getDurationToNextCheckpoint();
+
                 if (distanceToNext != null) {
                     distanceToNext = distanceToNext / 1000;
                 } else {
                     distanceToNext = 0;
                 }
+                String formattedTime = TimeUtils.convertFromSecondsToFormattedTime(durationToNext);
+
+                String markerInfoMessage = ctx.getString(R.string.format_checkpoint_info_window_text,
+                        ctx.getString(R.string.message_distance_to_next_checkpoint), distanceToNext, ctx.getString(R.string.suffix_kilometers),
+                        ctx.getString(R.string.message_eta_to_next_checkpoint), formattedTime);
 
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .icon(BitmapDescriptorFactory.fromBitmap(icon))
-                        .snippet("Distance to the next checkpoint : " + String.valueOf(distanceToNext) + " Km")
+                        .snippet(markerInfoMessage)
                         .title(checkpoint.getCheckpointName());
 
                 Pair<Integer, MarkerOptions> markerInfo = new Pair<>(checkpoint.getCheckpointId(), markerOptions);
                 markerInfoList.add(markerInfo);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            } catch (NumberFormatException | NullPointerException exception) {
+                exception.printStackTrace();
             }
         }
         return markerInfoList;

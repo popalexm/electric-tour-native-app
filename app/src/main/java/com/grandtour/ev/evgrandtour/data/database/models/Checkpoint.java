@@ -18,6 +18,11 @@ public class Checkpoint implements Parcelable {
     private double latitude;
     private double longitude;
     private Integer distanceToNextCheckpoint;
+    private Integer durationToNextCheckpoint;
+
+    public Integer getDurationToNextCheckpoint() {
+        return durationToNextCheckpoint;
+    }
 
     public Integer getCheckpointId() {
         return checkpointId;
@@ -53,6 +58,10 @@ public class Checkpoint implements Parcelable {
 
     public Integer getDistanceToNextCheckpoint() {
         return distanceToNextCheckpoint;
+    }
+
+    public void setDurationToNextCheckpoint(Integer durationToNextCheckpoint) {
+        this.durationToNextCheckpoint = durationToNextCheckpoint;
     }
 
     public void setDistanceToNextCheckpoint(Integer distanceToNextCheckpoint) {
