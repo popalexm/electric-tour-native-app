@@ -5,6 +5,7 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
@@ -14,15 +15,12 @@ public class Checkpoint implements Parcelable {
     @PrimaryKey
     private Integer checkpointId;
     private String tourId;
+    private Integer orderInTourId;
     private String checkpointName;
     private double latitude;
     private double longitude;
     private Integer distanceToNextCheckpoint;
     private Integer durationToNextCheckpoint;
-
-    public Integer getDurationToNextCheckpoint() {
-        return durationToNextCheckpoint;
-    }
 
     public Integer getCheckpointId() {
         return checkpointId;
@@ -73,20 +71,29 @@ public class Checkpoint implements Parcelable {
 
     protected Checkpoint(Parcel in) {
         this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.tourId = (String) in.readValue(String.class.getClassLoader());
+        this.tourId = in.readString();
+        this.orderInTourId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.checkpointName = in.readString();
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
         this.distanceToNextCheckpoint = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.durationToNextCheckpoint = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public Integer getDurationToNextCheckpoint() {
+        return durationToNextCheckpoint;
     }
 
     public String getTourId() {
         return tourId;
     }
 
-    @Override
-    public String toString() {
-        return checkpointName;
+    public void setTourId(String tourId) {
+        this.tourId = tourId;
+    }
+
+    public Integer getOrderInTourId() {
+        return orderInTourId;
     }
 
     @Override
@@ -94,18 +101,26 @@ public class Checkpoint implements Parcelable {
         return 0;
     }
 
-    public void setTourId(String tourId) {
-        this.tourId = tourId;
+    public void setOrderInTourId(Integer orderInTourId) {
+        this.orderInTourId = orderInTourId;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return checkpointName;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.checkpointId);
-        dest.writeValue(this.tourId);
+        dest.writeString(this.tourId);
+        dest.writeValue(this.orderInTourId);
         dest.writeString(this.checkpointName);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
         dest.writeValue(this.distanceToNextCheckpoint);
+        dest.writeValue(this.durationToNextCheckpoint);
     }
 
     public static final Parcelable.Creator<Checkpoint> CREATOR = new Parcelable.Creator<Checkpoint>() {

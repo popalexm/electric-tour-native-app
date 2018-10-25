@@ -10,7 +10,7 @@ public class TourCheckpoint {
     private String id;
     @SerializedName("ID")
     @Expose
-    private Integer iD;
+    private Integer tourOrderId;
     @SerializedName("Description")
     @Expose
     private String description;
@@ -29,12 +29,12 @@ public class TourCheckpoint {
         this.id = id;
     }
 
-    public Integer getID() {
-        return iD;
+    public Integer getTourOrderId() {
+        return tourOrderId;
     }
 
     public void setID(Integer iD) {
-        this.iD = iD;
+        this.tourOrderId = iD;
     }
 
     public String getDescription() {

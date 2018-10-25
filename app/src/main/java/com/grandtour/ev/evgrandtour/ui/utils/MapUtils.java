@@ -112,7 +112,7 @@ public final class MapUtils {
                 double longitude = checkpoint.getLongitude();
                 IconGenerator iconGenerator = new IconGenerator(Injection.provideGlobalContext());
                 iconGenerator.setStyle(IconGenerator.STYLE_BLUE);
-                Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getCheckpointId()));
+                Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getOrderInTourId()));
 
                 Integer distanceToNext = checkpoint.getDistanceToNextCheckpoint();
                 Integer durationToNext = checkpoint.getDurationToNextCheckpoint();

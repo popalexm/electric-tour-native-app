@@ -66,6 +66,7 @@ public class SyncAndSaveTourDetailsUseCase extends BaseUseCase implements BaseUs
         List<Checkpoint> toSaveCheckpoints = new ArrayList<>();
         for (TourCheckpoint tourCheckpoint : importedCheckpoints) {
             Checkpoint checkpoint = new Checkpoint();
+            checkpoint.setOrderInTourId(tourCheckpoint.getTourOrderId());
             checkpoint.setCheckpointName(tourCheckpoint.getDescription());
             checkpoint.setTourId(tourId);
             checkpoint.setLatitude(tourCheckpoint.getLatitude());
