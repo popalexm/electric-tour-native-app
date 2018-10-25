@@ -50,9 +50,8 @@ public class DistancePickerDialogFragment extends DialogFragment implements Dist
     }
 
     @Override
-    public void displayDistance(@NonNull Integer distance) {
-        int distanceInKm = distance / 1000;
-        String dist = getString(R.string.format_distance, distanceInKm, getString(R.string.suffix_kilometers));
+    public void displayDistance(@NonNull Integer distance, @NonNull String duration) {
+        String dist = getString(R.string.format_route_inf_message, "Distance : ", distance, getString(R.string.suffix_kilometers), duration);
         distancePickerViewModel.calculatedDistance.set(dist);
     }
 
@@ -60,7 +59,7 @@ public class DistancePickerDialogFragment extends DialogFragment implements Dist
     public void calculateDistances() {
         int startId = distancePickerViewModel.selectedStartCheckpoint.get();
         int endId = distancePickerViewModel.selectedEndCheckpoint.get();
-        presenter.startRouteCalculations(distancePickerViewModel.totalCheckpoints.get(startId)
+        presenter.onCalculateRouteInformationClicked(distancePickerViewModel.totalCheckpoints.get(startId)
                 .getCheckpointId(), distancePickerViewModel.totalCheckpoints.get(endId)
                 .getCheckpointId());
     }

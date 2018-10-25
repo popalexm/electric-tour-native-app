@@ -38,4 +38,7 @@ public interface CheckpointsDao {
 
     @Query("SELECT SUM(distanceToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
     Single<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+
+    @Query("SELECT SUM(durationToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
+    Single<Integer> getDrivingTimeBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
 }

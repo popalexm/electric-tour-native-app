@@ -8,7 +8,7 @@ public class DistancePickerContract extends BaseContract {
 
     public interface View extends BaseContract.View {
 
-        void displayDistance(@NonNull Integer distance);
+        void displayDistance(@NonNull Integer distance, String duration);
 
         void calculateDistances();
 
@@ -21,7 +21,7 @@ public class DistancePickerContract extends BaseContract {
 
         void onDismissButtonClicked();
 
-        void startRouteCalculations(@NonNull Integer start, @NonNull Integer end);
+        void onCalculateRouteInformationClicked(@NonNull Integer start, @NonNull Integer end);
 
     }
 }

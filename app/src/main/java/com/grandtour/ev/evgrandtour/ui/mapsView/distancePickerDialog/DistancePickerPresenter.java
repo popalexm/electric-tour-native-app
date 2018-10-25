@@ -1,8 +1,10 @@
 package com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog;
 
+import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
-import com.grandtour.ev.evgrandtour.domain.useCases.CalculateDistanceBetweenTwoCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetDrivingInfoBetweenTwoCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
+import com.grandtour.ev.evgrandtour.ui.utils.TimeUtils;
 
 import android.support.annotation.NonNull;
 
@@ -31,15 +33,21 @@ public class DistancePickerPresenter extends BasePresenter implements DistancePi
     }
 
     @Override
-    public void startRouteCalculations(@NonNull Integer startCheckpointId, @NonNull Integer endCheckpointId) {
-        CalculateDistanceBetweenTwoCheckpointsUseCase calculateDistance = new CalculateDistanceBetweenTwoCheckpointsUseCase(Schedulers.io(),
+    public void onCalculateRouteInformationClicked(@NonNull Integer startCheckpointId, @NonNull Integer endCheckpointId) {
+        GetDrivingInfoBetweenTwoCheckpointsUseCase calculateDistance = new GetDrivingInfoBetweenTwoCheckpointsUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId);
         addSubscription(calculateDistance.perform()
-                .doOnSuccess(view::displayDistance)
+                .doOnSuccess(distanceDurationPair -> {
+                    int distance = distanceDurationPair.first;
+                    String duration = TimeUtils.convertFromSecondsToFormattedTime(distanceDurationPair.second);
+                    int distanceInKm = distance / 1000;
+                    view.displayDistance(distanceInKm, duration);
+                })
                 .doOnError(throwable -> {
                     throwable.printStackTrace();
                     if (isViewAttached) {
-                        view.showMessage("Could not calculate routes, please make sure the selected end checkpoint is set after the start checkpoint!");
+                        view.showMessage(Injection.provideGlobalContext()
+                                .getString(R.string.error_message_could_not_calculate_routes));
                     }
                 })
                 .subscribe());
