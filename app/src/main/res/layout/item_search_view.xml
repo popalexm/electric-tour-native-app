@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel"></variable>
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_small"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:onClick="@{()-> viewModel.clickListener.OnSearchResultClicked(viewModel.searchResultId)}"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtSearchResultId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.3"
+                android:gravity="center"
+                android:padding="@dimen/margin_medium"
+                android:text="@{viewModel.searchResultTourId}" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.7"
+                android:padding="@dimen/margin_medium"
+                android:text="@{viewModel.searchResultName}" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+</layout>
+

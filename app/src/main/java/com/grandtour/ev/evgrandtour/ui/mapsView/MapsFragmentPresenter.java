@@ -9,6 +9,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Route;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
@@ -20,11 +21,13 @@ import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.RefreshAndSaveAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveTourDetailsUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
+import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
 
@@ -222,6 +225,31 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 .subscribe());
     }
 
+    @Override
+    public void onNewSearchQuery(@NonNull String text) {
+        addSubscription(
+                new QueryForRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), text.toLowerCase()).perform()
+                        .doOnSuccess(checkpoints -> {
+                            view.displaySearchResults(createSearchResultViewModels(checkpoints));
+                        })
+                        .subscribe());
+    }
+
+    private List<SearchResultViewModel> createSearchResultViewModels(@NonNull Iterable<Checkpoint> checkpoints) {
+        List<SearchResultViewModel> searchResultViewModels = new ArrayList<>();
+        for (Checkpoint details : checkpoints) {
+            SearchResultViewModel viewModel = new SearchResultViewModel(details.getCheckpointId(), String.valueOf(details.getOrderInTourId()),
+                    details.getCheckpointName(), this);
+            searchResultViewModels.add(viewModel);
+        }
+        return searchResultViewModels;
+    }
+
+    @Override
+    public void onSearchQueryCleared() {
+        view.clearSearchResults();
+    }
+
     private void syncAllAvailableToursDetails() {
         addSubscription(new GetAvailableTourIDsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(tours -> {
@@ -347,6 +375,12 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onServiceDisconnected(ComponentName name) {
         routeDirectionsRequestService = null;
+    }
+
+    @Override
+    public void OnSearchResultClicked(@NonNull Integer checkpointId) {
+        Log.e(TAG, "String ");
+
     }
 
     private class LocationUpdateCallback extends LocationCallback {

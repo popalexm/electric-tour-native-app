@@ -27,6 +27,9 @@ public interface CheckpointsDao {
     @Query("SELECT * FROM Checkpoint WHERE tourId= :tourId")
     Maybe<List<Checkpoint>> getAllCheckpointsForTourId(String tourId);
 
+    @Query("SELECT * FROM Checkpoint WHERE (checkpointName LIKE :queryText OR checkpointId LIKE :queryText) AND tourId = :tourId")
+    Maybe<List<Checkpoint>> getCheckpointsThatMatchQuery(String queryText, String tourId);
+
     @Query("SELECT * FROM Checkpoint WHERE checkpointId > :checkpointId LIMIT 10")
     Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);
 

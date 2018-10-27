@@ -19,6 +19,8 @@ import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.markerInfo.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mapsView.models.UserLocation;
+import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
+import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultsListViewModel;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
@@ -39,6 +41,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.SearchView;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,19 +49,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends Fragment implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener {
+public class MapsFragmentView extends Fragment
+        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener, SearchView.OnQueryTextListener {
 
     @NonNull
     public static final String TAG = MapsFragmentView.class.getSimpleName();
-
     @NonNull
     private GoogleMap googleMap;
     @NonNull
     private MapView mapView;
     @NonNull
     private final MapsViewModel mapsViewModel = new MapsViewModel();
+    @NonNull
+    private final SearchResultsListViewModel searchResultViewModel = new SearchResultsListViewModel();
     @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
     @NonNull
@@ -74,7 +80,9 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentMainMapViewBinding mapFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_map_view, container, false);
         mapFragmentBinding.setViewModel(mapsViewModel);
+        mapFragmentBinding.setSearchViewModel(searchResultViewModel);
         mapFragmentBinding.setPresenter(presenter);
+        mapFragmentBinding.searchViewCheckpoints.setOnQueryTextListener(this);
         mapView = mapFragmentBinding.getRoot()
                 .findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -273,7 +281,6 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
 
     @Override
     public void startGoogleMapsDirections(@NonNull String navigationUri) {
-       //"https://www.google.com/maps/dir/?api=1&origin=22.553600,88.409969&destination=22.569272,88.406490&waypoints=22.558090,88.411363|22.561650,88.408066|22.561955,88.407858";
          Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUri));
          startActivity(mapIntent);
     }
@@ -307,6 +314,18 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
         }
     }
 
+    @Override
+    public void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints) {
+        searchResultViewModel.parameters.clear();
+        searchResultViewModel.parameters.addAll(checkpoints);
+    }
+
+    @Override
+    public void clearSearchResults() {
+        searchResultViewModel.parameters.clear();
+        searchResultViewModel.parameters.addAll(new ArrayList<>());
+    }
+
     /** Delegated methods from the main activity
      */
     public void clearMapDataClicked() {
@@ -338,5 +357,20 @@ public class MapsFragmentView extends Fragment implements MapsFragmentContract.V
                 presenter.onStopCalculatingRoutesClicked();
                 break;
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String searchQuery) {
+        if (searchQuery.equals("")) {
+            presenter.onSearchQueryCleared();
+        } else {
+            presenter.onNewSearchQuery(searchQuery);
+        }
+        return false;
     }
 }

@@ -8,6 +8,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Tour;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
+import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchViewResultClickListener;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View{
+    public interface View extends BaseContract.View {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
@@ -37,9 +39,13 @@ public class MapsFragmentContract {
         void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints);
 
         void showTourPickerDialog(@NonNull List<Tour> tours);
+
+        void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints);
+
+        void clearSearchResults();
     }
 
-    public interface Presenter extends BaseContract.Presenter {
+    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
 
         void onMapReady();
 
@@ -66,5 +72,9 @@ public class MapsFragmentContract {
         void onChooseTourClicked();
 
         void onTourSelected(@NonNull String tourId);
+
+        void onNewSearchQuery(@NonNull String text);
+
+        void onSearchQueryCleared();
     }
 }
