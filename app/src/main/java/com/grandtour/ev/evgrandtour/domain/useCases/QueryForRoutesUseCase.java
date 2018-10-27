@@ -31,7 +31,7 @@ public class QueryForRoutesUseCase extends BaseUseCase implements BaseUseCaseMay
     @Override
     public Maybe<List<Checkpoint>> perform() {
         return storageManager.tourDao()
-                .getCurrentlySelectedTour()
+                .getCurrentlySelectedTourId()
                 .flatMap((Function<String, MaybeSource<List<Checkpoint>>>) tourId -> storageManager.checkpointsDao()
                         .getCheckpointsThatMatchQuery("%" + queryText + "%", tourId));
     }

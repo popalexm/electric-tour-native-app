@@ -48,14 +48,16 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentView extends Fragment
-        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, View.OnClickListener, SearchView.OnQueryTextListener {
+        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, SearchView.OnQueryTextListener {
 
+    public static final int ZOOM_LEVEL = 13;
     @NonNull
     public static final String TAG = MapsFragmentView.class.getSimpleName();
     @NonNull
@@ -156,15 +158,9 @@ public class MapsFragmentView extends Fragment
     }
 
     @Override
-    public void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg) {
+    public void showLoadingView(boolean isLoading) {
         if (isLoading) {
             mapsViewModel.isLoadingInProgress.set(true);
-            mapsViewModel.progressMessage.set(msg);
-            if (isCancelable) {
-                mapsViewModel.isCancelEnabled.set(true);
-            } else {
-                mapsViewModel.isCancelEnabled.set(false);
-            }
         } else {
             mapsViewModel.isLoadingInProgress.set(false);
         }
@@ -242,7 +238,7 @@ public class MapsFragmentView extends Fragment
             Integer checkpointId = (Integer) checkpoint.getTag();
             if (checkpointId != null) {
                 if (checkpointId.equals(markerCheckpointId)) {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(checkpoint.getPosition(), 14));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(checkpoint.getPosition(), MapsFragmentView.ZOOM_LEVEL));
                 }
             }
         }
@@ -334,6 +330,38 @@ public class MapsFragmentView extends Fragment
         searchResultViewModel.parameters.addAll(new ArrayList<>());
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String searchQuery) {
+        if (searchQuery.equals("")) {
+            presenter.onSearchQueryCleared();
+        } else {
+            presenter.onNewSearchQuery(searchQuery);
+        }
+        return false;
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker navigateToMarker) {
+        presenter.onNavigationClicked(navigateToMarker);
+    }
+
+    @Override
+    public void hideSoftKeyboard() {
+        Activity activity = getActivity();
+        if (activity != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            if (activity.getCurrentFocus() != null) {
+                inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus()
+                        .getWindowToken(), 0); // hide
+            }
+        }
+    }
+
     /** Delegated methods from the main activity
      */
     public void clearMapDataClicked() {
@@ -356,34 +384,5 @@ public class MapsFragmentView extends Fragment
 
     public void onCalculateDistanceBetweenCheckpoints() {
         presenter.onCalculateDistanceBetweenTwoCheckpointsClicked();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btn_cancel_route_calculations:
-                presenter.onStopCalculatingRoutesClicked();
-                break;
-        }
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String searchQuery) {
-        if (searchQuery.equals("")) {
-            presenter.onSearchQueryCleared();
-        } else {
-            presenter.onNewSearchQuery(searchQuery);
-        }
-        return false;
-    }
-
-    @Override
-    public void onInfoWindowLongClick(Marker navigateToMarker) {
-        presenter.onNavigationClicked(navigateToMarker);
     }
 }

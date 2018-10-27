@@ -49,14 +49,22 @@
             android:selectedItemPosition="@={viewModel.selectedEndCheckpoint}" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:text="@string/hint_distance_between"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/distance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:hint="@string/hint_distance_between"
+            android:textColor="@color/colorSecondaryGreen"
             android:text="@={viewModel.calculatedDistance}"
             android:textAlignment="center"
-            android:textColor="@android:color/holo_red_light" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/buttonCalculate"

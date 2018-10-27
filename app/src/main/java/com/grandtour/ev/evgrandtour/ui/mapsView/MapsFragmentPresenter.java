@@ -101,15 +101,14 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onCalculatingRoutesStarted() {
         if (isViewAttached) {
-            view.showLoadingView(true, true, Injection.provideGlobalContext()
-                    .getString(R.string.message_calculating_routes));
+            view.showLoadingView(true);
         }
     }
 
     @Override
     public void onCalculatingRoutesDone() {
         if (isViewAttached) {
-            view.showLoadingView(false, false, "");
+            view.showLoadingView(false);
         }
         reloadAvailableCheckpointsAndRoutes();
     }
@@ -125,7 +124,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     .getString(R.string.error_message_internet_connection_intrerupted));
         }
         if (isViewAttached) {
-            view.showLoadingView(false, false, "");
+            view.showLoadingView(false);
         }
     }
 
@@ -140,16 +139,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onClearCheckpointsAndRoutesClicked() {
         deleteAllCheckpointsAndRoutes();
-    }
-
-    @Override
-    public void onStopCalculatingRoutesClicked() {
-        if (routeDirectionsRequestService != null) {
-            routeDirectionsRequestService.stopSelf();
-        }
-        if (isViewAttached) {
-            view.showLoadingView(false, false, "");
-        }
     }
 
     @Override
@@ -193,7 +182,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     .doOnSubscribe(disposable -> {
                         if (isViewAttached) {
                             String msg = Injection.provideGlobalContext().getString(R.string.message_retrieving_available_tours);
-                            view.showLoadingView(true, false, msg);
+                            view.showLoadingView(true);
                         }
                     })
                     .doOnSuccess(entireTourResponseResponse -> {
@@ -204,7 +193,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     .doOnError(throwable -> {
                         throwable.printStackTrace();
                         if (isViewAttached) {
-                            view.showLoadingView(false, false, "");
+                            view.showLoadingView(false);
                         }
                         String errorMsg = Injection.provideGlobalContext().getString(R.string.message_error_occured);
                         displayShortMessage(errorMsg);
@@ -257,14 +246,14 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                             Injection.provideStorageManager(), tours).perform()
                             .doOnComplete(() -> {
                                 if (isViewAttached) {
-                                    view.showLoadingView(false, false, "");
+                                    view.showLoadingView(false);
                                 }
                                 openTourPickerDialog();
                             })
                             .doOnError(throwable -> {
                                 throwable.printStackTrace();
                                 if (isViewAttached) {
-                                    view.showLoadingView(false, false, "");
+                                    view.showLoadingView(false);
                                 }
                             })
                             .subscribe();
@@ -294,8 +283,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     private void reloadAvailableCheckpointsAndRoutes() {
         if (isViewAttached) {
-            view.showLoadingView(true, false, Injection.provideGlobalContext()
-                    .getString(R.string.message_loading_available_checkpoints_and_routes));
+            view.showLoadingView(true);
             view.clearMapCheckpoints();
             view.clearMapRoutes();
         }
@@ -322,7 +310,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         Maybe.concat(getAvailableCheckpoints, getAvailableRoutes)
                 .doOnComplete(() -> {
                     if (isViewAttached) {
-                        view.showLoadingView(false, false, "");
+                        view.showLoadingView(false);
                     }
                 })
                 .subscribe();
@@ -379,6 +367,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void OnSearchResultClicked(@NonNull Integer checkpointId) {
+        view.hideSoftKeyboard();
         view.moveToMarker(checkpointId);
         view.clearSearchResults();
     }

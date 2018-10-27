@@ -2,6 +2,7 @@
 <resources>
     <string name="format_checkpoint_info_window_text">%1$s %2$d %3$s %4$s %5$s</string>
     <string name="format_start_number_end_message" > %1$s  %2$d  %3$s </string>
+    <string name="format_distance_between"> %1$d  %2$s (%3$s) </string>
     <string name="format_route_inf_message"> %1$s  %2$d  %3$s (%4$s) </string>
     <string name="format_navigation_directions">%1$s%2$f,%3$f</string>
     <string name="format_distance">%1$d %2$s</string>

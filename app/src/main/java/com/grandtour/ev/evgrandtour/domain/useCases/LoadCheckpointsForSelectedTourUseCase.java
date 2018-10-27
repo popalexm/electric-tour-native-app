@@ -28,7 +28,7 @@ public class LoadCheckpointsForSelectedTourUseCase extends BaseUseCase implement
     @Override
     public Maybe<List<Checkpoint>> perform() {
         return storageManager.tourDao()
-                .getCurrentlySelectedTour()
+                .getCurrentlySelectedTourId()
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread)
                 .flatMap((Function<String, MaybeSource<List<Checkpoint>>>) tourId -> storageManager.checkpointsDao()

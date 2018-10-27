@@ -27,7 +27,7 @@ public class GetAvailableRoutesUseCase extends BaseUseCase implements BaseUseCas
     @Override
     public Maybe<List<Route>> perform() {
         return storageManager.tourDao()
-                .getCurrentlySelectedTour()
+                .getCurrentlySelectedTourId()
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread)
                 .flatMap(new Function<String, MaybeSource<List<Route>>>() {

@@ -29,9 +29,9 @@ public class GoogleMapInfoWindow implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoContents(Marker marker) {
         View windowLayout = context.getLayoutInflater()
-                .inflate(R.layout.info_window, null);
+                .inflate(R.layout.map_marker_info_window, null);
         TextView txtCheckpointName = windowLayout.findViewById(R.id.txtCheckpointName);
-        TextView txtCheckpointLenght = windowLayout.findViewById(R.id.txtViewLength);
+        TextView txtCheckpointDistance = windowLayout.findViewById(R.id.txtViewLength);
         TextView txtCheckpointDuration = windowLayout.findViewById(R.id.txtViewDuration);
 
         String bodyText = marker.getSnippet();
@@ -39,7 +39,7 @@ public class GoogleMapInfoWindow implements GoogleMap.InfoWindowAdapter {
         int position = bodyText.indexOf(GoogleMapInfoWindow.KM_PATTERN);
         int positionIncludingPattern = position + GoogleMapInfoWindow.KM_PATTERN.length();
         String distanceToNext = bodyText.substring(0, positionIncludingPattern);
-        txtCheckpointLenght.setText(distanceToNext);
+        txtCheckpointDistance.setText(distanceToNext);
         String travelTimeToNext = bodyText.substring(positionIncludingPattern);
         txtCheckpointDuration.setText(travelTimeToNext);
         return windowLayout;

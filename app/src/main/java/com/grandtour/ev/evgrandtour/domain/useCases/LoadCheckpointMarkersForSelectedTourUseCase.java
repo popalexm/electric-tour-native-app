@@ -32,7 +32,7 @@ public class LoadCheckpointMarkersForSelectedTourUseCase extends BaseUseCase imp
     @Override
     public Maybe<List<Pair<Integer, MarkerOptions>>> perform() {
         return storageManager.tourDao()
-                .getCurrentlySelectedTour()
+                .getCurrentlySelectedTourId()
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread)
                 .flatMap((Function<String, MaybeSource<List<Pair<Integer, MarkerOptions>>>>) tourId -> storageManager.checkpointsDao()

@@ -13,9 +13,9 @@
         android:layout_marginStart="31dp"
         android:layout_marginTop="22dp"
         android:layout_toEndOf="@id/info"
-        android:src="@drawable/ic_navigation_black_24dp"
-        app:backgroundTint="@android:color/white"
-        app:elevation="2dp" />
+        android:src="@drawable/ic_navigation_white_24dp"
+        app:backgroundTint="@color/colorSecondaryGreen"
+        app:elevation="3dp" />
 
     <LinearLayout
         android:id="@+id/info"

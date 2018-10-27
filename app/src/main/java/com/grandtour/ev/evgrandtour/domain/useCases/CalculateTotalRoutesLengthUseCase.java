@@ -9,7 +9,7 @@ import android.util.Pair;
 
 import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
-import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Function3;
 
 public class CalculateTotalRoutesLengthUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
@@ -23,7 +23,7 @@ public class CalculateTotalRoutesLengthUseCase extends BaseUseCase implements Ba
     }
 
     @Override
-    public Maybe<Pair<Integer, Integer>> perform() {
+    public Maybe<Pair<Pair<Integer, Integer>, String>> perform() {
         Maybe<Integer> distance = storageManager.checkpointsDao()
                 .getTotalDistanceForTour()
                 .subscribeOn(executorThread)
@@ -32,10 +32,15 @@ public class CalculateTotalRoutesLengthUseCase extends BaseUseCase implements Ba
                 .getTotalRouteTimeForTour()
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
-        return Maybe.zip(distance, duration, new BiFunction<Integer, Integer, Pair<Integer, Integer>>() {
+        Maybe<String> selectedRouteName = storageManager.tourDao()
+                .getCurrentlySelectedTourName()
+                .subscribeOn(executorThread)
+                .observeOn(postExecutionThread);
+        return Maybe.zip(distance, duration, selectedRouteName, new Function3<Integer, Integer, String, Pair<Pair<Integer, Integer>, String>>() {
             @Override
-            public Pair<Integer, Integer> apply(Integer distance, Integer duration) {
-                return new Pair<>(distance, duration);
+            public Pair<Pair<Integer, Integer>, String> apply(Integer distance, Integer duration, String routeTitle) {
+                Pair<Integer, Integer> distanceDurationPair = new Pair<>(distance, duration);
+                return new Pair<>(distanceDurationPair, routeTitle);
             }
         });
     }

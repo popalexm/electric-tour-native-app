@@ -63,12 +63,14 @@ public final class MapUtils {
     }
 
     @NonNull
-    public static String generateInfoMessage(@NonNull Pair<Integer, Integer> distanceDurationPair) {
-        int lengthInKm = distanceDurationPair.first / 1000;
-        int duration = distanceDurationPair.second;
+    public static String generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {
+        Pair<Integer, Integer> distanceDuration = routeInfoPair.first;
+        int lengthInKm = distanceDuration.first / 1000;
+        int duration = distanceDuration.second;
+        String routeName = routeInfoPair.second;
         String convertedDuration = TimeUtils.convertFromSecondsToFormattedTime(duration);
         Context ctx = Injection.provideGlobalContext();
-        return ctx.getString(R.string.format_route_inf_message, ctx.getString(R.string.message_total_route_lenght_is_estimated_at), lengthInKm,
+        return ctx.getString(R.string.format_route_inf_message, routeName + " |", lengthInKm,
                 ctx.getString(R.string.suffix_kilometers), convertedDuration);
     }
 

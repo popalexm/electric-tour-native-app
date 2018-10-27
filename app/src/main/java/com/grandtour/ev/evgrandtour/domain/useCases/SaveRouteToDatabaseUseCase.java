@@ -31,7 +31,7 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
     @Override
     public Maybe<Long> perform() {
         return storageManager.tourDao()
-                .getCurrentlySelectedTour()
+                .getCurrentlySelectedTourId()
                 .subscribeOn(executorThread)
                 .observeOn(executorThread)
                 .flatMap(new Function<String, MaybeSource<Long>>() {

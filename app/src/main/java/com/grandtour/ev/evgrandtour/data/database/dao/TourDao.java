@@ -21,7 +21,10 @@ public interface TourDao {
     Maybe<List<Tour>> getAllAvailableTours();
 
     @Query("SELECT tourId FROM TOUR WHERE isCurrentSelection= 1")
-    Maybe<String> getCurrentlySelectedTour();
+    Maybe<String> getCurrentlySelectedTourId();
+
+    @Query("SELECT name FROM TOUR WHERE isCurrentSelection= 1")
+    Maybe<String> getCurrentlySelectedTourName();
 
     @Query("UPDATE TOUR SET isCurrentSelection = :isSelected WHERE tourId = :tourId")
     void updateTourSelectionById(String tourId, Integer isSelected);

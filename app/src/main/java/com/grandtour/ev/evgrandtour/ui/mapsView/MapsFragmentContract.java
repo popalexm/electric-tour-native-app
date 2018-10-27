@@ -46,6 +46,8 @@ public class MapsFragmentContract {
         void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints);
 
         void clearSearchResults();
+
+        void hideSoftKeyboard();
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
@@ -63,8 +65,6 @@ public class MapsFragmentContract {
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
         void onClearCheckpointsAndRoutesClicked();
-
-        void onStopCalculatingRoutesClicked();
 
         void onNavigationClicked(@NonNull Marker originMarker);
 

@@ -6,7 +6,7 @@ public class BaseContract {
 
     public interface View {
 
-        void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg);
+        void showLoadingView(boolean isLoading);
 
         void showMessage(@NonNull String msg);
     }

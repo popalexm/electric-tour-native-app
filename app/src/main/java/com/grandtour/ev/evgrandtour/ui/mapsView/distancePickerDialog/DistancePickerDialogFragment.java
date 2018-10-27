@@ -51,7 +51,7 @@ public class DistancePickerDialogFragment extends DialogFragment implements Dist
 
     @Override
     public void displayDistance(@NonNull Integer distance, @NonNull String duration) {
-        String dist = getString(R.string.format_route_inf_message, "Distance : ", distance, getString(R.string.suffix_kilometers), duration);
+        String dist = getString(R.string.format_distance_between, distance, getString(R.string.suffix_kilometers), duration);
         distancePickerViewModel.calculatedDistance.set(dist);
     }
 
@@ -70,7 +70,7 @@ public class DistancePickerDialogFragment extends DialogFragment implements Dist
     }
 
     @Override
-    public void showLoadingView(boolean isLoading, boolean isCancelable, @NonNull String msg) {
+    public void showLoadingView(boolean isLoading) {
     }
 
     @Override
