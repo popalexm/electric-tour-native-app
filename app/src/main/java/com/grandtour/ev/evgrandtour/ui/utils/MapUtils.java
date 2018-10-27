@@ -73,11 +73,9 @@ public final class MapUtils {
     }
 
     @NonNull
-    public static String composeUriForMapsIntentRequest(@NonNull LatLng originLatLng, @NonNull List<Checkpoint> designatedCheckpoints ) {
+    public static String composeUriForMapsIntentRequest(@NonNull List<Checkpoint> designatedCheckpoints) {
         StringBuilder navUriBuilder = new StringBuilder();
         navUriBuilder.append(MapConstant.MAP_URI_PREFIX);
-        //String originString = originLatLng.latitude + "," + originLatLng.longitude;
-        // navUriBuilder.append(originString);
         navUriBuilder.append(MapConstant.MAP_URI_DESTINATION_PREFIX);
         int checkpointsSize = designatedCheckpoints.size();
         Checkpoint destinationCheckpoint = designatedCheckpoints.get(checkpointsSize -1);
@@ -111,7 +109,7 @@ public final class MapUtils {
                 double latitude = checkpoint.getLatitude();
                 double longitude = checkpoint.getLongitude();
                 IconGenerator iconGenerator = new IconGenerator(Injection.provideGlobalContext());
-                iconGenerator.setStyle(IconGenerator.STYLE_BLUE);
+                iconGenerator.setStyle(IconGenerator.STYLE_ORANGE);
                 Bitmap icon = iconGenerator.makeIcon(String.valueOf(checkpoint.getOrderInTourId()));
 
                 Integer distanceToNext = checkpoint.getDistanceToNextCheckpoint();
@@ -123,7 +121,6 @@ public final class MapUtils {
                     distanceToNext = 0;
                 }
                 String formattedTime = TimeUtils.convertFromSecondsToFormattedTime(durationToNext);
-
                 String markerInfoMessage = ctx.getString(R.string.format_checkpoint_info_window_text,
                         ctx.getString(R.string.message_distance_to_next_checkpoint), distanceToNext, ctx.getString(R.string.suffix_kilometers),
                         ctx.getString(R.string.message_eta_to_next_checkpoint), formattedTime);

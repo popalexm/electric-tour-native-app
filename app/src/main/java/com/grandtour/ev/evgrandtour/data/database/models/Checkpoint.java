@@ -22,8 +22,7 @@ public class Checkpoint implements Parcelable {
     private Integer distanceToNextCheckpoint;
     private Integer durationToNextCheckpoint;
 
-    public Integer getCheckpointId() {
-        return checkpointId;
+    public Checkpoint() {
     }
 
     public void setCheckpointId(Integer checkpointId) {
@@ -66,7 +65,8 @@ public class Checkpoint implements Parcelable {
         this.distanceToNextCheckpoint = distanceToNextCheckpoint;
     }
 
-    public Checkpoint() {
+    public Integer getCheckpointId() {
+        return checkpointId;
     }
 
     protected Checkpoint(Parcel in) {

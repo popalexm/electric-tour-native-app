@@ -160,7 +160,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     checkpointId).perform()
                     .subscribe(checkpoints -> {
                         if (checkpoints.size() != 0) {
-                            String navUri = MapUtils.composeUriForMapsIntentRequest(originMarker.getPosition(), checkpoints);
+                            String navUri = MapUtils.composeUriForMapsIntentRequest(checkpoints);
                             if (isViewAttached) {
                                 view.startGoogleMapsDirections(navUri);
                             }

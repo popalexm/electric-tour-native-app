@@ -187,6 +187,7 @@ public class MapsFragmentView extends Fragment
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 this.googleMap.setMyLocationEnabled(true);
                 this.googleMap.setInfoWindowAdapter(new GoogleMapInfoWindow(getActivity()));
+                this.googleMap.setOnInfoWindowLongClickListener(this);
                 presenter.onMapReady();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -265,6 +266,9 @@ public class MapsFragmentView extends Fragment
 
     @Override
     public void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions) {
+        routePolyOptions.color(getContext().getResources()
+                .getColor(R.color.colorSecondaryGreen));
+
         Polyline route = googleMap.addPolyline(routePolyOptions);
         mapsViewModel.routes.add(route);
     }
@@ -280,15 +284,6 @@ public class MapsFragmentView extends Fragment
                 mapsViewModel.totalRouteInformation.set("");
                 mapsViewModel.isRouteLengthAvailable.set(false);
             }
-        }
-    }
-
-    public void openNavigationForSelectedMarker() {
-        Marker navigateToMarker = mapsViewModel.currentSelectedMarker.get();
-        if (navigateToMarker != null) {
-            presenter.onNavigationClicked(navigateToMarker);
-        } else {
-            showMessage(getString(R.string.message_no_checkpoint_selected));
         }
     }
 
@@ -385,5 +380,10 @@ public class MapsFragmentView extends Fragment
             presenter.onNewSearchQuery(searchQuery);
         }
         return false;
+    }
+
+    @Override
+    public void onInfoWindowLongClick(Marker navigateToMarker) {
+        presenter.onNavigationClicked(navigateToMarker);
     }
 }

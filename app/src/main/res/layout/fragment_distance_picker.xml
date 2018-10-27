@@ -2,7 +2,6 @@
 <layout>
 
     <data>
-
         <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerViewModel" />
@@ -23,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:text="Start Checkpoint"
+            android:text="@string/label_start_checkpoint"
             android:textAlignment="center" />
 
         <android.support.v7.widget.AppCompatSpinner
@@ -38,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="End Checkpoint"
+            android:text="@string/label_end_checkpoint"
             android:textAlignment="center" />
 
         <android.support.v7.widget.AppCompatSpinner
@@ -49,47 +48,51 @@
             android:entries="@{viewModel.totalCheckpoints}"
             android:selectedItemPosition="@={viewModel.selectedEndCheckpoint}" />
 
-        <Button
-            android:id="@+id/button"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:background="@drawable/btn_background"
-            android:textColor="@android:color/black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/fab_margin"
-            android:onClick="@{() -> presenter.onCalculateDistanceBetweenCheckpoints()}"
-            android:text="Calculate Distance" />
-
         <TextView
             android:id="@+id/distance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:hint="Distance between .."
+            android:hint="@string/hint_distance_between"
             android:text="@={viewModel.calculatedDistance}"
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_light" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/colorAccent" />
-
-
         <Button
-            android:id="@+id/btnDismiss"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:id="@+id/buttonCalculate"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="@dimen/margin_extra_large"
-            android:layout_marginStart="@dimen/margin_extra_large"
-            android:layout_marginTop="8dp"
-            android:onClick="@{() -> presenter.onDismissButtonClicked()}"
-            android:text="Dismiss" />
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/btn_background"
+            android:onClick="@{() -> presenter.onCalculateDistanceBetweenCheckpoints()}"
+            android:text="@string/btn_calculate"
+            android:textColor="@android:color/black" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+            <Button
+                android:id="@+id/buttonDismiss"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="@dimen/fab_margin"
+                android:background="@drawable/btn_background_cancel"
+                android:onClick="@{() -> presenter.onDismissButtonClicked()}"
+                android:text="@string/btn_dimiss"
+                android:textColor="@android:color/white" />
+
+        </RelativeLayout>
     </LinearLayout>
-
 </layout>
 

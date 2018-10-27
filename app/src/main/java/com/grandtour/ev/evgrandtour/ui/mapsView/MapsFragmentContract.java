@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.mapsView;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View {
+    public interface View extends BaseContract.View, GoogleMap.OnInfoWindowLongClickListener {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 

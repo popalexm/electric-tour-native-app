@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onMenuItemClick(MenuItem item) {
         MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
         switch (item.getItemId()) {
-            case R.id.btn_sync_available_tours :
-                if (mapsFragmentView != null) {
-                    mapsFragmentView.onChooseTourClicked();
-                }
-                break;
             case R.id.action_delete_waypoints :
                 if (mapsFragmentView != null) {
                     mapsFragmentView.clearMapDataClicked();
@@ -68,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
         if (mapsFragmentView != null) {
-            mapsFragmentView.openNavigationForSelectedMarker();
+            mapsFragmentView.onChooseTourClicked();
         }
     }
 }
