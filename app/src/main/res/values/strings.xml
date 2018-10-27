@@ -1,31 +1,15 @@
 <resources>
     <string name="app_name">Electric Tour</string>
-    <string name="action_settings">Settings</string>
 
     <string name="message_distance_to_next_checkpoint">Distance to next : </string>
     <string name="message_eta_to_next_checkpoint">ETA to next : </string>
-    <string name="message_error_opening_file">There was an error while trying to open the selected file!</string>
-    <string name="message_error_format_invalid">File format is invalid !</string>
     <string name="title_marker_current_location">Current location</string>
-    <string name="message_calculating_routes">Calculating routes in progress !</string>
-    <string name="message_loading_checkpoints">Loading checkpoints in progress !</string>
-    <string name="message_loading_available_checkpoints_and_routes">Loading all available checkpoints and routes !</string>
-    <string name="message_done">Done</string>
-    <string name="message_all_waypoints_removed">All Waypoints have been removed !</string>
-    <string name="message_added">Added </string>
-    <string name="message_checkpoints">Checkpoints !</string>
-    <string name="message_no_checkpoint_selected">Please select a checkpoint to start Navigation Mode</string>
-    <string name="message_loading_checpoints">Loading checkpoints !</string>
     <string name="message_are_you_sure_you_want_to_delete_all_data">Are you sure you want to delete all the imported checkpoints and routes?</string>
     <string name="title_are_you_sure">Are you sure ?</string>
-    <string name="title_route_length">Route Length !</string>
-    <string name="title_route_recalculation">Route Recalculation !</string>
-    <string name="title_select_tour">Select a tour !</string>
+    <string name="title_select_tour">Select a daily route !</string>
     <string name="message_retrieving_available_tours">Retrieving all available tours !</string>
     <string name="message_no_internet_reloading_saved_tour">Internet Connection is not available at this moment, reloading your last saved tour !</string>
     <string name="message_error_occured">An error occurred while retrieving the tours !</string>
-    <string name="message_total_route_lenght_is_estimated_at">Total : </string>
-    <string name="message_are_you_sure_you_want_to_recalculate">Are you sure you want to re-calculate the current routes ? This action requires an active internet connection!</string>
     <string name="message_route_calculations_running_in_background">Route directions are being calculated while the applications is in the background !</string>
     <string name="error_message_no_internet_connection">Error while trying to connect to the internet !</string>
     <string name="error_message_internet_connection_intrerupted">Network connection was interrupted, aborting !</string>

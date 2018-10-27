@@ -1,7 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="margin_extra_large">32dp</dimen>
-    <dimen name="margin_map_deviation">60dp</dimen>
     <dimen name="margin_sx_small">4dp</dimen>
     <dimen name="margin_small">6dp</dimen>
     <dimen name="margin_medium">8dp</dimen>

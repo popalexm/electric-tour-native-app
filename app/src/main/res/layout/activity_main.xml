@@ -19,13 +19,14 @@
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:layout_gravity="bottom"
+        app:navigationIcon="@mipmap/ic_launcher_foreground"
         app:backgroundTint="@color/colorPrimary"
         app:buttonGravity="bottom|top"
         app:fabAlignmentMode="end" />
 
     <android.support.design.widget.FloatingActionButton
         style="@style/Widget.MaterialComponents.BottomAppBar"
-        android:id="@+id/fab_calculate_routes"
+        android:id="@+id/fab_open_tour_selection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:backgroundTint="@android:color/white"

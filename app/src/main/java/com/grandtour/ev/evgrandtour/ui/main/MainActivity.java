@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
 
-        FloatingActionButton calculateRoutesFab = findViewById(R.id.fab_calculate_routes);
+        FloatingActionButton calculateRoutesFab = findViewById(R.id.fab_open_tour_selection);
         calculateRoutesFab.setOnClickListener(this);
 
         bottomAppBar.replaceMenu(R.menu.menu_main);
@@ -60,10 +60,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v) {
-        MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
-        if (mapsFragmentView != null) {
-            mapsFragmentView.onChooseTourClicked();
+    public void onClick(View view) {
+        if (view.getId() == R.id.fab_open_tour_selection) {
+            MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
+            if (mapsFragmentView != null) {
+                mapsFragmentView.onChooseTourClicked();
+            }
         }
+
     }
 }
