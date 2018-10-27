@@ -379,8 +379,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void OnSearchResultClicked(@NonNull Integer checkpointId) {
-        Log.e(TAG, "String ");
-
+        view.moveToMarker(checkpointId);
+        view.clearSearchResults();
     }
 
     private class LocationUpdateCallback extends LocationCallback {

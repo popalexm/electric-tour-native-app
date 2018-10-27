@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.mapsView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -231,6 +232,18 @@ public class MapsFragmentView extends Fragment
             Marker checkpointMarker = googleMap.addMarker(checkpoint.second);
             checkpointMarker.setTag(checkpoint.first);
             mapsViewModel.checkpoints.add(checkpointMarker);
+        }
+    }
+
+    @Override
+    public void moveToMarker(@NonNull Integer markerCheckpointId) {
+        for (Marker checkpoint : mapsViewModel.checkpoints) {
+            Integer checkpointId = (Integer) checkpoint.getTag();
+            if (checkpointId != null) {
+                if (checkpointId.equals(markerCheckpointId)) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(checkpoint.getPosition(), 14));
+                }
+            }
         }
     }
 
