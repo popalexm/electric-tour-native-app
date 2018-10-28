@@ -116,11 +116,13 @@ public final class MapUtils {
 
                 Integer distanceToNext = checkpoint.getDistanceToNextCheckpoint();
                 Integer durationToNext = checkpoint.getDurationToNextCheckpoint();
-
                 if (distanceToNext != null) {
                     distanceToNext = distanceToNext / 1000;
                 } else {
                     distanceToNext = 0;
+                }
+                if (durationToNext == null) {
+                    durationToNext = 0;
                 }
                 String formattedTime = TimeUtils.convertFromSecondsToFormattedTime(durationToNext);
                 String markerInfoMessage = ctx.getString(R.string.format_checkpoint_info_window_text,

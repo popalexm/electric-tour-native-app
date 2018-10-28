@@ -34,14 +34,19 @@ public class GoogleMapInfoWindow implements GoogleMap.InfoWindowAdapter {
         TextView txtCheckpointDistance = windowLayout.findViewById(R.id.txtViewLength);
         TextView txtCheckpointDuration = windowLayout.findViewById(R.id.txtViewDuration);
 
+        String checkpointName = marker.getTitle();
+        if (checkpointName != null) {
+            txtCheckpointName.setText(marker.getTitle());
+        }
         String bodyText = marker.getSnippet();
-        txtCheckpointName.setText(marker.getTitle());
-        int position = bodyText.indexOf(GoogleMapInfoWindow.KM_PATTERN);
-        int positionIncludingPattern = position + GoogleMapInfoWindow.KM_PATTERN.length();
-        String distanceToNext = bodyText.substring(0, positionIncludingPattern);
-        txtCheckpointDistance.setText(distanceToNext);
-        String travelTimeToNext = bodyText.substring(positionIncludingPattern);
-        txtCheckpointDuration.setText(travelTimeToNext);
+        if (bodyText != null) {
+            int position = bodyText.indexOf(GoogleMapInfoWindow.KM_PATTERN);
+            int positionIncludingPattern = position + GoogleMapInfoWindow.KM_PATTERN.length();
+            String distanceToNext = bodyText.substring(0, positionIncludingPattern);
+            txtCheckpointDistance.setText(distanceToNext);
+            String travelTimeToNext = bodyText.substring(positionIncludingPattern);
+            txtCheckpointDuration.setText(travelTimeToNext);
+        }
         return windowLayout;
     }
 
