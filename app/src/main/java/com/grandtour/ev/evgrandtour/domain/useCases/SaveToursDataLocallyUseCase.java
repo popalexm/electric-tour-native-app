@@ -51,8 +51,6 @@ public class SaveToursDataLocallyUseCase extends BaseUseCase implements BaseUseC
                 List<TourCheckpoint> tourResponseCheckpoints = response.getTourCheckpoints();
                 try {
                     List<Checkpoint> toSaveCheckpoints = SaveToursDataLocallyUseCase.convertToCheckpoints(tourResponseCheckpoints, tourId);
-                    localStorageManager.checkpointsDao()
-                            .insert(toSaveCheckpoints);
                     localStorageManager.checkpointsDao().insert(toSaveCheckpoints);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
