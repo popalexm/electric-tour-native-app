@@ -13,23 +13,25 @@ import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Route;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.DeleteAllSavedDataUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableTourIDsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableToursUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingWaypointsFromOrigin;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.RefreshAndSaveAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SyncAndSaveTourDetailsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
+
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import android.Manifest;
 import android.app.Service;
@@ -53,6 +55,7 @@ import java.util.List;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Response;
 
 public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
 
@@ -67,6 +70,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     private final MapsFragmentContract.View view;
     @NonNull
     private final GpsLocationManager gpsLocationManager = GpsLocationManager.getInstance();
+    @NonNull
+    private final List<TourDataResponse> tourDataResponses = new ArrayList<>();
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -145,7 +150,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onNavigationClicked(@NonNull Marker originMarker) {
         Integer checkpointId = (Integer) originMarker.getTag();
         if (checkpointId != null) {
-            addSubscription(new GetFollowingWaypointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+            addSubscription(new GetFollowingCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
                     checkpointId).perform()
                     .subscribe(checkpoints -> {
                         if (checkpoints.size() != 0) {
@@ -156,6 +161,39 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                         }
                     }));
         }
+    }
+
+    private void retrieveAvailableToursFromRemoteSource(){
+        tourDataResponses.clear();
+        new SyncAllAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi())
+                .perform()
+                .doOnSubscribe(subscription -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(true);
+                    }
+                })
+                .doOnEach(new Subscriber<Response<TourDataResponse>>() {
+                    @Override
+                    public void onSubscribe(Subscription s) { }
+
+                    @Override
+                    public void onNext(Response<TourDataResponse> response) {
+                        if (response.isSuccessful() && response.body() != null){
+                            tourDataResponses.add(response.body());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) { t.printStackTrace(); }
+
+                    @Override
+                    public void onComplete() { }
+                }).doOnComplete(() -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(false);
+                    }
+                    view.showTourPickerDialog(tourDataResponses);
+                }).subscribe();
     }
 
     @Override
@@ -177,28 +215,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onChooseTourClicked() {
         boolean isNetworkAvailable = NetworkUtils.isInternetConnectionAvailable(Injection.provideGlobalContext());
         if (isNetworkAvailable){
-            addSubscription(new RefreshAndSaveAllAvailableToursUseCase(Schedulers.io(),
-                    AndroidSchedulers.mainThread(), Injection.provideBackendApi(), Injection.provideStorageManager()).perform()
-                    .doOnSubscribe(disposable -> {
-                        if (isViewAttached) {
-                            String msg = Injection.provideGlobalContext().getString(R.string.message_retrieving_available_tours);
-                            view.showLoadingView(true);
-                        }
-                    })
-                    .doOnSuccess(entireTourResponseResponse -> {
-                        if (entireTourResponseResponse.length > 0) {
-                            syncAllAvailableToursDetails();
-                        }
-                    })
-                    .doOnError(throwable -> {
-                        throwable.printStackTrace();
-                        if (isViewAttached) {
-                            view.showLoadingView(false);
-                        }
-                        String errorMsg = Injection.provideGlobalContext().getString(R.string.message_error_occured);
-                        displayShortMessage(errorMsg);
-                    })
-                    .subscribe());
+            retrieveAvailableToursFromRemoteSource();
         } else {
             String errorMsg = Injection.provideGlobalContext().getString(R.string.message_no_internet_reloading_saved_tour);
             displayShortMessage(errorMsg);
@@ -208,10 +225,14 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onTourSelected(@NonNull String tourId) {
-        addSubscription(new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
-                .doOnComplete(this::startRouteDirectionsRequests)
+        addSubscription(new SaveToursDataLocallyUseCase(Schedulers.io(),
+                AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourDataResponses)
+                .perform()
                 .doOnError(Throwable::printStackTrace)
-                .subscribe());
+                .subscribe(() -> addSubscription(new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
+                        .doOnComplete(this::startRouteDirectionsRequests)
+                        .doOnError(Throwable::printStackTrace)
+                        .subscribe())));
     }
 
     @Override
@@ -237,34 +258,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onSearchQueryCleared() {
         view.clearSearchResults();
-    }
-
-    private void syncAllAvailableToursDetails() {
-        addSubscription(new GetAvailableTourIDsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .doOnSuccess(tours -> {
-                    new SyncAndSaveTourDetailsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi(),
-                            Injection.provideStorageManager(), tours).perform()
-                            .doOnComplete(() -> {
-                                if (isViewAttached) {
-                                    view.showLoadingView(false);
-                                }
-                                openTourPickerDialog();
-                            })
-                            .doOnError(throwable -> {
-                                throwable.printStackTrace();
-                                if (isViewAttached) {
-                                    view.showLoadingView(false);
-                                }
-                            })
-                            .subscribe();
-                })
-                .subscribe());
-    }
-
-    private void openTourPickerDialog() {
-        addSubscription(new GetAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .doOnSuccess(view::showTourPickerDialog)
-                .subscribe());
     }
 
     private void displayShortMessage(@NonNull String msg) {

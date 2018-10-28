@@ -1,6 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.utils;
 
-import com.grandtour.ev.evgrandtour.data.database.models.Tour;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,7 +24,7 @@ public final class DialogUtils {
     }
 
     @NonNull
-    public static AlertDialog.Builder getMultipleChoicesAlertDialogBuilder(@NonNull Context context, @NonNull List<Tour> selectionChoices,
+    public static AlertDialog.Builder getMultipleChoicesAlertDialogBuilder(@NonNull Context context, @NonNull List<TourDataResponse> selectionChoices,
             @NonNull CharSequence title, @Nullable DialogChoiceCallback callback) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         ListAdapter adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_singlechoice, selectionChoices);
@@ -32,7 +32,7 @@ public final class DialogUtils {
         builder.setSingleChoiceItems(adapter, -1, (dialog, selectedPosition) -> {
             if (callback != null) {
                 callback.onDialogChoiceSelected(selectionChoices.get(selectedPosition)
-                        .getTourId());
+                        .getId());
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -41,6 +41,6 @@ public final class DialogUtils {
 
     public interface DialogChoiceCallback{
 
-        void onDialogChoiceSelected(String choice);
+        void onDialogChoiceSelected(String tourId);
     }
 }

@@ -14,7 +14,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.database.models.Tour;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerDialogFragment;
@@ -306,7 +306,7 @@ public class MapsFragmentView extends Fragment
     }
 
     @Override
-    public void showTourPickerDialog(@NonNull List<Tour> tours) {
+    public void showTourPickerDialog(@NonNull List<TourDataResponse> tours) {
         Activity activity = getActivity();
         if (activity != null) {
             final String[] selectedTourId = new String[1];

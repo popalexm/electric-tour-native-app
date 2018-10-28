@@ -2,7 +2,6 @@ package com.grandtour.ev.evgrandtour.data.network;
 
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.AvailableToursResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
-import com.grandtour.ev.evgrandtour.data.network.models.response.entireTour.EntireTourResponse;
 
 import java.util.List;
 
@@ -13,8 +12,6 @@ import retrofit2.http.Path;
 
 public interface BackendAPI {
 
-    @GET("entire-tour/")
-    Maybe<Response<EntireTourResponse>> getEntireTourCheckpoints();
 
     @GET("tours/")
     Maybe<Response<List<AvailableToursResponse>>> getAllTours();

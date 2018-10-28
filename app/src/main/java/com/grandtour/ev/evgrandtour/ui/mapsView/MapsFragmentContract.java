@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.database.models.Tour;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchViewResultClickListener;
@@ -41,7 +41,7 @@ public class MapsFragmentContract {
 
         void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints);
 
-        void showTourPickerDialog(@NonNull List<Tour> tours);
+        void showTourPickerDialog(@NonNull List<TourDataResponse> tours);
 
         void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints);
 
