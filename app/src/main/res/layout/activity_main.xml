@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:backgroundTint="@android:color/white"
-        android:src="@drawable/ic_directions_black_24dp"
+        android:src="@mipmap/ic_route"
         app:layout_anchor="@id/bottomAppBar"/>
 
 </android.support.design.widget.CoordinatorLayout>
