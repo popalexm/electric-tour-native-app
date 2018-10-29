@@ -274,6 +274,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         isServiceBound = true;
     }
 
+
     private void reloadAvailableCheckpointsAndRoutes() {
         if (isViewAttached) {
             view.showLoadingView(true);
@@ -296,6 +297,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     if (isViewAttached) {
                         if (checkpoints.size() > 0) {
                             view.loadCheckpoints(checkpoints);
+                            view.centerMapToCurrentSelectedRoute();
                         }
                     }
                 })

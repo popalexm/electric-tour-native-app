@@ -14,12 +14,6 @@ import io.reactivex.Maybe;
 @Dao
 public interface TourDao {
 
-    @Query("SELECT tourId FROM TOUR")
-    Maybe<List<String>> getAllAvailableTourIDs();
-
-    @Query("SELECT * FROM TOUR")
-    Maybe<List<Tour>> getAllAvailableTours();
-
     @Query("SELECT tourId FROM TOUR WHERE isCurrentSelection= 1")
     Maybe<String> getCurrentlySelectedTourId();
 

@@ -12,7 +12,6 @@ import retrofit2.http.Path;
 
 public interface BackendAPI {
 
-
     @GET("tours/")
     Maybe<Response<List<AvailableToursResponse>>> getAllTours();
 

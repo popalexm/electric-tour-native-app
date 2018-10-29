@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import io.reactivex.Maybe;
-import io.reactivex.Single;
 
 @Dao
 public interface RouteDao {
@@ -21,9 +20,6 @@ public interface RouteDao {
 
     @Query("DELETE FROM ROUTE")
     int deleteAll();
-
-    @Query("Select count(*) from ROUTE")
-    Single<Integer> getTotalAvailableRoutes();
 
     @Query("Select * from ROUTE WHERE tourId = :tourId")
     Maybe<List<Route>> getRouteForSelectedTour(@NonNull String tourId);

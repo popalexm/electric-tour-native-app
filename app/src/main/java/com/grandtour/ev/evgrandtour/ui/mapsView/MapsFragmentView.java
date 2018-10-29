@@ -7,6 +7,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -230,6 +231,19 @@ public class MapsFragmentView extends Fragment
             checkpointMarker.setTag(checkpoint.first);
             mapsViewModel.checkpoints.add(checkpointMarker);
         }
+    }
+
+    @Override
+    public void centerMapToCurrentSelectedRoute() {
+        List<Marker> routeCheckpoints = mapsViewModel.checkpoints;
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (int i = 0; i < routeCheckpoints.size(); i++) {
+            LatLng position = routeCheckpoints.get(i)
+                    .getPosition();
+            builder.include(new LatLng(position.latitude, position.longitude));
+        }
+        LatLngBounds bounds = builder.build();
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
     }
 
     @Override

@@ -27,6 +27,8 @@ public class MapsFragmentContract {
 
         void loadCheckpoints(@NonNull List<Pair<Integer, MarkerOptions>> checkpoints);
 
+        void centerMapToCurrentSelectedRoute();
+
         void moveToMarker(@NonNull Integer markerCheckpointId);
 
         void clearMapCheckpoints();

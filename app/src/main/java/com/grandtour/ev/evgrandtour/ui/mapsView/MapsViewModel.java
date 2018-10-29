@@ -13,11 +13,7 @@ import android.support.annotation.NonNull;
 public class MapsViewModel {
 
     @NonNull
-    public final ObservableField<String> progressMessage = new ObservableField<>("");
-    @NonNull
     public final ObservableBoolean isLoadingInProgress = new ObservableBoolean();
-    @NonNull
-    public final ObservableBoolean isCancelEnabled = new ObservableBoolean();
     @NonNull
     public final ObservableArrayList<Marker> checkpoints = new ObservableArrayList<>();
     @NonNull
