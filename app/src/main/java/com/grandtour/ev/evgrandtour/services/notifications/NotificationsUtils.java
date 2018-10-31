@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.services.notifications;
 
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.main.MainActivity;
 
 import android.app.Notification;
@@ -33,6 +34,9 @@ public final class NotificationsUtils {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationsUtils.NOTIFICATION_CHANNEL_ID).setSmallIcon(
                 R.drawable.ic_location_on_amber_a400_24dp)
+                .setColor(Injection.provideGlobalContext()
+                        .getResources()
+                        .getColor(R.color.colorPrimary))
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationMessage))

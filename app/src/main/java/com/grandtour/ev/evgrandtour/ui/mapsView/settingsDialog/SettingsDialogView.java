@@ -27,8 +27,6 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
     private Switch switchLocationTracking;
     @NonNull
     private Button btnDismiss;
-    private boolean areLocationUpdatesEnabled;
-    private boolean areDeviationNotificationsEnabled;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,10 +36,11 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
         btnDismiss = view.findViewById(R.id.buttonDismiss);
 
         btnDismiss.setOnClickListener(this);
+
+        setupCurrentSettings();
         switchLocationTracking.setOnCheckedChangeListener(this);
         switchRouteDeviationNotification.setOnCheckedChangeListener(this);
 
-        setupCurrentSettings();
         setupTransparentDialogBackground();
         return view;
     }
@@ -63,31 +62,12 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
         switch (buttonView.getId()) {
             case R.id.switchLocation:
                 if (callback != null) {
-                    if (areDeviationNotificationsEnabled && !isChecked) {
-                        updateLocationUpdateStatus(false, callback);
-                        updateRouteDeviationNotificationStatus(false, callback);
-                    }
-                    if (!areDeviationNotificationsEnabled && isChecked) {
-                        updateLocationUpdateStatus(true, callback);
-                    }
-                    if (!areDeviationNotificationsEnabled && !isChecked) {
-                        updateLocationUpdateStatus(false, callback);
-                    }
+                    updateLocationUpdateStatus(isChecked, callback);
                 }
                 break;
             case R.id.switchDeviationNotifications:
                 if (callback != null) {
-                    if (!isChecked) {
-                        updateRouteDeviationNotificationStatus(false, callback);
-                    }
-                    if (areLocationUpdatesEnabled && isChecked) {
-                        updateRouteDeviationNotificationStatus(true, callback);
-                    }
-                    if (!areLocationUpdatesEnabled && isChecked) {
-                        switchLocationTracking.setChecked(true);
-                        updateRouteDeviationNotificationStatus(true, callback);
-                        updateRouteDeviationNotificationStatus(true, callback);
-                    }
+                    updateRouteDeviationNotificationStatus(isChecked);
                 }
                 break;
         }
@@ -97,15 +77,13 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
         preferences.edit()
                 .putBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, areLocationTrackingEnabled)
                 .commit();
-        this.areLocationUpdatesEnabled = areLocationTrackingEnabled;
         listener.OnLocationTrackingSettingsUpdate(areLocationTrackingEnabled);
     }
 
-    private void updateRouteDeviationNotificationStatus(boolean areRouteDeviationNotificationEnabled, @NonNull UpdateSettingsListener listener) {
+    private void updateRouteDeviationNotificationStatus(boolean areRouteDeviationNotificationEnabled) {
         preferences.edit()
                 .putBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, areRouteDeviationNotificationEnabled)
                 .commit();
-        this.areDeviationNotificationsEnabled = areRouteDeviationNotificationEnabled;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class GpsLocationManager {
 
     @NonNull
     private static final String TAG = GpsLocationManager.class.getSimpleName();
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 60000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 240000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = GpsLocationManager.UPDATE_INTERVAL_IN_MILLISECONDS / 2;
     @Nullable
     private static GpsLocationManager instance;
