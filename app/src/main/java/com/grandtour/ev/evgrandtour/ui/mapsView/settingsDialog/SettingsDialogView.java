@@ -4,12 +4,15 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -38,6 +41,10 @@ public class SettingsDialogView extends DialogFragment implements CompoundButton
         switchLocationTracking.setOnCheckedChangeListener(this);
         switchRouteDeviationNotification.setOnCheckedChangeListener(this);
         setupCurrentSettings();
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
         return view;
     }
 
