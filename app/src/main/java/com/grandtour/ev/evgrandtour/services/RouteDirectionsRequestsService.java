@@ -29,7 +29,7 @@ import okhttp3.internal.http2.StreamResetException;
 
 public class RouteDirectionsRequestsService extends Service {
 
-    private static final int NOTIFICATION_ID = 12;
+    private static final int ROUTE_REQUESTS_NOTIFICATION_ID = 12;
     @NonNull
     public static final String ROUTE_MAP_POINTS_BUNDLE = "routeMapPointsParcelable";
     @NonNull
@@ -65,7 +65,7 @@ public class RouteDirectionsRequestsService extends Service {
     public boolean onUnbind(Intent intent) {
         Notification notification = NotificationsUtils.createNotification(this, getString(R.string.message_route_calculations_running_in_background),
                 getString(R.string.app_name));
-        startForeground(RouteDirectionsRequestsService.NOTIFICATION_ID, notification);
+        startForeground(RouteDirectionsRequestsService.ROUTE_REQUESTS_NOTIFICATION_ID, notification);
         return true;
     }
 

@@ -55,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mapsFragmentView.onCalculateDistanceBetweenCheckpoints();
                 }
                 break;
+            case R.id.action_settings:
+                if (mapsFragmentView != null) {
+                    mapsFragmentView.openSettingsDialog();
+                }
+                break;
         }
         return true;
     }
@@ -67,6 +72,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mapsFragmentView.onChooseTourClicked();
             }
         }
-
     }
 }

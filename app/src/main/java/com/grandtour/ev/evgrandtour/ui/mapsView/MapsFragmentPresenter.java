@@ -24,9 +24,11 @@ import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
+import com.grandtour.ev.evgrandtour.ui.mapsView.settingsDialog.SharedPreferencesKeys;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
 
@@ -63,6 +65,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
     @Nullable
     private Service routeDirectionsRequestService;
+    @Nullable
+    private Service locationUpdatesService;
     @NonNull
     private final ServiceConnection serviceConnection = this;
     private boolean isServiceBound;
@@ -81,7 +85,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onMapReady() {
         if (isViewAttached) {
             reloadAvailableCheckpointsAndRoutes();
-            startLocationUpdates();
+            if (Injection.provideSharedPreferences()
+                    .getBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, false)) {
+                startLocationTracking();
+            }
         }
     }
 
@@ -260,6 +267,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         view.clearSearchResults();
     }
 
+    @Override
+    public void onSettingsClicked() {
+        if (isViewAttached) {
+            view.showSettingsDialog();
+        }
+    }
+
     private void displayShortMessage(@NonNull String msg) {
         if (isViewAttached) {
             view.showMessage(msg);
@@ -274,6 +288,19 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         isServiceBound = true;
     }
 
+    private void startLocationTracking() {
+        Context context = Injection.provideGlobalContext();
+        Intent serviceIntent = new Intent(context, LocationsUpdatesService.class);
+        context.startService(serviceIntent);
+        context.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        isServiceBound = true;
+    }
+
+    private void stopLocationTracking() {
+        if (locationUpdatesService != null) {
+            locationUpdatesService.stopSelf();
+        }
+    }
 
     private void reloadAvailableCheckpointsAndRoutes() {
         if (isViewAttached) {
@@ -313,7 +340,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager())
                 .perform()
                 .doOnComplete(() -> {
-                    view.showTotalRouteInformation("", false);
+                    view.showTotalRouteInformation("Please select a tour !", true);
                 })
                 .subscribe(distanceDurationPair -> {
                     String infoMessage = MapUtils.generateInfoMessage(distanceDurationPair);
@@ -339,25 +366,30 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         }
     }
 
-    private void startLocationUpdates() {
-        gpsLocationManager.initLocationClient();
-        gpsLocationManager.createLocationRequest();
-        gpsLocationManager.setCallback(new LocationUpdateCallback());
-        if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            gpsLocationManager.startRequestingLocationUpdates();
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        Log.d(TAG, "Connected to service " + name.getClassName());
+        if (name.getClassName()
+                .equals(LocationsUpdatesService.class.getName())) {
+            LocationsUpdatesService.LocationServiceBinder binder = (LocationsUpdatesService.LocationServiceBinder) service;
+            locationUpdatesService = binder.getService();
+        } else if (name.getClassName()
+                .equals(RouteDirectionsRequestsService.class.getName())) {
+            RouteDirectionsRequestsService.LocalBinder binder = (RouteDirectionsRequestsService.LocalBinder) service;
+            routeDirectionsRequestService = binder.getService();
         }
     }
 
     @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        RouteDirectionsRequestsService.LocalBinder binder = (RouteDirectionsRequestsService.LocalBinder) service;
-        routeDirectionsRequestService = binder.getService();
-    }
-
-    @Override
     public void onServiceDisconnected(ComponentName name) {
-        routeDirectionsRequestService = null;
+        Log.d(TAG, "Disconnected from service " + name.getClassName());
+        if (name.getClassName()
+                .equals(LocationsUpdatesService.class.getName())) {
+            locationUpdatesService = null;
+        } else if (name.getClassName()
+                .equals(RouteDirectionsRequestsService.class.getName())) {
+            routeDirectionsRequestService = null;
+        }
     }
 
     @Override
@@ -365,6 +397,24 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         view.hideSoftKeyboard();
         view.moveToMarker(checkpointId);
         view.clearSearchResults();
+    }
+
+    @Override
+    public void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled) {
+        Injection.provideSharedPreferences()
+                .edit()
+                .putBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, isLocationTrackingEnabled)
+                .apply();
+        if (isLocationTrackingEnabled) {
+            startLocationTracking();
+        } else {
+            stopLocationTracking();
+        }
+    }
+
+    @Override
+    public void onRouteDeviationTrackingUpdate(boolean isDeviationTrackingEnabled) {
+
     }
 
     private class LocationUpdateCallback extends LocationCallback {

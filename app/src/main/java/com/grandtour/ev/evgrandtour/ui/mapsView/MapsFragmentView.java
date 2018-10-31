@@ -17,12 +17,16 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
+import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
+import com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.markerInfo.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mapsView.models.UserLocation;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultsListViewModel;
+import com.grandtour.ev.evgrandtour.ui.mapsView.settingsDialog.SettingsDialogView;
 import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.DialogUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
@@ -72,7 +76,9 @@ public class MapsFragmentView extends Fragment
     @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
     @NonNull
-    private final RouteRequestsBroadcastReceiver routeDirectionsRequestsService = new RouteRequestsBroadcastReceiver(presenter);
+    private final RouteRequestsBroadcastReceiver routeDirectionsBroadcastReceiver = new RouteRequestsBroadcastReceiver(presenter);
+    @NonNull
+    private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(presenter);
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -127,7 +133,9 @@ public class MapsFragmentView extends Fragment
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
-                    .registerReceiver(routeDirectionsRequestsService, new IntentFilter(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST));
+                    .registerReceiver(routeDirectionsBroadcastReceiver, new IntentFilter(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST));
+            LocalBroadcastManager.getInstance(activity)
+                    .registerReceiver(locationUpdatesBroadcastReceiver, new IntentFilter(LocationsUpdatesService.ACTION_LOCATION_BROADCAST));
         }
     }
 
@@ -147,7 +155,9 @@ public class MapsFragmentView extends Fragment
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
-                    .unregisterReceiver(routeDirectionsRequestsService);
+                    .unregisterReceiver(routeDirectionsBroadcastReceiver);
+            LocalBroadcastManager.getInstance(activity)
+                    .unregisterReceiver(locationUpdatesBroadcastReceiver);
         }
         presenter.onDestroy();
     }
@@ -320,6 +330,22 @@ public class MapsFragmentView extends Fragment
     }
 
     @Override
+    public void showSettingsDialog() {
+        FragmentManager fManager = getFragmentManager();
+        if (fManager != null) {
+            FragmentTransaction fragmentTransaction = fManager.beginTransaction();
+            Fragment previousDialog = getFragmentManager().findFragmentByTag(SettingsDialogView.TAG);
+            if (previousDialog != null) {
+                fragmentTransaction.remove(previousDialog);
+            }
+            fragmentTransaction.addToBackStack(null);
+            SettingsDialogView dialogFragment = new SettingsDialogView();
+            dialogFragment.setTargetFragment(MapsFragmentView.this, 300);
+            dialogFragment.show(fragmentTransaction, SettingsDialogView.TAG);
+        }
+    }
+
+    @Override
     public void showTourPickerDialog(@NonNull List<TourDataResponse> tours) {
         Activity activity = getActivity();
         if (activity != null) {
@@ -398,5 +424,19 @@ public class MapsFragmentView extends Fragment
 
     public void onCalculateDistanceBetweenCheckpoints() {
         presenter.onCalculateDistanceBetweenTwoCheckpointsClicked();
+    }
+
+    public void openSettingsDialog() {
+        presenter.onSettingsClicked();
+    }
+
+    @Override
+    public void OnLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled) {
+        presenter.onLocationTrackingSettingsUpdate(isLocationTrackingEnabled);
+    }
+
+    @Override
+    public void OnRouteDeviationTrackingUpdate(boolean isDeviationTrackingEnabled) {
+        presenter.onRouteDeviationTrackingUpdate(isDeviationTrackingEnabled);
     }
 }

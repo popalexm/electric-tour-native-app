@@ -30,7 +30,7 @@ public class DistancePickerDialogFragment extends DialogFragment implements Dist
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentDistancePickerBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_distance_picker, null, false);
         binding.setViewModel(distancePickerViewModel);
         binding.setPresenter(presenter);

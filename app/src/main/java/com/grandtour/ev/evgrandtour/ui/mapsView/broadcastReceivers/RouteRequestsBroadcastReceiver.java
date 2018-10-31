@@ -1,8 +1,9 @@
-package com.grandtour.ev.evgrandtour.ui.mapsView;
+package com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.ui.mapsView.MapsFragmentContract;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

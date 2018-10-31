@@ -11,6 +11,7 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourD
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchViewResultClickListener;
+import com.grandtour.ev.evgrandtour.ui.mapsView.settingsDialog.UpdateSettingsListener;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View, GoogleMap.OnInfoWindowLongClickListener {
+    public interface View extends BaseContract.View, GoogleMap.OnInfoWindowLongClickListener, UpdateSettingsListener {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
@@ -42,6 +43,8 @@ public class MapsFragmentContract {
         void startGoogleMapsDirections(@NonNull String navigationUri);
 
         void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints);
+
+        void showSettingsDialog();
 
         void showTourPickerDialog(@NonNull List<TourDataResponse> tours);
 
@@ -81,5 +84,12 @@ public class MapsFragmentContract {
         void onNewSearchQuery(@NonNull String text);
 
         void onSearchQueryCleared();
+
+        void onSettingsClicked();
+
+        void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
+
+        void onRouteDeviationTrackingUpdate(boolean isDeviationTrackingEnabled);
+
     }
 }
