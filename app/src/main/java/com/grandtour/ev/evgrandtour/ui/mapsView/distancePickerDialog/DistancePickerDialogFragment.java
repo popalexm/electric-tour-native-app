@@ -3,23 +3,20 @@ package com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDistancePickerBinding;
+import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Toast;
 
 import java.util.Collection;
 
-public class DistancePickerDialogFragment extends DialogFragment implements DistancePickerContract.View {
+public class DistancePickerDialogFragment extends BaseDialogFragment implements DistancePickerContract.View {
 
     @NonNull
     public final static String TAG = DistancePickerDialogFragment.class.getSimpleName();
@@ -37,10 +34,7 @@ public class DistancePickerDialogFragment extends DialogFragment implements Dist
         FragmentDistancePickerBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_distance_picker, null, false);
         binding.setViewModel(distancePickerViewModel);
         binding.setPresenter(presenter);
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
+        setupTransparentDialogBackground();
         return binding.getRoot();
     }
 

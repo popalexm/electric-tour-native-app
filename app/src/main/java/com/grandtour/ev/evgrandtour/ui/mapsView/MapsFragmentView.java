@@ -435,8 +435,4 @@ public class MapsFragmentView extends Fragment
         presenter.onLocationTrackingSettingsUpdate(isLocationTrackingEnabled);
     }
 
-    @Override
-    public void OnRouteDeviationTrackingUpdate(boolean isDeviationTrackingEnabled) {
-        presenter.onRouteDeviationTrackingUpdate(isDeviationTrackingEnabled);
-    }
 }

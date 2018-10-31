@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.mapsView.settingsDialog;
+package com.grandtour.ev.evgrandtour.data;
 
 import android.support.annotation.NonNull;
 

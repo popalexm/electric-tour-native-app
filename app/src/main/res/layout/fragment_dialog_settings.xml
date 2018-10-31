@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="@dimen/margin_normal">
 
-
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -20,6 +19,7 @@
                 android:orientation="vertical">
 
                 <Switch
+                    android:theme="@style/SwitchStyle"
                     android:id="@+id/switchLocation"
                     android:text="@string/hint_enable_current_location_monitoring"
                     android:layout_margin="@dimen/margin_medium"
@@ -27,6 +27,7 @@
                     android:layout_height="wrap_content" />
 
                 <Switch
+                    android:theme="@style/SwitchStyle"
                     android:id="@+id/switchDeviationNotifications"
                     android:text="@string/hint_enable_route_deviation"
                     android:layout_margin="@dimen/margin_medium"

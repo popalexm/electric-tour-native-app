@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.services;
+package com.grandtour.ev.evgrandtour.services.notifications;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.ui.main.MainActivity;
@@ -31,7 +31,8 @@ public final class NotificationsUtils {
             NotificationsUtils.setOreoNotificationChannel(notificationManager);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationsUtils.NOTIFICATION_CHANNEL_ID).setSmallIcon(R.drawable.ic_location_searching_indigo_600_24dp)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationsUtils.NOTIFICATION_CHANNEL_ID).setSmallIcon(
+                R.drawable.ic_location_on_amber_a400_24dp)
                 .setContentTitle(notificationTitle)
                 .setContentText(notificationMessage)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationMessage))

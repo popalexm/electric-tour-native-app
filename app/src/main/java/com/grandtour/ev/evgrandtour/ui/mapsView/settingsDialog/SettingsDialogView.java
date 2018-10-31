@@ -2,22 +2,20 @@ package com.grandtour.ev.evgrandtour.ui.mapsView.settingsDialog;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
+import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
-public class SettingsDialogView extends DialogFragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+public class SettingsDialogView extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
     @NonNull
     public static final String TAG = SettingsDialogView.class.getSimpleName();
@@ -29,10 +27,12 @@ public class SettingsDialogView extends DialogFragment implements CompoundButton
     private Switch switchLocationTracking;
     @NonNull
     private Button btnDismiss;
+    private boolean areLocationUpdatesEnabled;
+    private boolean areDeviationNotificationsEnabled;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_settings, null);
+        View view = inflater.inflate(R.layout.fragment_dialog_settings, null);
         switchLocationTracking = view.findViewById(R.id.switchLocation);
         switchRouteDeviationNotification = view.findViewById(R.id.switchDeviationNotifications);
         btnDismiss = view.findViewById(R.id.buttonDismiss);
@@ -40,11 +40,9 @@ public class SettingsDialogView extends DialogFragment implements CompoundButton
         btnDismiss.setOnClickListener(this);
         switchLocationTracking.setOnCheckedChangeListener(this);
         switchRouteDeviationNotification.setOnCheckedChangeListener(this);
+
         setupCurrentSettings();
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        }
+        setupTransparentDialogBackground();
         return view;
     }
 
@@ -61,19 +59,53 @@ public class SettingsDialogView extends DialogFragment implements CompoundButton
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        UpdateSettingsListener listener = (UpdateSettingsListener) getTargetFragment();
+        UpdateSettingsListener callback = (UpdateSettingsListener) getTargetFragment();
         switch (buttonView.getId()) {
             case R.id.switchLocation:
-                if (listener != null) {
-                    listener.OnLocationTrackingSettingsUpdate(isChecked);
+                if (callback != null) {
+                    if (areDeviationNotificationsEnabled && !isChecked) {
+                        updateLocationUpdateStatus(false, callback);
+                        updateRouteDeviationNotificationStatus(false, callback);
+                    }
+                    if (!areDeviationNotificationsEnabled && isChecked) {
+                        updateLocationUpdateStatus(true, callback);
+                    }
+                    if (!areDeviationNotificationsEnabled && !isChecked) {
+                        updateLocationUpdateStatus(false, callback);
+                    }
                 }
                 break;
             case R.id.switchDeviationNotifications:
-                if (listener != null) {
-                    listener.OnRouteDeviationTrackingUpdate(isChecked);
+                if (callback != null) {
+                    if (!isChecked) {
+                        updateRouteDeviationNotificationStatus(false, callback);
+                    }
+                    if (areLocationUpdatesEnabled && isChecked) {
+                        updateRouteDeviationNotificationStatus(true, callback);
+                    }
+                    if (!areLocationUpdatesEnabled && isChecked) {
+                        switchLocationTracking.setChecked(true);
+                        updateRouteDeviationNotificationStatus(true, callback);
+                        updateRouteDeviationNotificationStatus(true, callback);
+                    }
                 }
                 break;
         }
+    }
+
+    private void updateLocationUpdateStatus(boolean areLocationTrackingEnabled, @NonNull UpdateSettingsListener listener) {
+        preferences.edit()
+                .putBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, areLocationTrackingEnabled)
+                .commit();
+        this.areLocationUpdatesEnabled = areLocationTrackingEnabled;
+        listener.OnLocationTrackingSettingsUpdate(areLocationTrackingEnabled);
+    }
+
+    private void updateRouteDeviationNotificationStatus(boolean areRouteDeviationNotificationEnabled, @NonNull UpdateSettingsListener listener) {
+        preferences.edit()
+                .putBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, areRouteDeviationNotificationEnabled)
+                .commit();
+        this.areDeviationNotificationsEnabled = areRouteDeviationNotificationEnabled;
     }
 
     @Override

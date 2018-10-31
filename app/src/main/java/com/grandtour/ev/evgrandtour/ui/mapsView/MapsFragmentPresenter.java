@@ -8,6 +8,7 @@ import com.google.maps.android.PolyUtil;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Route;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
@@ -24,11 +25,10 @@ import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.services.NotificationsUtils;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.services.notifications.NotificationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
-import com.grandtour.ev.evgrandtour.ui.mapsView.settingsDialog.SharedPreferencesKeys;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
 
@@ -36,7 +36,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -48,7 +47,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
@@ -147,13 +145,15 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onCurrentLocationChanged(@NonNull Location location) {
         if (isViewAttached) {
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            view.updateCurrentUserLocation(latLng);
-        } if (currentSelectedRoutePoints.size() > 0){
-            if (Injection.provideSharedPreferences().getBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED , false )){
-                boolean isLocationOnRoute = PolyUtil.isLocationOnPath(new LatLng(location.getLatitude(), location.getLongitude()), currentSelectedRoutePoints , true, 1000);
+            LatLng locationLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            view.updateCurrentUserLocation(locationLatLng);
+            boolean areDeviationNotificationsEnabled = Injection.provideSharedPreferences()
+                    .getBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, false);
+            if (currentSelectedRoutePoints.size() > 0 && areDeviationNotificationsEnabled) {
+                boolean isLocationOnRoute = PolyUtil.isLocationOnPath(locationLatLng, currentSelectedRoutePoints, true, 1000);
                 if (!isLocationOnRoute) {
-                    generateDeviationNotification();
+                    NotificationManager.getInstance()
+                            .notifyAboutRouteDeviation();
                 }
             }
         }
@@ -179,13 +179,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                         }
                     }));
         }
-    }
-
-    private void generateDeviationNotification(){
-        Context ctx = Injection.provideGlobalContext();
-        Notification notification = NotificationsUtils.createNotification(ctx ,"You have deviated from the selected route !" , "Warning !");
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ctx);
-        notificationManager.notify(1200, notification);
     }
 
     private void retrieveAvailableToursFromRemoteSource(){
@@ -358,7 +351,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager())
                 .perform()
                 .doOnComplete(() -> {
-                    view.showTotalRouteInformation("Please select a tour !", true);
+                    view.showTotalRouteInformation(Injection.provideGlobalContext()
+                            .getString(R.string.title_please_select_tour), true);
                 })
                 .subscribe(distanceDurationPair -> {
                     String infoMessage = MapUtils.generateInfoMessage(distanceDurationPair);
@@ -393,7 +387,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             locationUpdatesService = binder.getService();
         } else if (name.getClassName()
                 .equals(RouteDirectionsRequestsService.class.getName())) {
-            RouteDirectionsRequestsService.LocalBinder binder = (RouteDirectionsRequestsService.LocalBinder) service;
+            RouteDirectionsRequestsService.RouteDirectionsLocalBinder binder = (RouteDirectionsRequestsService.RouteDirectionsLocalBinder) service;
             routeDirectionsRequestService = binder.getService();
         }
     }
@@ -419,22 +413,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled) {
-        Injection.provideSharedPreferences()
-                .edit()
-                .putBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, isLocationTrackingEnabled)
-                .apply();
         if (isLocationTrackingEnabled) {
             startLocationTracking();
         } else {
             stopLocationTracking();
         }
-    }
-
-    @Override
-    public void onRouteDeviationTrackingUpdate(boolean isDeviationTrackingEnabled) {
-        Injection.provideSharedPreferences()
-                .edit()
-                .putBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, isDeviationTrackingEnabled)
-                .apply();
     }
 }

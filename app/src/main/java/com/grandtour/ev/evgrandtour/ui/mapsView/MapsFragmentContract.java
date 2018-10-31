@@ -88,8 +88,5 @@ public class MapsFragmentContract {
         void onSettingsClicked();
 
         void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
-
-        void onRouteDeviationTrackingUpdate(boolean isDeviationTrackingEnabled);
-
     }
 }

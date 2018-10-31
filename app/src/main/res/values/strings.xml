@@ -14,7 +14,7 @@
     <string name="error_message_internet_connection_intrerupted">Network connection was interrupted, aborting !</string>
     <string name="error_message_could_not_calculate_routes">Could not calculate routes, please make sure the selected end checkpoint is set after the start checkpoint !</string>
     <string name="suffix_kilometers"> Km</string>
-    <string name="hint_click_to_start_navigation">Press and Hold To Start Navigation</string>
+    <string name="hint_click_to_start_navigation">Press and Hold To Start Navigation\n to the next 10 checkpoints !</string>
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancel</string>
     <string name="lorem_ipsum">Lorem Ipsum</string>
@@ -25,6 +25,9 @@
     <string name="btn_calculate">Calculate</string>
     <string name="hint_enable_route_deviation">Enable route deviation notifications</string>
     <string name="hint_enable_current_location_monitoring">Enable current location monitoring</string>
+    <string name="message_notify_deviation">You are deviating from the selected route !</string>
+    <string name="title_warning">Warning !</string>
+    <string name="title_please_select_tour">No tour selected !</string>
 
 
 </resources>

@@ -98,7 +98,7 @@ public final class MapUtils {
             }
 
         }
-        Log.i(MapUtils.TAG, "Resulted uri : " + navUriBuilder);
+        Log.i(MapUtils.TAG, "Maps intent uri : " + navUriBuilder);
         return navUriBuilder.toString();
     }
 

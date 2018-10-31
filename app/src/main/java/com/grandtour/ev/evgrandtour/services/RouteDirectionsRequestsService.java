@@ -9,6 +9,7 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesRe
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
+import com.grandtour.ev.evgrandtour.services.notifications.NotificationsUtils;
 
 import android.app.Notification;
 import android.app.Service;
@@ -39,7 +40,7 @@ public class RouteDirectionsRequestsService extends Service {
     @NonNull
     public static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
     @NonNull
-    private final IBinder localBinder = new RouteDirectionsRequestsService.LocalBinder();
+    private final IBinder localBinder = new RouteDirectionsLocalBinder();
     @Nullable
     private Disposable directionsRequestsDisposable;
 
@@ -130,7 +131,7 @@ public class RouteDirectionsRequestsService extends Service {
                 .sendBroadcast(intent);
     }
 
-    public class LocalBinder extends Binder {
+    public class RouteDirectionsLocalBinder extends Binder {
 
         public RouteDirectionsRequestsService getService() {
             return RouteDirectionsRequestsService.this;
