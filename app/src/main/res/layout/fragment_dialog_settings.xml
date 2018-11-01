@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -37,14 +37,14 @@
             </LinearLayout>
 
 
-        <Button
+        <android.support.design.button.MaterialButton
             android:id="@+id/buttonDismiss"
-            style="@style/Widget.AppCompat.Button.Colored"
+            app:backgroundTint="@android:color/holo_red_light"
+            app:cornerRadius="@dimen/margin_normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/fab_margin"
-            android:background="@drawable/btn_background_cancel"
             android:text="@string/btn_dimiss"
             android:textColor="@android:color/white" />
 

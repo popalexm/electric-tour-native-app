@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="me.tatarka.bindingcollectionadapter2.LayoutManagers" />
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogViewModel"></variable>
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogContract.Presenter"></variable>
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/dialog_background">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/verticalCenterGuideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="0dp"
+            app:layout_constraintGuide_percent="0.33" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/verticalCenterGuideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="0dp"
+            app:layout_constraintGuide_percent="0.66" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <FrameLayout
+            android:id="@+id/main_content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/buttonDismiss"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewRouteOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_normal"
+                app:itemBinding="@{viewModel.itemBinding}"
+                app:items="@{viewModel.availableTours}"
+                app:layoutManager="@{LayoutManagers.linear()}"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="8dp" />
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}">
+
+            </ProgressBar>
+
+        </FrameLayout>
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/buttonDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:layout_marginTop="28dp"
+            android:onClick="@{()-> presenter.onDismissButtonClicked()}"
+            android:text="@string/btn_dimiss"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@android:color/holo_red_light"
+            app:cornerRadius="@dimen/margin_normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/verticalCenterGuideline1"
+            app:layout_constraintRight_toRightOf="@id/verticalCenterGuideline2"
+            app:layout_constraintTop_toBottomOf="@+id/main_content_frame" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>
+

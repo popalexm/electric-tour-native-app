@@ -7,7 +7,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchViewResultClickListener;
@@ -46,7 +45,7 @@ public class MapsFragmentContract {
 
         void showSettingsDialog();
 
-        void showTourPickerDialog(@NonNull List<TourDataResponse> tours);
+        void showTourPickerDialog();
 
         void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints);
 

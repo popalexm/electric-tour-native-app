@@ -15,12 +15,13 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
+import com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialog;
 import com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.markerInfo.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mapsView.models.UserLocation;
@@ -59,7 +60,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends Fragment
+public class MapsFragmentView extends BaseFragment
         implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, SearchView.OnQueryTextListener {
 
     public static final int ZOOM_LEVEL = 13;
@@ -346,16 +347,9 @@ public class MapsFragmentView extends Fragment
     }
 
     @Override
-    public void showTourPickerDialog(@NonNull List<TourDataResponse> tours) {
-        Activity activity = getActivity();
-        if (activity != null) {
-            final String[] selectedTourId = new String[1];
-            DialogUtils.getMultipleChoicesAlertDialogBuilder(getActivity(), tours, getString(R.string.title_select_tour), tourId -> selectedTourId[0] = tourId)
-                    .setPositiveButton("OK", (dialog, which) -> {
-                        presenter.onTourSelected(selectedTourId[0]);
-                    })
-                    .show();
-        }
+    public void showTourPickerDialog() {
+        ChooseTourDialog dialog = ChooseTourDialog.createInstance(this);
+        showDialog(dialog, this, ChooseTourDialog.TAG, 200);
     }
 
     @Override
