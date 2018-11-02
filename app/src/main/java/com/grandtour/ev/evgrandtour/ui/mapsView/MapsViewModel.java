@@ -26,5 +26,7 @@ public class MapsViewModel {
     public final ObservableField<String> totalRouteInformation = new ObservableField<>("");
     @NonNull
     public final ObservableBoolean isRouteLengthAvailable = new ObservableBoolean();
+    @NonNull
+    public final ObservableBoolean isSearchViewOpen = new ObservableBoolean();
 
 }

@@ -39,26 +39,31 @@
                          android:layout_height="wrap_content"
                          android:layout_gravity="start|center_vertical"
                          android:focusable="false"
-                         app:queryHint="Search For Checkpoints">
+                         app:queryHint="Search in route...">
+                     </android.support.v7.widget.SearchView>
+
+                     <LinearLayout
+                         android:layout_width="wrap_content"
+                         android:layout_height="match_parent"
+                         android:visibility="@{viewModel.isSearchViewOpen == false ? View.VISIBLE: View.GONE}">
 
                          <TextView
-                             android:layout_width="match_parent"
+                             android:layout_width="wrap_content"
                              android:layout_height="match_parent"
                              android:layout_gravity="center"
                              android:gravity="center_vertical"
                              android:maxLines="1"
                              android:text="@={viewModel.totalRouteInformation}"
-                             android:visibility="@{viewModel.isRouteLengthAvailable == true ? View.VISIBLE: View.GONE}"
-                             android:textSize="18sp" />
+                             android:textSize="18sp"
+                             android:visibility="@{viewModel.isRouteLengthAvailable == true ? View.VISIBLE: View.GONE}" />
 
                          <ProgressBar
                              android:layout_width="wrap_content"
                              android:layout_height="match_parent"
                              android:layout_gravity="end|center_vertical"
+                             android:padding="@dimen/margin_small"
                              android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}" />
-
-                     </android.support.v7.widget.SearchView>
-
+                     </LinearLayout>
                  </LinearLayout>
 
         <com.google.android.gms.maps.MapView

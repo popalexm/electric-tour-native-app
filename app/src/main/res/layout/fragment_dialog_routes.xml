@@ -10,11 +10,11 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogViewModel"></variable>
+            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogContract.Presenter"></variable>
+            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogContract.Presenter" />
 
     </data>
 
@@ -82,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
             android:layout_marginTop="28dp"
-            android:onClick="@{()-> presenter.onDismissButtonClicked()}"
+            android:onClick="@{()-> presenter.OnDismissButtonClicked()}"
             android:text="@string/btn_dimiss"
             android:textColor="@android:color/white"
             app:backgroundTint="@android:color/holo_red_light"

@@ -3,6 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogRoutesBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.mapsView.SelectedTourListener;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -15,18 +16,18 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public class ChooseTourDialog extends BaseDialogFragment implements ChooseTourDialogContract.View {
+public class ChooseTourDialogFragment extends BaseDialogFragment implements ChooseTourDialogContract.View {
 
     @NonNull
-    public static final String TAG = ChooseTourDialog.class.getSimpleName();
+    public static final String TAG = ChooseTourDialogFragment.class.getSimpleName();
     @NonNull
     private final ChooseTourDialogPresenter presenter = new ChooseTourDialogPresenter(this);
     @NonNull
     private final ChooseTourDialogViewModel viewModel = new ChooseTourDialogViewModel();
 
     @NonNull
-    public static ChooseTourDialog createInstance(@NonNull Fragment targetFragment) {
-        ChooseTourDialog dialog = new ChooseTourDialog();
+    public static ChooseTourDialogFragment createInstance(@NonNull Fragment targetFragment) {
+        ChooseTourDialogFragment dialog = new ChooseTourDialogFragment();
         dialog.setTargetFragment(targetFragment, 200);
         return dialog;
     }
@@ -69,6 +70,15 @@ public class ChooseTourDialog extends BaseDialogFragment implements ChooseTourDi
 
     @Override
     public void dismissDialog() {
+        dismiss();
+    }
+
+    @Override
+    public void saveSelectionAndDismiss(@NonNull String tourId) {
+        SelectedTourListener callback = (SelectedTourListener) getTargetFragment();
+        if (callback != null) {
+            presenter.OnSelectionSaved(callback, tourId);
+        }
         dismiss();
     }
 }

@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchViewResultClickListener;
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View, GoogleMap.OnInfoWindowLongClickListener, UpdateSettingsListener {
+    public interface View extends BaseContract.View, GoogleMap.OnInfoWindowLongClickListener, UpdateSettingsListener, SelectedTourListener {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
@@ -78,7 +79,7 @@ public class MapsFragmentContract {
 
         void onChooseTourClicked();
 
-        void onTourSelected(@NonNull String tourId);
+        void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
 
         void onNewSearchQuery(@NonNull String text);
 

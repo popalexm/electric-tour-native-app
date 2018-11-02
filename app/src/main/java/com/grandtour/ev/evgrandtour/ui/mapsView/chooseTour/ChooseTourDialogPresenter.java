@@ -3,6 +3,8 @@ package com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
+import com.grandtour.ev.evgrandtour.ui.mapsView.SelectedTourListener;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -16,13 +18,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
-public class ChooseTourDialogPresenter implements ChooseTourDialogContract.Presenter {
+public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTourDialogContract.Presenter {
 
     @NonNull
     private final ChooseTourDialogContract.View view;
     @NonNull
     private final List<TourDataResponse> tourDataResponses = new ArrayList<>();
-    private boolean isViewAttached;
 
     ChooseTourDialogPresenter(@NonNull ChooseTourDialogContract.View view) {
         this.view = view;
@@ -35,28 +36,24 @@ public class ChooseTourDialogPresenter implements ChooseTourDialogContract.Prese
     }
 
     @Override
-    public void onDetach() {
-        isViewAttached = false;
-    }
-
-    @Override
     public void onDestroy() {
-
     }
 
     @Override
-    public void onTourChosen() {
-
+    public void OnDismissButtonClicked() {
+        if (isViewAttached) {
+            view.dismissDialog();
+        }
     }
 
     @Override
-    public void onDismissButtonClicked() {
-        view.dismissDialog();
+    public void OnSelectionSaved(@NonNull SelectedTourListener callback, @NonNull String tourId) {
+        callback.OnSelectedTour(tourId, tourDataResponses);
     }
 
     private void retrieveAvailableToursFromRemoteSource() {
         tourDataResponses.clear();
-        new SyncAllAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi()).perform()
+        addSubscription(new SyncAllAvailableToursUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideBackendApi()).perform()
                 .doOnSubscribe(subscription -> {
                     if (isViewAttached) {
                         view.showLoadingView(true);
@@ -89,7 +86,7 @@ public class ChooseTourDialogPresenter implements ChooseTourDialogContract.Prese
                         convertResponseAndLoad();
                     }
                 })
-                .subscribe();
+                .subscribe());
     }
 
     private void convertResponseAndLoad() {
@@ -103,6 +100,6 @@ public class ChooseTourDialogPresenter implements ChooseTourDialogContract.Prese
 
     @Override
     public void OnTourClicked(String tourId) {
-
+        view.saveSelectionAndDismiss(tourId);
     }
 }

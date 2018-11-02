@@ -15,13 +15,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
-import com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialog;
+import com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mapsView.markerInfo.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mapsView.models.UserLocation;
@@ -44,9 +45,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
 import android.util.Pair;
@@ -61,7 +59,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentView extends BaseFragment
-        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, SearchView.OnQueryTextListener {
+        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener,
+        View.OnClickListener {
 
     public static final int ZOOM_LEVEL = 13;
     @NonNull
@@ -94,6 +93,8 @@ public class MapsFragmentView extends BaseFragment
         mapFragmentBinding.setSearchViewModel(searchResultViewModel);
         mapFragmentBinding.setPresenter(presenter);
         mapFragmentBinding.searchViewCheckpoints.setOnQueryTextListener(this);
+        mapFragmentBinding.searchViewCheckpoints.setOnSearchClickListener(this);
+        mapFragmentBinding.searchViewCheckpoints.setOnCloseListener(this);
         mapView = mapFragmentBinding.getRoot()
                 .findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
@@ -316,40 +317,21 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints) {
-        FragmentManager fManager = getFragmentManager();
-        if (fManager != null) {
-            FragmentTransaction fragmentTransaction = fManager.beginTransaction();
-            Fragment previousDialog = getFragmentManager().findFragmentByTag(DistancePickerDialogFragment.TAG);
-            if (previousDialog != null) {
-                fragmentTransaction.remove(previousDialog);
-            }
-            fragmentTransaction.addToBackStack(null);
-            DistancePickerDialogFragment dialogFragment = new DistancePickerDialogFragment();
-            dialogFragment.setTotalCheckpoints(checkpoints);
-            dialogFragment.show(fragmentTransaction, DistancePickerDialogFragment.TAG);
-        }
+        DistancePickerDialogFragment dialog = new DistancePickerDialogFragment();
+        dialog.setTotalCheckpoints(checkpoints);
+        showDialog(dialog, this, DistancePickerDialogFragment.TAG, 400);
     }
 
     @Override
     public void showSettingsDialog() {
-        FragmentManager fManager = getFragmentManager();
-        if (fManager != null) {
-            FragmentTransaction fragmentTransaction = fManager.beginTransaction();
-            Fragment previousDialog = getFragmentManager().findFragmentByTag(SettingsDialogView.TAG);
-            if (previousDialog != null) {
-                fragmentTransaction.remove(previousDialog);
-            }
-            fragmentTransaction.addToBackStack(null);
-            SettingsDialogView dialogFragment = new SettingsDialogView();
-            dialogFragment.setTargetFragment(MapsFragmentView.this, 300);
-            dialogFragment.show(fragmentTransaction, SettingsDialogView.TAG);
-        }
+        SettingsDialogView dialog = new SettingsDialogView();
+        showDialog(dialog, this, SettingsDialogView.TAG, 300);
     }
 
     @Override
     public void showTourPickerDialog() {
-        ChooseTourDialog dialog = ChooseTourDialog.createInstance(this);
-        showDialog(dialog, this, ChooseTourDialog.TAG, 200);
+        ChooseTourDialogFragment dialog = ChooseTourDialogFragment.createInstance(this);
+        showDialog(dialog, this, ChooseTourDialogFragment.TAG, 200);
     }
 
     @Override
@@ -429,4 +411,23 @@ public class MapsFragmentView extends BaseFragment
         presenter.onLocationTrackingSettingsUpdate(isLocationTrackingEnabled);
     }
 
+    @Override
+    public void OnSelectedTour(@NonNull String tourId, List<TourDataResponse> tourDataResponses) {
+        presenter.onTourSelected(tourId, tourDataResponses);
+    }
+
+    @Override
+    public boolean onClose() {
+        mapsViewModel.isSearchViewOpen.set(false);
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.searchViewCheckpoints:
+                mapsViewModel.isSearchViewOpen.set(true);
+                break;
+        }
+    }
 }

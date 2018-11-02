@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.mapsView.SelectedTourListener;
 
 import android.support.annotation.NonNull;
 
@@ -14,14 +15,14 @@ public class ChooseTourDialogContract extends BaseContract {
 
         void dismissDialog();
 
+        void saveSelectionAndDismiss(@NonNull String tourId);
     }
 
     public interface Presenter extends BaseContract.Presenter, TourClickedListener {
 
-        void onTourChosen();
+        void OnDismissButtonClicked();
 
-        void onDismissButtonClicked();
-
+        void OnSelectionSaved(@NonNull SelectedTourListener callback, @NonNull String tourId);
     }
 
 }

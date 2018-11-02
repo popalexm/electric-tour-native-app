@@ -70,8 +70,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @NonNull
     private final GpsLocationManager gpsLocationManager = GpsLocationManager.getInstance();
     @NonNull
-    private final List<TourDataResponse> tourDataResponses = new ArrayList<>();
-    @NonNull
     private List<LatLng> currentSelectedRoutePoints = new ArrayList<>();
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
@@ -204,7 +202,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onTourSelected(@NonNull String tourId) {
+    public void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> tourDataResponses) {
         addSubscription(new SaveToursDataLocallyUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourDataResponses)
                 .perform()
