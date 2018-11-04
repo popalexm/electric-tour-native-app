@@ -9,7 +9,6 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,16 +25,15 @@ public class ChooseTourDialogFragment extends BaseDialogFragment implements Choo
     private final ChooseTourDialogViewModel viewModel = new ChooseTourDialogViewModel();
 
     @NonNull
-    public static ChooseTourDialogFragment createInstance(@NonNull Fragment targetFragment) {
-        ChooseTourDialogFragment dialog = new ChooseTourDialogFragment();
-        dialog.setTargetFragment(targetFragment, 200);
-        return dialog;
+    public static ChooseTourDialogFragment createInstance() {
+        return new ChooseTourDialogFragment();
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentDialogRoutesBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_routes, null, false);
         binding.setViewModel(viewModel);
+        binding.setPresenter(presenter);
         setupTransparentDialogBackground();
         return binding.getRoot();
     }

@@ -23,11 +23,6 @@ public class GoogleMapInfoWindow implements GoogleMap.InfoWindowAdapter {
 
     @Override
     public View getInfoWindow(Marker marker) {
-        return null;
-    }
-
-    @Override
-    public View getInfoContents(Marker marker) {
         View windowLayout = context.getLayoutInflater()
                 .inflate(R.layout.map_marker_info_window, null);
         TextView txtCheckpointName = windowLayout.findViewById(R.id.txtCheckpointName);
@@ -50,5 +45,8 @@ public class GoogleMapInfoWindow implements GoogleMap.InfoWindowAdapter {
         return windowLayout;
     }
 
-
+    @Override
+    public View getInfoContents(Marker marker) {
+        return null;
+    }
 }

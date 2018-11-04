@@ -289,7 +289,7 @@ public class MapsFragmentView extends BaseFragment
     @Override
     public void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions) {
         routePolyOptions.color(getContext().getResources()
-                .getColor(R.color.colorSecondaryGreen));
+                .getColor(R.color.colorBlue));
 
         Polyline route = googleMap.addPolyline(routePolyOptions);
         mapsViewModel.routes.add(route);
@@ -330,7 +330,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void showTourPickerDialog() {
-        ChooseTourDialogFragment dialog = ChooseTourDialogFragment.createInstance(this);
+        ChooseTourDialogFragment dialog = ChooseTourDialogFragment.createInstance();
         showDialog(dialog, this, ChooseTourDialogFragment.TAG, 200);
     }
 

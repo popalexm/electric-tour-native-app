@@ -34,6 +34,8 @@
                      android:paddingStart="@dimen/margin_small">
 
                      <android.support.v7.widget.SearchView
+                         style="@style/SearchViewStyle"
+                         app:theme="@style/SearchViewStyle.ActionBar"
                          android:id="@+id/searchViewCheckpoints"
                          android:layout_width="wrap_content"
                          android:layout_height="wrap_content"
@@ -43,26 +45,31 @@
                      </android.support.v7.widget.SearchView>
 
                      <LinearLayout
-                         android:layout_width="wrap_content"
+                         android:layout_width="match_parent"
                          android:layout_height="match_parent"
+                         android:orientation="horizontal"
                          android:visibility="@{viewModel.isSearchViewOpen == false ? View.VISIBLE: View.GONE}">
 
                          <TextView
-                             android:layout_width="wrap_content"
+                             android:layout_width="0dp"
+                             android:layout_gravity="center_horizontal"
                              android:layout_height="match_parent"
-                             android:layout_gravity="center"
-                             android:gravity="center_vertical"
+                             android:layout_weight="0.85"
+                             android:gravity="center"
                              android:maxLines="1"
                              android:text="@={viewModel.totalRouteInformation}"
-                             android:textSize="18sp"
+                             android:textColor="@color/colorAccent"
+                             android:textSize="16sp"
+                             android:textStyle="bold"
                              android:visibility="@{viewModel.isRouteLengthAvailable == true ? View.VISIBLE: View.GONE}" />
 
                          <ProgressBar
-                             android:layout_width="wrap_content"
+                             android:layout_width="0dp"
+                             android:layout_weight="0.15"
                              android:layout_height="match_parent"
                              android:layout_gravity="end|center_vertical"
                              android:padding="@dimen/margin_small"
-                             android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}" />
+                             android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.INVISIBLE}" />
                      </LinearLayout>
                  </LinearLayout>
 
@@ -74,9 +81,13 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_view"
+            android:layout_marginEnd="@dimen/margin_large"
+            android:layout_marginStart="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/topBar"
+            android:background="@drawable/dialog_background"
             app:itemBinding="@{searchViewModel.itemBinding}"
             app:items="@{searchViewModel.parameters}"
             app:layoutManager="@{LayoutManagers.linear()}" />

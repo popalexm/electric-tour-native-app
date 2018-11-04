@@ -20,7 +20,7 @@ public class ChooseTourDialogContract extends BaseContract {
 
     public interface Presenter extends BaseContract.Presenter, TourClickedListener {
 
-        void OnDismissButtonClicked();
+        void onDismissButtonClicked();
 
         void OnSelectionSaved(@NonNull SelectedTourListener callback, @NonNull String tourId);
     }

@@ -4,9 +4,8 @@
     <string name="message_distance_to_next_checkpoint">Distance to next : </string>
     <string name="message_eta_to_next_checkpoint">ETA to next : </string>
     <string name="title_marker_current_location">Current location</string>
-    <string name="message_are_you_sure_you_want_to_delete_all_data">Are you sure you want to delete all the imported checkpoints and routes?</string>
+    <string name="message_are_you_sure_you_want_to_delete_all_data">Are you sure you want to clear current selection ?</string>
     <string name="title_are_you_sure">Are you sure ?</string>
-    <string name="title_select_tour">Select a daily route !</string>
     <string name="message_no_internet_reloading_saved_tour">Internet Connection is not available at this moment, reloading your last saved tour !</string>
     <string name="message_route_calculations_running_in_background">Route directions are being calculated while the applications is in the background !</string>
     <string name="message_location_updates">Monitoring your location in the background !</string>
@@ -14,7 +13,7 @@
     <string name="error_message_internet_connection_intrerupted">Network connection was interrupted, aborting !</string>
     <string name="error_message_could_not_calculate_routes">Could not calculate routes, please make sure the selected end checkpoint is set after the start checkpoint !</string>
     <string name="suffix_kilometers"> Km</string>
-    <string name="hint_click_to_start_navigation">Press and Hold To Start Navigation\n to the next 10 checkpoints !</string>
+    <string name="hint_click_to_start_navigation">Press and Hold To Start Navigation !</string>
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancel</string>
     <string name="lorem_ipsum">Lorem Ipsum</string>
@@ -24,10 +23,11 @@
     <string name="label_start_checkpoint">Start Checkpoint</string>
     <string name="btn_calculate">Calculate</string>
     <string name="hint_enable_route_deviation">Enable route deviation notifications</string>
-    <string name="hint_enable_current_location_monitoring">Enable current location monitoring</string>
+    <string name="hint_enable_current_location_monitoring">Enable current location tracking</string>
     <string name="message_notify_deviation">You are deviating from the selected route !</string>
     <string name="title_warning">Warning !</string>
-    <string name="title_please_select_tour">No tour selected !</string>
+    <string name="title_no_tour_selected">No tour selected !</string>
+    <string name="title_please_select_tour">Please select a tour !</string>
 
 
 </resources>

@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onMenuItemClick(MenuItem item) {
         MapsFragmentView mapsFragmentView = (MapsFragmentView) getSupportFragmentManager().findFragmentByTag(MapsFragmentView.TAG);
         switch (item.getItemId()) {
-            case R.id.action_delete_waypoints :
-                if (mapsFragmentView != null) {
-                    mapsFragmentView.clearMapDataClicked();
-                }
-                break;
             case R.id.action_distance_between_2_checkpoints:
                 if (mapsFragmentView != null) {
                     mapsFragmentView.onCalculateDistanceBetweenCheckpoints();

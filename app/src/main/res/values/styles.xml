@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -13,15 +15,39 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="SwitchStyle" parent="Theme.AppCompat.Light">
+    <style name="TextViewStyle" parent="android:Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="SwitchStyle" parent="Theme.AppCompat.NoActionBar">
         <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/colorPrimary</item>
-
+        <item name="colorControlActivated">@color/colorAccent</item>
         <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">#f1f1f1</item>
-
+        <item name="colorSwitchThumbNormal">@color/colorPrimaryDark</item>
         <!-- inactive track color (30% transparency) -->
-        <item name="android:colorForeground">#42221f1f</item>
+        <item name="android:colorForeground">@color/colorPrimaryDark</item>
+
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="searchIcon">@drawable/ic_search_accent_24dp</item>
+        <item name="searchHintIcon">@drawable/ic_search_white_24dp</item>
+        <item name="closeIcon">@drawable/ic_close_white_24dp</item>
+    </style>
+
+    <style name="SearchViewStyle.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="autoCompleteTextViewStyle">@style/AutoCompleteTextView.SearchView</item>
+    </style>
+
+    <style name="AutoCompleteTextView.SearchView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/white</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:popupBackground">@color/colorPrimaryDark</item>
     </style>
 
 </resources>

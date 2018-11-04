@@ -26,6 +26,7 @@
             android:textAlignment="center" />
 
         <android.support.v7.widget.AppCompatSpinner
+            style="@style/SpinnerStyle"
             android:id="@+id/spinnerFirstCheckpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,6 +42,7 @@
             android:textAlignment="center" />
 
         <android.support.v7.widget.AppCompatSpinner
+            style="@style/SpinnerStyle"
             android:id="@+id/spinnerSecondCheckpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:textColor="@color/colorSecondaryGreen"
+            android:textColor="@color/colorAccent"
             android:text="@={viewModel.calculatedDistance}"
             android:textAlignment="center"
             android:textSize="16sp" />
@@ -72,10 +74,11 @@
             android:layout_marginEnd="@dimen/margin_x_large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/margin_small"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/margin_x_large"
             android:layout_marginTop="@dimen/margin_normal"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/colorAccent"
             app:cornerRadius="@dimen/margin_normal"
             android:background="@drawable/btn_background"
             android:onClick="@{() -> presenter.onCalculateDistanceBetweenCheckpoints()}"
@@ -95,6 +98,8 @@
             <android.support.design.button.MaterialButton
                 android:id="@+id/buttonDismiss"
                 style="@style/Widget.AppCompat.Button.Colored"
+                android:onClick="@{()-> presenter.onDismissButtonClicked()}"
+                android:paddingEnd="@dimen/margin_large"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -102,7 +107,7 @@
                 app:backgroundTint="@android:color/holo_red_light"
                 app:cornerRadius="@dimen/margin_normal"
                 android:background="@drawable/btn_background_cancel"
-                android:onClick="@{() -> presenter.onDismissButtonClicked()}"
+                android:paddingStart="@dimen/margin_large"
                 android:text="@string/btn_dimiss"
                 android:textColor="@android:color/white" />
 

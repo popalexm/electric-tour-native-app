@@ -157,7 +157,9 @@ public final class MapUtils {
     public static CircleOptions getCurrentUserLocationCircle(@NonNull LatLng latLng) {
         return new CircleOptions()
                 .center(latLng)
-                .strokeColor(Injection.provideGlobalContext().getResources().getColor(R.color.colorPrimary))
+                .strokeColor(Injection.provideGlobalContext()
+                        .getResources()
+                        .getColor(R.color.colorAccent))
                 .radius(MapUtils.LOCATION_CIRCLE_RADIUS);
     }
 }

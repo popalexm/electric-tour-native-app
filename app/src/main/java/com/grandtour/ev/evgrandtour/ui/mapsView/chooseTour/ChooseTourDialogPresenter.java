@@ -40,7 +40,7 @@ public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTo
     }
 
     @Override
-    public void OnDismissButtonClicked() {
+    public void onDismissButtonClicked() {
         if (isViewAttached) {
             view.dismissDialog();
         }

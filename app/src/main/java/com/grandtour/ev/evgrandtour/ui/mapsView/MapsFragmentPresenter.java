@@ -312,7 +312,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 .perform()
                 .doOnComplete(() -> {
                     view.showTotalRouteInformation(Injection.provideGlobalContext()
-                            .getString(R.string.title_please_select_tour), true);
+                            .getString(R.string.title_no_tour_selected), true);
                 })
                 .subscribe(distanceDurationPair -> {
                     String infoMessage = MapUtils.generateInfoMessage(distanceDurationPair);

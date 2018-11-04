@@ -15,6 +15,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_medium"
                 android:layout_gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -23,6 +24,7 @@
                     android:id="@+id/switchLocation"
                     android:text="@string/hint_enable_current_location_monitoring"
                     android:layout_margin="@dimen/margin_medium"
+                    android:switchPadding="@dimen/margin_small"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -30,6 +32,7 @@
                     android:theme="@style/SwitchStyle"
                     android:id="@+id/switchDeviationNotifications"
                     android:text="@string/hint_enable_route_deviation"
+                    android:switchPadding="@dimen/margin_small"
                     android:layout_margin="@dimen/margin_medium"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -43,8 +46,10 @@
             app:cornerRadius="@dimen/margin_normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_medium"
+            android:paddingEnd="@dimen/margin_large"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/fab_margin"
+            android:paddingStart="@dimen/margin_large"
             android:text="@string/btn_dimiss"
             android:textColor="@android:color/white" />
 
