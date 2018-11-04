@@ -32,11 +32,10 @@
                 <TextView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/circular_background"
                     android:gravity="center"
-                    android:shadowColor="@android:color/white"
+                    android:background="@drawable/circular_background"
                     android:text="@{viewModel.positionInList}"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/colorAccent"
                     android:textSize="16sp" />
 
             </FrameLayout>
