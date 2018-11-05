@@ -4,8 +4,6 @@
     <string name="message_distance_to_next_checkpoint">Distance to next : </string>
     <string name="message_eta_to_next_checkpoint">ETA to next : </string>
     <string name="title_marker_current_location">Current location</string>
-    <string name="message_are_you_sure_you_want_to_delete_all_data">Are you sure you want to clear current selection ?</string>
-    <string name="title_are_you_sure">Are you sure ?</string>
     <string name="message_no_internet_reloading_saved_tour">Internet Connection is not available at this moment, reloading your last saved tour !</string>
     <string name="message_route_calculations_running_in_background">Route directions are being calculated while the applications is in the background !</string>
     <string name="message_location_updates">Monitoring your location in the background !</string>
@@ -14,8 +12,6 @@
     <string name="error_message_could_not_calculate_routes">Could not calculate routes, please make sure the selected end checkpoint is set after the start checkpoint !</string>
     <string name="suffix_kilometers"> Km</string>
     <string name="hint_click_to_start_navigation">Press and Hold To Start Navigation !</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_cancel">Cancel</string>
     <string name="lorem_ipsum">Lorem Ipsum</string>
     <string name="btn_dimiss">Dismiss</string>
     <string name="hint_distance_between">Distance between ..</string>
