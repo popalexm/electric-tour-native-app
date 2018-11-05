@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.TourModel" />
+            type="com.grandtour.ev.evgrandtour.ui.chooseTour.TourModel" />
     </data>
 
     <android.support.design.card.MaterialCardView

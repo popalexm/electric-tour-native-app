@@ -5,7 +5,7 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePointViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePointViewModel" />
     </data>
 
     <TextView

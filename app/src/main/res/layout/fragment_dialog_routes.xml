@@ -6,11 +6,11 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.chooseTour.ChooseTourDialogContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogContract.Presenter" />
 
     </data>
 

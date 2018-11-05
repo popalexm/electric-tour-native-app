@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.services.notifications;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
-import com.grandtour.ev.evgrandtour.ui.main.MainActivity;
+import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

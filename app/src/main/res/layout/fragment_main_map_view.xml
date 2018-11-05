@@ -9,15 +9,15 @@
 
         <variable
             name="searchViewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.search.SearchResultsListViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultsListViewModel" />
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.MapsViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.MapsFragmentContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentContract.Presenter" />
     </data>
 
     <RelativeLayout

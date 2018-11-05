@@ -7,8 +7,6 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 
 import android.support.annotation.NonNull;
 
-import java.util.concurrent.Callable;
-
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
@@ -37,15 +35,12 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
                 .flatMap(new Function<String, MaybeSource<Long>>() {
                     @Override
                     public MaybeSource<Long> apply(String tourId) {
-                        return Maybe.fromCallable(new Callable<Long>() {
-                            @Override
-                            public Long call() {
-                                Route route = new Route();
-                                route.setTourId(tourId);
-                                route.setRoutePolyline(routePolyline);
-                                return storageManager.routeDao()
-                                        .insert(route);
-                            }
+                        return Maybe.fromCallable(() -> {
+                            Route route = new Route();
+                            route.setTourId(tourId);
+                            route.setRoutePolyline(routePolyline);
+                            return storageManager.routeDao()
+                                    .insert(route);
                         });
                     }
                 });

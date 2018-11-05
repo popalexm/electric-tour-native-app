@@ -5,6 +5,7 @@ import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
 import com.grandtour.ev.evgrandtour.data.network.DirectionsAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -12,8 +13,9 @@ import android.support.annotation.NonNull;
 public class Injection {
 
     /**
-     * Provides the global application context, not a memory leak .
+     * Provides the global Application Context, which is already a singleton, not an activity / fragment Context instance, not a memory leak .
      */
+    @SuppressLint("StaticFieldLeak")
     @NonNull
     private static Context context;
     @NonNull

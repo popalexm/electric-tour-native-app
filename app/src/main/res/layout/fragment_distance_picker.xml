@@ -5,11 +5,11 @@
         <import type="com.grandtour.ev.evgrandtour.R" />
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerContract.Presenter" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
