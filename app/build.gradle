@@ -19,7 +19,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.grandtour.ev.evgrandtour"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 12
         versionName "2.0.5"

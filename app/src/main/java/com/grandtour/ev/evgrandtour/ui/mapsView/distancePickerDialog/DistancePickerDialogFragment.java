@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class DistancePickerDialogFragment extends BaseDialogFragment implements DistancePickerContract.View {
@@ -26,7 +27,11 @@ public class DistancePickerDialogFragment extends BaseDialogFragment implements 
     public final DistancePickerPresenter presenter = new DistancePickerPresenter(this);
 
     public void setTotalCheckpoints(@NonNull Collection<Checkpoint> totalCheckpoints) {
-        this.distancePickerViewModel.totalCheckpoints.addAll(totalCheckpoints);
+        Collection<DistancePointViewModel> viewModels = new ArrayList<>();
+        for (Checkpoint checkpoint : totalCheckpoints) {
+            viewModels.add(new DistancePointViewModel(checkpoint.getCheckpointId(), checkpoint.getCheckpointName()));
+        }
+        this.distancePickerViewModel.totalCheckpoints.addAll(viewModels);
     }
 
     @Override
@@ -61,9 +66,8 @@ public class DistancePickerDialogFragment extends BaseDialogFragment implements 
     public void calculateDistances() {
         int startId = distancePickerViewModel.selectedStartCheckpoint.get();
         int endId = distancePickerViewModel.selectedEndCheckpoint.get();
-        presenter.onCalculateRouteInformationClicked(distancePickerViewModel.totalCheckpoints.get(startId)
-                .getCheckpointId(), distancePickerViewModel.totalCheckpoints.get(endId)
-                .getCheckpointId());
+        presenter.onCalculateRouteInformationClicked(distancePickerViewModel.totalCheckpoints.get(startId).checkpointId,
+                distancePickerViewModel.totalCheckpoints.get(endId).checkpointId);
     }
 
     @Override

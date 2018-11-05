@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+
+        <import type="com.grandtour.ev.evgrandtour.R" />
         <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.mapsView.distancePickerDialog.DistancePickerViewModel" />
@@ -25,13 +27,14 @@
             android:text="@string/label_start_checkpoint"
             android:textAlignment="center" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <Spinner
             style="@style/SpinnerStyle"
             android:id="@+id/spinnerFirstCheckpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:entries="@{viewModel.totalCheckpoints}"
+            app:itemBinding="@{viewModel.itemBinding}"
+            app:items="@{viewModel.totalCheckpoints}"
             android:selectedItemPosition="@={viewModel.selectedStartCheckpoint}" />
 
         <TextView
@@ -41,13 +44,14 @@
             android:text="@string/label_end_checkpoint"
             android:textAlignment="center" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <Spinner
             style="@style/SpinnerStyle"
             android:id="@+id/spinnerSecondCheckpoint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
-            android:entries="@{viewModel.totalCheckpoints}"
+            app:itemBinding="@{viewModel.itemBinding}"
+            app:items="@{viewModel.totalCheckpoints}"
             android:selectedItemPosition="@={viewModel.selectedEndCheckpoint}" />
 
         <TextView
