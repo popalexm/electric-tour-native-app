@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.distancePicker;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDistancePickerBinding;
-import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.base.BottomDialogFragment;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -17,7 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DistancePickerDialogFragment extends BaseDialogFragment implements DistancePickerContract.View {
+public class DistancePickerDialogFragment extends BottomDialogFragment implements DistancePickerContract.View {
 
     @NonNull
     public final static String TAG = DistancePickerDialogFragment.class.getSimpleName();
@@ -40,6 +40,7 @@ public class DistancePickerDialogFragment extends BaseDialogFragment implements 
         binding.setViewModel(distancePickerViewModel);
         binding.setPresenter(presenter);
         setupTransparentDialogBackground();
+        setupBottomSheetToExpanded();
         return binding.getRoot();
     }
 
