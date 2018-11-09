@@ -29,7 +29,8 @@ public class DistancePickerDialogFragment extends BottomDialogFragment implement
     public void setTotalCheckpoints(@NonNull Collection<Checkpoint> totalCheckpoints) {
         Collection<DistancePointViewModel> viewModels = new ArrayList<>();
         for (Checkpoint checkpoint : totalCheckpoints) {
-            viewModels.add(new DistancePointViewModel(checkpoint.getCheckpointId(), checkpoint.getCheckpointName()));
+            String displayedName = checkpoint.getOrderInTourId() + "   " + checkpoint.getCheckpointName();
+            viewModels.add(new DistancePointViewModel(checkpoint.getCheckpointId(), displayedName));
         }
         this.distancePickerViewModel.totalCheckpoints.addAll(viewModels);
     }

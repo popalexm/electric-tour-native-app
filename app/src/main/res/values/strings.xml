@@ -15,15 +15,16 @@
     <string name="lorem_ipsum">Lorem Ipsum</string>
     <string name="btn_dimiss">Dismiss</string>
     <string name="hint_distance_between">Distance between ..</string>
-    <string name="label_end_checkpoint">End Checkpoint</string>
-    <string name="label_start_checkpoint">Start Checkpoint</string>
+    <string name="label_end_checkpoint">Second Checkpoint</string>
+    <string name="label_start_checkpoint">First Checkpoint</string>
     <string name="btn_calculate">Calculate</string>
     <string name="hint_enable_route_deviation">Enable route deviation notifications</string>
     <string name="hint_enable_current_location_monitoring">Enable current location tracking</string>
     <string name="message_notify_deviation">You are deviating from the selected route !</string>
     <string name="title_warning">Warning !</string>
-    <string name="title_no_tour_selected">No tour selected !</string>
-    <string name="title_please_select_tour">Please select a tour !</string>
+    <string name="title_no_tour_selected">No route selected !</string>
+    <string name="title_please_select_tour">Please select a route !</string>
+    <string name="hint_select_2_checkpoints_for_distance_calculation">Select 2 checkpoints to calculate the distance between them on the current route</string>
 
 
 </resources>

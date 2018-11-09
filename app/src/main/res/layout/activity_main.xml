@@ -22,7 +22,7 @@
         app:navigationIcon="@mipmap/ic_launcher_foreground"
         app:backgroundTint="@color/colorPrimary"
         app:buttonGravity="bottom|top"
-        app:fabAlignmentMode="end" />
+        app:fabAlignmentMode="center" />
 
     <android.support.design.widget.FloatingActionButton
         style="@style/Widget.MaterialComponents.BottomAppBar"
