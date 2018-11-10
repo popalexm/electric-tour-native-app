@@ -41,7 +41,7 @@
                          android:layout_height="wrap_content"
                          android:layout_gravity="start|center_vertical"
                          android:focusable="false"
-                         app:queryHint="Search in route...">
+                         app:queryHint="@string/hint_search_checkpoints">
                      </android.support.v7.widget.SearchView>
 
                      <LinearLayout
