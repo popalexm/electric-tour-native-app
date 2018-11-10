@@ -1,6 +1,5 @@
 package com.grandtour.ev.evgrandtour.services;
 
-import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
@@ -9,9 +8,7 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesRe
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
-import com.grandtour.ev.evgrandtour.services.notifications.NotificationsUtils;
 
-import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -30,7 +27,6 @@ import okhttp3.internal.http2.StreamResetException;
 
 public class RouteDirectionsRequestsService extends Service {
 
-    private static final int ROUTE_REQUESTS_NOTIFICATION_ID = 12;
     @NonNull
     public static final String ROUTE_MAP_POINTS_BUNDLE = "routeMapPointsParcelable";
     @NonNull
@@ -52,21 +48,11 @@ public class RouteDirectionsRequestsService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        stopForeground(true);
         return localBinder;
     }
 
     @Override
-    public void onRebind(Intent intent) {
-        stopForeground(true);
-        super.onRebind(intent);
-    }
-
-    @Override
     public boolean onUnbind(Intent intent) {
-        Notification notification = NotificationsUtils.createNotification(this, getString(R.string.message_route_calculations_running_in_background),
-                getString(R.string.app_name));
-        startForeground(RouteDirectionsRequestsService.ROUTE_REQUESTS_NOTIFICATION_ID, notification);
         return true;
     }
 
