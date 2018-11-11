@@ -57,7 +57,8 @@ public class LocationsUpdatesService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Notification notification = NotificationsUtils.createNotification(this, getString(R.string.message_location_updates), getString(R.string.app_name));
+        Notification notification = NotificationsUtils.createLowPriorityNotification(this, getString(R.string.message_location_updates),
+                getString(R.string.app_name));
         startForeground(LocationsUpdatesService.LOCATION_NOTIFICATION_ID, notification);
         return true;
     }

@@ -23,7 +23,7 @@ public class NotificationManager {
 
     public void notifyAboutRouteDeviation() {
         Context ctx = Injection.provideGlobalContext();
-        Notification notification = NotificationsUtils.createNotification(ctx, ctx.getString(R.string.message_notify_deviation),
+        Notification notification = NotificationsUtils.createHighPriorityNotification(ctx, ctx.getString(R.string.message_notify_deviation),
                 ctx.getString(R.string.title_warning));
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ctx);
         notificationManager.notify(1200, notification);
