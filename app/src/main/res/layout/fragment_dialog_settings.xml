@@ -39,6 +39,14 @@
 
             </LinearLayout>
 
+        <TextView
+            android:id="@+id/txtAppVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/margin_normal"
+            android:textSize="12sp"
+            android:textStyle="italic" />
 
         <android.support.design.button.MaterialButton
             android:id="@+id/buttonDismiss"

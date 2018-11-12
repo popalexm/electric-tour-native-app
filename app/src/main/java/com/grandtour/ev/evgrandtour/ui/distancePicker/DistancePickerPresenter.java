@@ -34,22 +34,25 @@ public class DistancePickerPresenter extends BasePresenter implements DistancePi
 
     @Override
     public void onCalculateRouteInformationClicked(@NonNull Integer startCheckpointId, @NonNull Integer endCheckpointId) {
-        GetDrivingInfoBetweenTwoCheckpointsUseCase calculateDistance = new GetDrivingInfoBetweenTwoCheckpointsUseCase(Schedulers.io(),
-                AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId);
-        addSubscription(calculateDistance.perform()
-                .doOnSuccess(distanceDurationPair -> {
-                    int distance = distanceDurationPair.first;
-                    String duration = TimeUtils.convertFromSecondsToFormattedTime(distanceDurationPair.second);
-                    int distanceInKm = distance / 1000;
-                    view.displayDistance(distanceInKm, duration);
-                })
-                .doOnError(throwable -> {
-                    throwable.printStackTrace();
-                    if (isViewAttached) {
-                        view.showMessage(Injection.provideGlobalContext()
-                                .getString(R.string.error_message_could_not_calculate_routes));
-                    }
-                })
-                .subscribe());
+        if (startCheckpointId < endCheckpointId) {
+            GetDrivingInfoBetweenTwoCheckpointsUseCase calculateDistance = new GetDrivingInfoBetweenTwoCheckpointsUseCase(Schedulers.io(),
+                    AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId - 1);
+            addSubscription(calculateDistance.perform()
+                    .doOnSuccess(distanceDurationPair -> {
+                        int distance = distanceDurationPair.first;
+                        String duration = TimeUtils.convertFromSecondsToFormattedTime(distanceDurationPair.second);
+                        int distanceInKm = distance / 1000;
+                        view.displayDistance(distanceInKm, duration);
+                    })
+                    .doOnError(Throwable::printStackTrace)
+                    .subscribe());
+        } else {
+            if (isViewAttached) {
+                view.showMessage(Injection.provideGlobalContext()
+                        .getString(R.string.error_message_could_not_calculate_routes));
+            }
+        }
+
+
     }
 }

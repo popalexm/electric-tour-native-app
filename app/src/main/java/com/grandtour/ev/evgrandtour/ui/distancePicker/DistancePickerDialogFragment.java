@@ -5,14 +5,17 @@ import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDistancePickerBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BottomDialogFragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +28,8 @@ public class DistancePickerDialogFragment extends BottomDialogFragment implement
     public final DistancePickerViewModel distancePickerViewModel = new DistancePickerViewModel();
     @NonNull
     public final DistancePickerPresenter presenter = new DistancePickerPresenter(this);
+    @Nullable
+    private FragmentDistancePickerBinding binding;
 
     public void setTotalCheckpoints(@NonNull Collection<Checkpoint> totalCheckpoints) {
         Collection<DistancePointViewModel> viewModels = new ArrayList<>();
@@ -37,14 +42,13 @@ public class DistancePickerDialogFragment extends BottomDialogFragment implement
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentDistancePickerBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_distance_picker, null, false);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_distance_picker, null, false);
         binding.setViewModel(distancePickerViewModel);
         binding.setPresenter(presenter);
         setupTransparentDialogBackground();
         setupBottomSheetToExpanded();
         return binding.getRoot();
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -60,8 +64,13 @@ public class DistancePickerDialogFragment extends BottomDialogFragment implement
 
     @Override
     public void displayDistance(@NonNull Integer distance, @NonNull String duration) {
-        String dist = getString(R.string.format_distance_between, distance, getString(R.string.suffix_kilometers), duration);
-        distancePickerViewModel.calculatedDistance.set(dist);
+        Activity activity = getActivity();
+        if (activity != null && binding != null) {
+            String dist = getString(R.string.format_distance_between, distance, getString(R.string.suffix_kilometers), duration);
+            binding.distance.setTextColor(activity.getResources()
+                    .getColor(R.color.colorLightGrey));
+            distancePickerViewModel.calculatedDistance.set(dist);
+        }
     }
 
     @Override
@@ -83,7 +92,13 @@ public class DistancePickerDialogFragment extends BottomDialogFragment implement
 
     @Override
     public void showMessage(@NonNull String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT)
-                .show();
+        Activity activity = getActivity();
+        if (binding != null && activity != null) {
+            Animation animShake = AnimationUtils.loadAnimation(activity, R.anim.shake_animation);
+            distancePickerViewModel.calculatedDistance.set(msg);
+            binding.distance.setTextColor(activity.getResources()
+                    .getColor(R.color.colorRed));
+            binding.distance.startAnimation(animShake);
+        }
     }
 }

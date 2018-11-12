@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.settings;
 
+import com.grandtour.ev.evgrandtour.BuildConfig;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class SettingsDialogView extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
 
@@ -27,6 +29,8 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
     private Switch switchLocationTracking;
     @NonNull
     private Button btnDismiss;
+    @NonNull
+    private TextView txtAppVersion;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,13 +38,13 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
         switchLocationTracking = view.findViewById(R.id.switchLocation);
         switchRouteDeviationNotification = view.findViewById(R.id.switchDeviationNotifications);
         btnDismiss = view.findViewById(R.id.buttonDismiss);
+        txtAppVersion = view.findViewById(R.id.txtAppVersion);
 
         btnDismiss.setOnClickListener(this);
-
-        setupCurrentSettings();
         switchLocationTracking.setOnCheckedChangeListener(this);
         switchRouteDeviationNotification.setOnCheckedChangeListener(this);
 
+        setupCurrentSettings();
         setupTransparentDialogBackground();
         return view;
     }
@@ -54,6 +58,9 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
         if (areDeviationNotificationsEnabled) {
             switchRouteDeviationNotification.setChecked(true);
         }
+        String appVersion = BuildConfig.VERSION_NAME;
+        String appVersionPrefix = getString(R.string.application_version);
+        txtAppVersion.setText(getString(R.string.format_app_version, appVersionPrefix, appVersion));
     }
 
     @Override
