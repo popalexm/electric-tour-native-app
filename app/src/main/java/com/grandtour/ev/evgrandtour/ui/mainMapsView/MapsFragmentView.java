@@ -337,14 +337,12 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints) {
-        searchResultViewModel.parameters.clear();
-        searchResultViewModel.parameters.addAll(checkpoints);
+        searchResultViewModel.parameters.update(checkpoints);
     }
 
     @Override
     public void clearSearchResults() {
-        searchResultViewModel.parameters.clear();
-        searchResultViewModel.parameters.addAll(new ArrayList<>());
+        searchResultViewModel.parameters.update(new ArrayList<>());
     }
 
     @Override
