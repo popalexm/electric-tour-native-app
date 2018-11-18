@@ -4,7 +4,6 @@
 
     <data>
         <import type="android.view.View" />
-
         <import type="me.tatarka.bindingcollectionadapter2.LayoutManagers" />
 
         <variable
@@ -61,6 +60,7 @@
                              android:textColor="@color/colorAccent"
                              android:textSize="16sp"
                              android:textStyle="bold"
+                             app:isWarningState="@{viewModel.isWarningState}"
                              android:visibility="@{viewModel.isRouteLengthAvailable == true ? View.VISIBLE: View.GONE}" />
 
                          <ProgressBar

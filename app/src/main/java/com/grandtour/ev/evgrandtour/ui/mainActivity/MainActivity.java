@@ -1,12 +1,14 @@
 package com.grandtour.ev.evgrandtour.ui.mainActivity;
 
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.databinding.ActivityMainBinding;
+import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentView;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.bottomappbar.BottomAppBar;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,19 +17,31 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener , Toolbar.OnMenuItemClickListener{
 
+    @Nullable
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
-
-        FloatingActionButton calculateRoutesFab = findViewById(R.id.fab_open_tour_selection);
-        calculateRoutesFab.setOnClickListener(this);
-
-        bottomAppBar.replaceMenu(R.menu.menu_main);
-        bottomAppBar.setNavigationOnClickListener(this);
-        bottomAppBar.setOnMenuItemClickListener(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        setupViews();
         setupGeoFenceMapFragment();
+    }
+
+    private void setupViews() {
+        if (binding != null) {
+            binding.fabOpenTourSelection.setOnClickListener(this);
+            binding.bottomAppBar.replaceMenu(R.menu.menu_main);
+            binding.bottomAppBar.setNavigationOnClickListener(this);
+            binding.bottomAppBar.setOnMenuItemClickListener(this);
+        }
+    }
+
+    public void animateRouteSelectionButton() {
+        if (binding != null) {
+            AnimationManager.getInstance()
+                    .startBounceAnimation(binding.fabOpenTourSelection);
+        }
     }
 
     private void setupGeoFenceMapFragment() {

@@ -53,6 +53,10 @@ public class MapsFragmentContract {
         void clearSearchResults();
 
         void hideSoftKeyboard();
+
+        void animateRouteSelectionButton();
+
+        void animateInfoText();
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {

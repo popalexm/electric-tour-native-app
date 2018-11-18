@@ -1,8 +1,10 @@
 package com.grandtour.ev.evgrandtour.ui.distancePicker;
 
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDistancePickerBinding;
+import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BottomDialogFragment;
 
 import android.app.Activity;
@@ -14,8 +16,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,11 +94,12 @@ public class DistancePickerDialogFragment extends BottomDialogFragment implement
     public void showMessage(@NonNull String msg) {
         Activity activity = getActivity();
         if (binding != null && activity != null) {
-            Animation animShake = AnimationUtils.loadAnimation(activity, R.anim.shake_animation);
             distancePickerViewModel.calculatedDistance.set(msg);
-            binding.distance.setTextColor(activity.getResources()
+            binding.distance.setTextColor(Injection.provideGlobalContext()
+                    .getResources()
                     .getColor(R.color.colorRed));
-            binding.distance.startAnimation(animShake);
+            AnimationManager.getInstance()
+                    .shakeTextView(binding.distance);
         }
     }
 }

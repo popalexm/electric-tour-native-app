@@ -176,11 +176,19 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onCalculateDistanceBetweenTwoCheckpointsClicked() {
         addSubscription(new LoadCheckpointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                .subscribe(checkpoints -> {
-                    if (checkpoints.size() != 0) {
+                .doOnComplete(() -> {
+                    if (isViewAttached) {
+                        view.showMessage(Injection.provideGlobalContext()
+                                .getString(R.string.error_please_select_a_route));
+                        view.animateRouteSelectionButton();
+                    }
+                })
+                .doOnSuccess(checkpoints -> {
+                    if (checkpoints.size() != 0 && isViewAttached) {
                         view.showCalculateDistanceDialog(checkpoints);
                     }
-                }));
+                })
+                .subscribe());
     }
 
     @Override
@@ -342,6 +350,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 .doOnComplete(() -> {
                     view.showTotalRouteInformation(Injection.provideGlobalContext()
                             .getString(R.string.title_no_tour_selected), true);
+                    view.animateRouteSelectionButton();
+                    view.animateInfoText();
                 })
                 .subscribe(distanceDurationPair -> {
                     String infoMessage = MapUtils.generateInfoMessage(distanceDurationPair);

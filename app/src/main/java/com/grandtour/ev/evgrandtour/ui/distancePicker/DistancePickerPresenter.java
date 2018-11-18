@@ -52,7 +52,5 @@ public class DistancePickerPresenter extends BasePresenter implements DistancePi
                         .getString(R.string.error_message_could_not_calculate_routes));
             }
         }
-
-
     }
 }

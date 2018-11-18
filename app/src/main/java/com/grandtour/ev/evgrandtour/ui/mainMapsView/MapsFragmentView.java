@@ -19,9 +19,11 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourD
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
@@ -29,7 +31,6 @@ import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultsListViewModel;
 import com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogView;
-import com.grandtour.ev.evgrandtour.ui.utils.AnimationUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
@@ -47,12 +48,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,13 +178,6 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void showMessage(@NonNull String msg) {
-        Toast toast = Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-    }
-
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         this.googleMap.setOnMarkerClickListener(this);
@@ -233,7 +225,8 @@ public class MapsFragmentView extends BaseFragment
             Circle currentUserCircle = googleMap.addCircle(circleOptions);
 
             mapsViewModel.currentUserLocation.set(new CurrentUserLocation(currentUserMarker, currentUserCircle));
-            AnimationUtils.addAnimationToCircle(currentUserCircle);
+            AnimationManager.getInstance()
+                    .startUserLocationAnimation(currentUserCircle);
         }
     }
 
@@ -375,6 +368,19 @@ public class MapsFragmentView extends BaseFragment
                         .getWindowToken(), 0); // hide
             }
         }
+    }
+
+    @Override
+    public void animateRouteSelectionButton() {
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.animateRouteSelectionButton();
+        }
+    }
+
+    @Override
+    public void animateInfoText() {
+        mapsViewModel.isWarningState.set(true);
     }
 
     public void onChooseTourClicked() {
