@@ -1,32 +1,29 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchViewResultClickListener;
 import com.grandtour.ev.evgrandtour.ui.settings.UpdateSettingsListener;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
-import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View, GoogleMap.OnInfoWindowLongClickListener, UpdateSettingsListener, SelectedTourListener {
+    public interface View extends BaseContract.View, UpdateSettingsListener, SelectedTourListener {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
-        void loadCheckpoints(@NonNull List<Pair<Integer, MarkerOptions>> checkpoints);
+        void loadCheckpoints(@NonNull List<MapCheckpoint> checkpoints);
 
         void centerMapToCurrentSelectedRoute();
 
@@ -73,7 +70,7 @@ public class MapsFragmentContract {
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
-        void onNavigationClicked(@NonNull Marker originMarker);
+        void onNavigationClicked(@NonNull MapCheckpoint originMarker);
 
         void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints);
 

@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 public class CurrentUserLocation {
 
     @NonNull
-    private Marker currentLocationMarker;
+    private final Marker currentLocationMarker;
     @NonNull
-    private Circle currentLocationCircle;
+    private final Circle currentLocationCircle;
 
     public CurrentUserLocation(@NonNull Marker currentLocationMarker, @NonNull Circle currentLocationCircle) {
         this.currentLocationMarker = currentLocationMarker;

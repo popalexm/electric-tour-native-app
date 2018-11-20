@@ -12,7 +12,7 @@
     <string name="error_message_internet_connection_intrerupted">Network connection was interrupted, aborting !</string>
     <string name="error_message_could_not_calculate_routes">Please make sure second checkpoint has a higher number than the first one !</string>
     <string name="suffix_kilometers"> Km</string>
-    <string name="hint_click_to_start_navigation">Press and hold to start navigation\nfrom your current location</string>
+    <string name="hint_click_to_start_navigation">Click to start navigation\nfrom your current location</string>
     <string name="lorem_ipsum">Lorem Ipsum</string>
     <string name="btn_dimiss">Dismiss</string>
     <string name="hint_distance_between">Distance between…</string>

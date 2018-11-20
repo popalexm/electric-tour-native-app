@@ -1,8 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
@@ -17,8 +15,8 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourD
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointMarkersForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
@@ -26,6 +24,7 @@ import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.services.notifications.NotificationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
@@ -43,8 +42,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,10 +149,9 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onNavigationClicked(@NonNull Marker originMarker) {
-        Integer checkpointId = (Integer) originMarker.getTag();
-        if (checkpointId != null) {
-            addSubscription(new GetFollowingCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+    public void onNavigationClicked(@NonNull MapCheckpoint originMarker) {
+        Integer checkpointId = originMarker.getMapCheckpointId();
+        addSubscription(new GetFollowingCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
                     checkpointId).perform()
                     .subscribe(checkpoints -> {
                         if (checkpoints.size() != 0) {
@@ -165,7 +161,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                             }
                         }
                     }));
-        }
+
     }
 
     @Override
@@ -241,7 +237,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        Log.d(TAG, "Connected to service " + name.getClassName());
         if (name.getClassName()
                 .equals(LocationsUpdatesService.class.getName())) {
             LocationsUpdatesService.LocationServiceBinder binder = (LocationsUpdatesService.LocationServiceBinder) service;
@@ -255,7 +250,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
-        Log.d(TAG, "Disconnected from service " + name.getClassName());
         if (name.getClassName()
                 .equals(LocationsUpdatesService.class.getName())) {
             locationUpdatesService = null;
@@ -325,7 +319,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 })
                 .doOnError(Throwable::printStackTrace);
 
-        Maybe<List<Pair<Integer, MarkerOptions>>> getAvailableCheckpoints = new LoadCheckpointMarkersForSelectedTourUseCase(Schedulers.io(),
+        Maybe<List<MapCheckpoint>> getAvailableCheckpoints = new LoadMapCheckpointForSelectedTourUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(checkpoints -> {
                     if (isViewAttached) {
