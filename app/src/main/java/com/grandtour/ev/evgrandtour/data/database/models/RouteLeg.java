@@ -1,0 +1,67 @@
+package com.grandtour.ev.evgrandtour.data.database.models;
+
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.PrimaryKey;
+
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
+@Entity(foreignKeys = @ForeignKey(entity = Route.class, parentColumns = "routeId", childColumns = "routeId", onDelete = CASCADE))
+public class RouteLeg {
+
+    @PrimaryKey(autoGenerate = true)
+    private int routeLegId;
+    private int routeId;
+    private double routeLegStartLatitude;
+    private double routeLegStartLongitude;
+    private double routeLegEndLatitude;
+    private double routeLegEndLongitude;
+
+    public int getRouteLegId() {
+        return routeLegId;
+    }
+
+    public void setRouteLegId(int routeLegId) {
+        this.routeLegId = routeLegId;
+    }
+
+    public int getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(int routeId) {
+        this.routeId = routeId;
+    }
+
+    public double getRouteLegStartLatitude() {
+        return routeLegStartLatitude;
+    }
+
+    public void setRouteLegStartLatitude(double routeLegStartLatitude) {
+        this.routeLegStartLatitude = routeLegStartLatitude;
+    }
+
+    public double getRouteLegStartLongitude() {
+        return routeLegStartLongitude;
+    }
+
+    public void setRouteLegStartLongitude(double routeLegStartLongitude) {
+        this.routeLegStartLongitude = routeLegStartLongitude;
+    }
+
+    public double getRouteLegEndLatitude() {
+        return routeLegEndLatitude;
+    }
+
+    public void setRouteLegEndLatitude(double routeLegEndLatitude) {
+        this.routeLegEndLatitude = routeLegEndLatitude;
+    }
+
+    public double getRouteLegEndLongitude() {
+        return routeLegEndLongitude;
+    }
+
+    public void setRouteLegEndLongitude(double routeLegEndLongitude) {
+        this.routeLegEndLongitude = routeLegEndLongitude;
+    }
+}

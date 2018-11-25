@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.services;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
-import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
+import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RouteResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
@@ -80,26 +80,27 @@ public class RouteDirectionsRequestsService extends Service {
                         broadcastRequestError(NetworkExceptions.UNKNOWN_HOST);
                     } else if (throwable instanceof StreamResetException) {
                         broadcastRequestError(NetworkExceptions.STREAM_RESET_EXCEPTION);
+                    } else {
+                        throwable.printStackTrace();
                     }
                     stopSelf();
                 })
                 .subscribe(response -> {
                     RoutesResponse routesResponse = response.body();
                     if (routesResponse != null) {
-                        List<Route> routes = routesResponse.getRoutes();
+                        List<RouteResponse> routes = routesResponse.getRoutes();
                         if (routes != null && routes.size() > 0) {
-                            String poly = routesResponse.getRoutes()
-                                    .get(0)
-                                    .getOverviewPolyline()
-                                    .getPoints();
-                            RouteDirectionsRequestsService.saveRouteToDatabase(poly);
+                            RouteResponse route = routesResponse.getRoutes()
+                                    .get(0);
+                            RouteDirectionsRequestsService.saveRouteToDatabase(route);
                         }
                     }
                 });
     }
 
-    private static void saveRouteToDatabase(@NonNull String routePolyline) {
-        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), routePolyline).perform()
+    private static void saveRouteToDatabase(@NonNull RouteResponse route) {
+        new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), route).perform()
+                .doOnError(Throwable::printStackTrace)
                 .subscribe();
     }
 

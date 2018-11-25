@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.domain.handlers;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Leg;
-import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Route;
+import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RouteResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 
 import android.support.annotation.NonNull;
@@ -35,9 +35,9 @@ public final class RoutesResponseHandler {
 
     public void handleRouteResponse(@NonNull RoutesResponse responseBody, List<Checkpoint> singleRouteRequestBatch) {
         if (isRequestDataOk(responseBody.getStatus())) {
-            List<Route> routes = responseBody.getRoutes();
+            List<RouteResponse> routes = responseBody.getRoutes();
             if (routes != null && routes.size() != 0) {
-                Route responseRoute = responseBody.getRoutes()
+                RouteResponse responseRoute = responseBody.getRoutes()
                         .get(0);
                 if (responseRoute != null) {
                     List<Leg> routeLegs = responseRoute.getLegs();
