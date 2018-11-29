@@ -8,12 +8,13 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.database.models.Route;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
@@ -42,6 +43,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,21 +154,16 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     public void onNavigationClicked(@NonNull MapCheckpoint originMarker) {
         Integer checkpointId = originMarker.getMapCheckpointId();
         addSubscription(new GetFollowingCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
-                    checkpointId).perform()
-                    .subscribe(checkpoints -> {
-                        if (checkpoints.size() != 0) {
-                            String navUri = MapUtils.composeUriForMapsIntentRequest(checkpoints);
-                            if (isViewAttached) {
-                                view.startGoogleMapsDirections(navUri);
-                            }
+                checkpointId).perform()
+                .subscribe(checkpoints -> {
+                    if (checkpoints.size() != 0) {
+                        String navUri = MapUtils.composeUriForMapsIntentRequest(checkpoints);
+                        if (isViewAttached) {
+                            view.startGoogleMapsDirections(navUri);
                         }
-                    }));
+                    }
+                }));
 
-    }
-
-    @Override
-    public void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints) {
-        drawRouteFromMapPoints(routeMapPoints);
     }
 
     @Override
@@ -190,10 +187,11 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onChooseTourClicked() {
         boolean isNetworkAvailable = NetworkUtils.isInternetConnectionAvailable(Injection.provideGlobalContext());
-        if (isNetworkAvailable){
+        if (isNetworkAvailable) {
             view.showTourPickerDialog();
         } else {
-            String errorMsg = Injection.provideGlobalContext().getString(R.string.message_no_internet_reloading_saved_tour);
+            String errorMsg = Injection.provideGlobalContext()
+                    .getString(R.string.message_no_internet_reloading_saved_tour);
             displayShortMessage(errorMsg);
             reloadAvailableCheckpointsAndRoutes();
         }
@@ -201,14 +199,15 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> tourDataResponses) {
-        addSubscription(new SaveToursDataLocallyUseCase(Schedulers.io(),
-                AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourDataResponses)
-                .perform()
-                .doOnError(Throwable::printStackTrace)
-                .subscribe(() -> addSubscription(new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourId).perform()
-                        .doOnComplete(this::startRouteDirectionsRequests)
+        addSubscription(
+                new SaveToursDataLocallyUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), tourDataResponses).perform()
                         .doOnError(Throwable::printStackTrace)
-                        .subscribe())));
+                        .subscribe(() -> addSubscription(
+                                new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+                                        tourId).perform()
+                                        .doOnComplete(this::startRouteDirectionsRequests)
+                                        .doOnError(Throwable::printStackTrace)
+                                        .subscribe())));
     }
 
     @Override
@@ -220,8 +219,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                         })
                         .subscribe());
     }
-
-
 
     @Override
     public void onSearchQueryCleared() {
@@ -309,18 +306,29 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.clearMapCheckpoints();
             view.clearMapRoutes();
         }
-        Maybe<List<Route>> getAvailableRoutes = new GetAvailableRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+
+        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesSteps = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(),
+                AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
-                .doOnSuccess(routes -> {
-                    for (Route route : routes) {
-                        currentSelectedRoutePoints = MapUtils.convertPolyLineToMapPoints(route.getRoutePolyline());
-                        drawRouteFromMapPoints(currentSelectedRoutePoints);
+                .doOnSuccess(routeLegsStepsList -> {
+                    if (isViewAttached) {
+                        for (Pair<RouteLeg, List<RouteStep>> routeLegStepsPair : routeLegsStepsList) {
+                            List<RouteStep> steps = routeLegStepsPair.second;
+                            int routeLegId = routeLegStepsPair.first.getRouteLegId();
+                            List<LatLng> routeLegPolyline = new ArrayList<>();
+                            for (RouteStep routeStep : steps) {
+                                List<LatLng> stepLinePoints = MapUtils.convertPolyLineToMapPoints(routeStep.getRouteStepPolyline());
+                                routeLegPolyline.addAll(stepLinePoints);
+                            }
+                            drawRouteStepFromMapPoints(routeLegPolyline, routeLegId);
+                            currentSelectedRoutePoints.addAll(routeLegPolyline);
+                        }
                     }
                 })
                 .doOnError(Throwable::printStackTrace);
 
-        Maybe<List<MapCheckpoint>> getAvailableCheckpoints = new LoadMapCheckpointForSelectedTourUseCase(Schedulers.io(),
-                AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+        Maybe<List<MapCheckpoint>> getAvailableCheckpoints = new LoadMapCheckpointForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+                Injection.provideStorageManager()).perform()
                 .doOnSuccess(checkpoints -> {
                     if (isViewAttached) {
                         if (checkpoints.size() > 0) {
@@ -331,7 +339,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 })
                 .doOnError(Throwable::printStackTrace);
 
-        Maybe.concat(getAvailableCheckpoints, getAvailableRoutes)
+        Maybe.concat(getAvailableCheckpoints, getAvailableRoutesSteps)
                 .doOnComplete(() -> {
                     if (isViewAttached) {
                         view.showLoadingView(false);
@@ -339,8 +347,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 })
                 .subscribe();
 
-        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager())
-                .perform()
+        addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnComplete(() -> {
                     view.showTotalRouteInformation(Injection.provideGlobalContext()
                             .getString(R.string.title_no_tour_selected), true);
@@ -354,10 +361,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 }, Throwable::printStackTrace));
     }
 
-    private void drawRouteFromMapPoints(@NonNull List<LatLng> routeMapPoints) {
+    private void drawRouteStepFromMapPoints(@NonNull List<LatLng> routeMapPoints, int routeStepId) {
         PolylineOptions routePolyline = MapUtils.generateRoute(routeMapPoints);
         if (isViewAttached) {
-            view.drawCheckpointsRoute(routePolyline);
+            view.drawRouteStepLineOnMap(routePolyline, routeStepId);
         }
     }
 

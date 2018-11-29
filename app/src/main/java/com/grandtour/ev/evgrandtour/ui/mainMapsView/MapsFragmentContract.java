@@ -14,7 +14,6 @@ import com.grandtour.ev.evgrandtour.ui.settings.UpdateSettingsListener;
 import android.location.Location;
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentContract {
@@ -33,7 +32,7 @@ public class MapsFragmentContract {
 
         void clearMapRoutes();
 
-        void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions);
+        void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId);
 
         void showTotalRouteInformation(@NonNull String infoMessage, boolean shouldShowInfoCard);
 
@@ -71,8 +70,6 @@ public class MapsFragmentContract {
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
         void onNavigationClicked(@NonNull MapCheckpoint originMarker);
-
-        void onNewRoutesReceived(@NonNull ArrayList<LatLng> routeMapPoints);
 
         void onCalculateDistanceBetweenTwoCheckpointsClicked();
 

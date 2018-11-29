@@ -1,13 +1,20 @@
 package com.grandtour.ev.evgrandtour.services;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RouteResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateRouteUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveRouteToDatabaseUseCase;
+import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.app.Service;
 import android.content.Intent;
@@ -16,8 +23,10 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Pair;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -27,8 +36,6 @@ import okhttp3.internal.http2.StreamResetException;
 
 public class RouteDirectionsRequestsService extends Service {
 
-    @NonNull
-    public static final String ROUTE_MAP_POINTS_BUNDLE = "routeMapPointsParcelable";
     @NonNull
     public static final String ROUTE_START_REQUESTS_BUNDLE = "routeDirectionsRequestsStart";
     @NonNull
@@ -66,11 +73,12 @@ public class RouteDirectionsRequestsService extends Service {
         directionsRequestsDisposable = new CalculateRouteUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), checkpoints, Injection.provideDirectionsApi(),
                 Injection.provideStorageManager()).perform()
                 .doOnComplete(() -> {
-                    broadcastDirectionRequestProgress(false);
+                    createElevationRequest();
+                  /*  broadcastDirectionRequestProgress(false);
                     if (directionsRequestsDisposable != null) {
                         directionsRequestsDisposable.dispose();
                     }
-                    stopSelf();
+                    stopSelf(); */
                 })
                 .doOnSubscribe(subscription -> {
                     broadcastDirectionRequestProgress(true);
@@ -92,16 +100,63 @@ public class RouteDirectionsRequestsService extends Service {
                         if (routes != null && routes.size() > 0) {
                             RouteResponse route = routesResponse.getRoutes()
                                     .get(0);
-                            RouteDirectionsRequestsService.saveRouteToDatabase(route);
+                            saveRouteToDatabase(route);
                         }
                     }
                 });
     }
 
-    private static void saveRouteToDatabase(@NonNull RouteResponse route) {
+    private void saveRouteToDatabase(@NonNull RouteResponse route) {
         new SaveRouteToDatabaseUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), route).perform()
-                .doOnError(Throwable::printStackTrace)
                 .subscribe();
+    }
+
+    private void createElevationRequest() {
+        new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .doOnSuccess(routeLegsSteps -> {
+                    for (Pair<RouteLeg, List<RouteStep>> routeLegStepsPair : routeLegsSteps) {
+                        List<RouteStep> steps = routeLegStepsPair.second;
+                        int routeLegId = routeLegStepsPair.first.getRouteLegId();
+                        List<LatLng> entireLegPolylineSteps = new ArrayList<>();
+                        for (RouteStep routeStep : steps) {
+                            List<LatLng> stepLinePoints = MapUtils.convertPolyLineToMapPoints(routeStep.getRouteStepPolyline());
+                            entireLegPolylineSteps.addAll(stepLinePoints);
+                        }
+                        filterCheckpoints(entireLegPolylineSteps);
+                    }
+                    broadcastDirectionRequestProgress(false);
+                    if (directionsRequestsDisposable != null) {
+                        directionsRequestsDisposable.dispose();
+                    }
+                    stopSelf();
+
+                })
+                .subscribe();
+    }
+
+    /**
+     * Takes a polyline array of LatLng points and filters them so that there is a distance
+     */
+    @NonNull
+    private List<LatLng> filterCheckpoints(@NonNull List<LatLng> polylinePoints) {
+        double maxCheckpointListDistanceLimit = 1000; // in Meters
+
+        List<LatLng> filteredPoints = new ArrayList<>();
+        double checkpointDistanceBuffer = 0;
+        for (int i = 0; i < polylinePoints.size() - 1; i++) {
+
+            LatLng firstCheckpoint = polylinePoints.get(i);
+            LatLng secondCheckpoint = polylinePoints.get(i + 1);
+
+            double distanceBetween = SphericalUtil.computeDistanceBetween(firstCheckpoint, secondCheckpoint);
+            if (checkpointDistanceBuffer >= maxCheckpointListDistanceLimit) {
+                filteredPoints.add(secondCheckpoint);
+                checkpointDistanceBuffer = 0;
+            } else {
+                checkpointDistanceBuffer += distanceBetween;
+            }
+        }
+        return filteredPoints;
     }
 
     private void broadcastDirectionRequestProgress(boolean areDirectionsRequestsInProgress) {

@@ -1,6 +1,12 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.SphericalUtil;
+
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.NetworkResponseConverter;
+import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Route;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
@@ -11,6 +17,7 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,73 +42,94 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
     }
 
     @Override
-    public Maybe<Long> perform() {
+    public Maybe<List<Pair<Long, List<ElevationPoint>>>> perform() {
         return storageManager.tourDao()
                 .getCurrentlySelectedTourId()
                 .subscribeOn(executorThread)
                 .observeOn(executorThread)
-                .flatMap(new Function<String, MaybeSource<Long>>() {
+                .flatMap(new Function<String, MaybeSource<List<Pair<Long, List<ElevationPoint>>>>>() {
                     @Override
-                    public MaybeSource<Long> apply(String tourId) {
+                    public MaybeSource<List<Pair<Long, List<ElevationPoint>>>> apply(String tourId) {
                         return Maybe.fromCallable(() -> {
-                            Route route = new Route();
-                            route.setTourId(tourId);
-                            route.setRoutePolyline(routeResponse.getOverviewPolyline()
-                                    .getPoints());
+                            String routePolyline = routeResponse.getOverviewPolyline()
+                                    .getPoints();
+                            Route route = NetworkResponseConverter.convertResponseToRoute(routePolyline, tourId);
+
                             long routeId = storageManager.routeDao()
                                     .insert(route);
 
                             List<Leg> responseLegs = routeResponse.getLegs();
+
+                            List<Pair<Long, List<ElevationPoint>>> routeElevationPoints = new ArrayList<>();
+
                             for (int i = 0; i < responseLegs.size(); i++) {
                                 Leg legResponse = responseLegs.get(i);
-                                RouteLeg routeLeg = SaveRouteToDatabaseUseCase.convertResponseToRouteLeg(legResponse, (int) routeId);
-                                long routeLegId = storageManager.routeLegDao()
-                                        .insertRouteLeg(routeLeg);
+                                Pair<Long, List<LatLng>> routeAndElevationPoints = saveRouteLegAndSteps(legResponse, (int) routeId);
 
-                                List<Step> responseSteps = legResponse.getSteps();
-                                List<RouteStep> routeStepsList = new ArrayList<>();
-                                for (Step stepResponse : responseSteps) {
-                                    RouteStep routeStep = SaveRouteToDatabaseUseCase.convertResponseToRouteStep(stepResponse, (int) routeLegId);
-                                    routeStepsList.add(routeStep);
-                                }
-                                storageManager.routeStepDao()
-                                        .insertRouteLeg(routeStepsList);
+                                Long routeLegId = routeAndElevationPoints.first;
+                                List<ElevationPoint> elevationPoints = NetworkResponseConverter.convertCoordinatesToElevationPoints(routeLegId,
+                                        routeAndElevationPoints.second);
+
+                                storageManager.elevationPointDao()
+                                        .insert(elevationPoints);
+                                routeElevationPoints.add(new Pair<>(routeLegId, elevationPoints));
                             }
-                            return routeId;
+                            return routeElevationPoints;
                         });
                     }
                 });
     }
 
-    @NonNull
-    private static RouteLeg convertResponseToRouteLeg(@NonNull Leg legResponse, int routeId) {
-        RouteLeg routeLeg = new RouteLeg();
-        routeLeg.setRouteId(routeId);
-        routeLeg.setRouteLegStartLatitude(legResponse.getStartLocation()
-                .getLat());
-        routeLeg.setRouteLegStartLongitude(legResponse.getStartLocation()
-                .getLng());
-        routeLeg.setRouteLegEndLatitude(legResponse.getStartLocation()
-                .getLat());
-        routeLeg.setRouteLegEndLongitude(legResponse.getStartLocation()
-                .getLng());
-        return routeLeg;
+    /**
+     * Saves the legs response and associated steps
+     */
+    private Pair<Long, List<LatLng>> saveRouteLegAndSteps(@NonNull Leg legResponse, int routeId) {
+        RouteLeg routeLeg = NetworkResponseConverter.convertResponseToRouteLeg(legResponse, routeId);
+        long routeLegId = storageManager.routeLegDao()
+                .insertRouteLeg(routeLeg);
+
+        List<Step> responseSteps = legResponse.getSteps();
+        List<RouteStep> routeStepsList = new ArrayList<>();
+
+        List<LatLng> routeLegElevationPoints = new ArrayList<>();
+        for (Step stepResponse : responseSteps) {
+            RouteStep routeStep = NetworkResponseConverter.convertResponseToRouteStep(stepResponse, (int) routeLegId);
+            routeStepsList.add(routeStep);
+            List<LatLng> responseStepPoints = PolyUtil.decode(stepResponse.getPolyline()
+                    .getPoints());
+            List<LatLng> stepElevationPoints = filterPolylineForEachKilometerOfCheckpoints(responseStepPoints);
+
+            routeLegElevationPoints.addAll(stepElevationPoints);
+        }
+        storageManager.routeStepDao()
+                .insertRouteLeg(routeStepsList);
+        return new Pair<>(routeLegId, routeLegElevationPoints);
     }
 
+    /**
+     * Takes an array of LatLng points extracted from a Polyline
+     * and filters them so that there is a distance of 1Km / 1000m between each point
+     * This method is used to generate the Elevation points for each Leg of the Route
+     */
     @NonNull
-    private static RouteStep convertResponseToRouteStep(@NonNull Step stepResponse, int routeLegId) {
-        RouteStep routeStep = new RouteStep();
-        routeStep.setRouteLegId(routeLegId);
-        routeStep.setRouteStepStartLatitude(stepResponse.getStartLocation()
-                .getLat());
-        routeStep.setRouteStepStartLongitude(stepResponse.getStartLocation()
-                .getLng());
-        routeStep.setRouteStepEndLatitude(stepResponse.getEndLocation()
-                .getLat());
-        routeStep.setRouteStepEndLongitude(stepResponse.getEndLocation()
-                .getLng());
-        routeStep.setRouteStepPolyline(stepResponse.getPolyline()
-                .getPoints());
-        return routeStep;
+    private List<LatLng> filterPolylineForEachKilometerOfCheckpoints(@NonNull List<LatLng> polylinePoints) {
+        double maxDistanceBetweenPoints = 1000; // in Meters
+        List<LatLng> filteredPolylinePoints = new ArrayList<>();
+
+        double checkpointDistanceBuffer = 0;
+        for (int i = 0; i < polylinePoints.size() - 1; i++) {
+
+            LatLng firstCheckpoint = polylinePoints.get(i);
+            LatLng secondCheckpoint = polylinePoints.get(i + 1);
+
+            double distanceBetweenPoints = SphericalUtil.computeDistanceBetween(firstCheckpoint, secondCheckpoint);
+            if (checkpointDistanceBuffer >= maxDistanceBetweenPoints) {
+                filteredPolylinePoints.add(secondCheckpoint);
+                checkpointDistanceBuffer = 0;
+            } else {
+                checkpointDistanceBuffer += distanceBetweenPoints;
+            }
+        }
+        return filteredPolylinePoints;
     }
 }

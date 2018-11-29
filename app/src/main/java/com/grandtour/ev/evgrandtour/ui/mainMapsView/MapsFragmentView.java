@@ -59,8 +59,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentView extends BaseFragment
-        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener,
-        View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>, ClusterManager.OnClusterClickListener<MapCheckpoint> {
+        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
+        SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>,
+        ClusterManager.OnClusterClickListener<MapCheckpoint> {
 
     public static final int ZOOM_LEVEL = 13;
     @NonNull
@@ -207,10 +208,13 @@ public class MapsFragmentView extends BaseFragment
     }
 
     private void setupGoogleMapCallbacks() {
-        googleMap.setOnCameraChangeListener(clusterManager);
-        googleMap.setOnMarkerClickListener(clusterManager);
-        googleMap.setOnInfoWindowClickListener(clusterManager);
-        googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+        if (clusterManager != null) {
+            googleMap.setOnCameraChangeListener(clusterManager);
+            googleMap.setOnMarkerClickListener(clusterManager);
+            googleMap.setOnInfoWindowClickListener(clusterManager);
+            googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+        }
+        googleMap.setOnPolylineClickListener(this);
     }
 
     @Override
@@ -302,13 +306,13 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions) {
+    public void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId) {
         Activity activity = getActivity();
         if (activity != null) {
-            routePolyOptions.color(activity.getResources()
-                    .getColor(R.color.colorBlue));
-            Polyline route = googleMap.addPolyline(routePolyOptions);
-            mapsViewModel.routePolyLine.add(route);
+            Polyline routePolyline = googleMap.addPolyline(routePolyOptions);
+            routePolyline.setTag(routeStepId);
+            routePolyline.setClickable(true);
+            mapsViewModel.routePolyLine.add(routePolyline);
         }
     }
 
@@ -452,5 +456,10 @@ public class MapsFragmentView extends BaseFragment
         final LatLngBounds bounds = builder.build();
         googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
         return true;
+    }
+
+    @Override
+    public void onPolylineClick(Polyline polyline) {
+        // TODO Implement click listener and logic for polyline clicked
     }
 }
