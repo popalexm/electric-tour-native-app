@@ -5,7 +5,7 @@ import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDistancePickerBinding;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
-import com.grandtour.ev.evgrandtour.ui.base.BottomDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.base.BaseBottomDialogFragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +20,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class DistancePickerDialogFragment extends BottomDialogFragment implements DistancePickerContract.View {
+public class DistancePickerDialogFragment extends BaseBottomDialogFragment implements DistancePickerContract.View {
 
     @NonNull
     public final static String TAG = DistancePickerDialogFragment.class.getSimpleName();

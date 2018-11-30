@@ -25,6 +25,7 @@ import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationFragment;
 import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
@@ -403,6 +404,12 @@ public class MapsFragmentView extends BaseFragment
     @Override
     public void animateInfoText() {
         mapsViewModel.isWarningState.set(true);
+    }
+
+    @Override
+    public void showRouteAltitudeInfoDialog(@NonNull Integer routeLegId) {
+        ElevationFragment elevationFragment = ElevationFragment.newInstance(routeLegId);
+        showDialog(elevationFragment, this, ElevationFragment.TAG, 500);
     }
 
     public void onChooseTourClicked() {

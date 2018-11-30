@@ -53,6 +53,8 @@ public class MapsFragmentContract {
         void animateRouteSelectionButton();
 
         void animateInfoText();
+
+        void showRouteAltitudeInfoDialog(@NonNull Integer routeLegId);
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {

@@ -8,7 +8,7 @@ import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.View;
 import android.view.Window;
 
-public class BottomDialogFragment extends BottomSheetDialogFragment {
+public class BaseBottomDialogFragment extends BottomSheetDialogFragment {
 
     public void setupTransparentDialogBackground() {
         if (getDialog() != null && getDialog().getWindow() != null) {

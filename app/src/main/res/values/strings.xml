@@ -27,5 +27,7 @@
     <string name="title_please_select_tour">Please select the desired route</string>
     <string name="hint_select_2_checkpoints_for_distance_calculation">Select 2 checkpoints to calculate the distance between them on the current route</string>
     <string name="error_please_select_a_route">Please select a route from the available routes list first before using the distance calculator !</string>
+    <string name="label_line_chart">Selected route altitude</string>
+    <string name="label_line_chart_values">Values are expressed in meters</string>
     <string name="application_version">App Version</string>
 </resources>
