@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.data.database;
+package com.grandtour.ev.evgrandtour.data.network;
 
 import com.google.android.gms.maps.model.LatLng;
 

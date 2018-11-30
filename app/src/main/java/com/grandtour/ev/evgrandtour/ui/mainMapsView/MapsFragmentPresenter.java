@@ -17,6 +17,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUs
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForClickedPolyline;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
@@ -270,6 +271,18 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         } else {
             stopLocationTracking();
         }
+    }
+
+    @Override
+    public void onPolylineClicked(Integer routeLegId) {
+        addSubscription(new LoadElevationPointsForClickedPolyline(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+                routeLegId).perform()
+                .doOnSuccess(elevationPoints -> {
+                    if (isViewAttached) {
+                        view.showMessage("Found " + elevationPoints.size() + " altitude points for this clicked line !");
+                    }
+                })
+                .subscribe());
     }
 
     private void displayShortMessage(@NonNull String msg) {

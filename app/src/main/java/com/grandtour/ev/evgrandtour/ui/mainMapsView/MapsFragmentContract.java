@@ -84,5 +84,7 @@ public class MapsFragmentContract {
         void onSettingsClicked();
 
         void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
+
+        void onPolylineClicked(Integer routeLegId);
     }
 }

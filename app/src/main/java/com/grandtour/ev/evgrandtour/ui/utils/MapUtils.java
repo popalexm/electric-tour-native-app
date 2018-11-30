@@ -10,7 +10,6 @@ import com.google.maps.android.PolyUtil;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 
 import android.content.Context;
@@ -26,8 +25,7 @@ public final class MapUtils {
 
     @NonNull
     private static final String TAG = MapUtils.class.getSimpleName();
-    @NonNull
-    private static final String DIRECTIONS_REQUEST_MODE = "driving";
+
     public static final int LOCATION_CIRCLE_RADIUS = 1000;
 
     private MapUtils() {
@@ -50,20 +48,6 @@ public final class MapUtils {
         return PolyUtil.decode(polyline);
     }
 
-    @NonNull
-    public static RouteParameters generateRouteRequestParams(@NonNull List<LatLng> checkpoints) {
-        LatLng startCheckpoint = checkpoints.get(0);
-        LatLng endCheckpoint = checkpoints.get(checkpoints.size() - 1);
-        checkpoints.remove(startCheckpoint);
-        checkpoints.remove(endCheckpoint);
-        return new RouteParameters.RouteParametersBuilder().setStartWaypoint(startCheckpoint)
-                .setEndWaypoint(endCheckpoint)
-                .setTransitWaypoints(checkpoints)
-                .setMode(MapUtils.DIRECTIONS_REQUEST_MODE)
-                .setAPIKey(Injection.provideGlobalContext()
-                        .getString(R.string.google_maps_key))
-                .createRouteParameters();
-    }
 
     @NonNull
     public static String generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {

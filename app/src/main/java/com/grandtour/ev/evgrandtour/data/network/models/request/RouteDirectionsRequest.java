@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public class RouteParameters {
+public class RouteDirectionsRequest {
 
     @NonNull
     public String startWaypoint;
@@ -19,7 +19,8 @@ public class RouteParameters {
     @NonNull
     public String apiKey;
 
-    RouteParameters(@NonNull String startWaypoint, @NonNull String endWaypoint,  @NonNull String transitWaypoints, @NonNull String mode, @NonNull String apiKey ) {
+    RouteDirectionsRequest(@NonNull String startWaypoint, @NonNull String endWaypoint, @NonNull String transitWaypoints, @NonNull String mode,
+            @NonNull String apiKey) {
         this.startWaypoint = startWaypoint;
         this.endWaypoint = endWaypoint;
         this.transitWaypoints = transitWaypoints;
@@ -70,8 +71,8 @@ public class RouteParameters {
             return this;
         }
 
-        public RouteParameters createRouteParameters() {
-            return new RouteParameters(startWaypoint, endWaypoint, transitWaypoints, mode, apiKey);
+        public RouteDirectionsRequest createRouteParameters() {
+            return new RouteDirectionsRequest(startWaypoint, endWaypoint, transitWaypoints, mode, apiKey);
         }
     }
 }

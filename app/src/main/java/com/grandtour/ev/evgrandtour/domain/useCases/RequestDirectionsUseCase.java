@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.grandtour.ev.evgrandtour.data.network.GoogleMapsAPI;
-import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
+import com.grandtour.ev.evgrandtour.data.network.models.request.RouteDirectionsRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
@@ -17,19 +17,19 @@ public class RequestDirectionsUseCase extends BaseUseCase implements BaseUseCase
     @NonNull
     private final GoogleMapsAPI googleMapsAPI;
     @NonNull
-    private final RouteParameters routeParameters;
+    private final RouteDirectionsRequest routeDirectionsRequest;
 
     RequestDirectionsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull GoogleMapsAPI googleMapsAPI,
-            @NonNull RouteParameters routeParameters) {
+            @NonNull RouteDirectionsRequest routeDirectionsRequest) {
         super(executorThread, postExecutionThread);
         this.googleMapsAPI = googleMapsAPI;
-        this.routeParameters = routeParameters;
+        this.routeDirectionsRequest = routeDirectionsRequest;
     }
 
     @Override
     public Maybe<Response<RoutesResponse>> perform() {
-        return googleMapsAPI.getDirectionsForWaypoints(routeParameters.startWaypoint, routeParameters.endWaypoint, routeParameters.transitWaypoints,
-                routeParameters.apiKey)
+        return googleMapsAPI.getDirectionsForWaypoints(routeDirectionsRequest.startWaypoint, routeDirectionsRequest.endWaypoint,
+                routeDirectionsRequest.transitWaypoints, routeDirectionsRequest.apiKey)
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }

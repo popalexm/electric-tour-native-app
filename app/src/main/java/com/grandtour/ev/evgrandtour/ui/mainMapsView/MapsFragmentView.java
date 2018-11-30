@@ -460,6 +460,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void onPolylineClick(Polyline polyline) {
-        // TODO Implement click listener and logic for polyline clicked
+        Integer routeLegId = (Integer) polyline.getTag();
+        presenter.onPolylineClicked(routeLegId);
     }
 }

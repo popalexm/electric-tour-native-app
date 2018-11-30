@@ -5,11 +5,11 @@ import com.google.maps.android.PolyUtil;
 import com.google.maps.android.SphericalUtil;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
-import com.grandtour.ev.evgrandtour.data.database.NetworkResponseConverter;
 import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Route;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
+import com.grandtour.ev.evgrandtour.data.network.NetworkResponseConverter;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Leg;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RouteResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Step;
@@ -42,25 +42,22 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
     }
 
     @Override
-    public Maybe<List<Pair<Long, List<ElevationPoint>>>> perform() {
+    public Maybe<List<Long>> perform() {
         return storageManager.tourDao()
                 .getCurrentlySelectedTourId()
                 .subscribeOn(executorThread)
                 .observeOn(executorThread)
-                .flatMap(new Function<String, MaybeSource<List<Pair<Long, List<ElevationPoint>>>>>() {
+                .flatMap(new Function<String, MaybeSource<List<Long>>>() {
                     @Override
-                    public MaybeSource<List<Pair<Long, List<ElevationPoint>>>> apply(String tourId) {
+                    public MaybeSource<List<Long>> apply(String tourId) {
                         return Maybe.fromCallable(() -> {
                             String routePolyline = routeResponse.getOverviewPolyline()
                                     .getPoints();
                             Route route = NetworkResponseConverter.convertResponseToRoute(routePolyline, tourId);
-
                             long routeId = storageManager.routeDao()
                                     .insert(route);
-
                             List<Leg> responseLegs = routeResponse.getLegs();
-
-                            List<Pair<Long, List<ElevationPoint>>> routeElevationPoints = new ArrayList<>();
+                            List<Long> routeElevationPoints = new ArrayList<>();
 
                             for (int i = 0; i < responseLegs.size(); i++) {
                                 Leg legResponse = responseLegs.get(i);
@@ -72,7 +69,7 @@ public class SaveRouteToDatabaseUseCase extends BaseUseCase implements BaseUseCa
 
                                 storageManager.elevationPointDao()
                                         .insert(elevationPoints);
-                                routeElevationPoints.add(new Pair<>(routeLegId, elevationPoints));
+                                routeElevationPoints.add(routeLegId);
                             }
                             return routeElevationPoints;
                         });

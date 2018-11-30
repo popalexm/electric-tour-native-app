@@ -15,6 +15,9 @@ public interface RouteLegDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertRouteLeg(@NonNull RouteLeg routeLeg);
 
+    @Query("DELETE FROM RouteLeg")
+    int deleteAll();
+
     @Query("Select * from ROUTELEG WHERE routeId = :routeId")
     List<RouteLeg> getRouteLegsForTourId(int routeId);
 

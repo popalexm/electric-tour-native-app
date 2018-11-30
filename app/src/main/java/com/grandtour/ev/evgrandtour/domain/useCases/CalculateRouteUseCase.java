@@ -2,17 +2,19 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.GoogleMapsAPI;
+import com.grandtour.ev.evgrandtour.data.network.NetworkRequestBuilders;
 import com.grandtour.ev.evgrandtour.data.network.NetworkStatusCodes;
-import com.grandtour.ev.evgrandtour.data.network.models.request.RouteParameters;
+import com.grandtour.ev.evgrandtour.data.network.models.request.RouteDirectionsRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
 import com.grandtour.ev.evgrandtour.domain.handlers.RoutesResponseHandler;
 import com.grandtour.ev.evgrandtour.ui.utils.ArrayUtils;
-import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.support.annotation.NonNull;
 
@@ -33,6 +35,10 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
     private final GoogleMapsAPI googleMapsAPI;
     @NonNull
     private final LocalStorageManager storageManager;
+    @NonNull
+    private final String googleApiKey = Injection.provideGlobalContext()
+            .getResources()
+            .getString(R.string.google_maps_key);
 
     public CalculateRouteUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull List<Checkpoint> checkpoints,
             @NonNull GoogleMapsAPI googleMapsAPI, @NonNull LocalStorageManager storageManager) {
@@ -63,9 +69,9 @@ public class CalculateRouteUseCase extends BaseUseCase implements BaseUseCaseFlo
                 checkpointCoordinateList.add(new LatLng(checkpoint.getLatitude(), checkpoint.getLongitude()));
             }
 
-            RouteParameters routeParameters = MapUtils.generateRouteRequestParams(checkpointCoordinateList);
+            RouteDirectionsRequest routeDirectionsRequest = NetworkRequestBuilders.createDirectionRequestParams(checkpointCoordinateList, googleApiKey);
             Maybe<Response<RoutesResponse>> calculateRouteUseCase = new RequestDirectionsUseCase(executorThread, postExecutionThread, googleMapsAPI,
-                    routeParameters).perform()
+                    routeDirectionsRequest).perform()
                     .doOnSuccess(response -> {
                         if (response != null) {
                             if (response.code() == NetworkStatusCodes.NETWORK_REPONSE_CODE_OK) {
