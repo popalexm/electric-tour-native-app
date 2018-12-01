@@ -22,8 +22,8 @@ android {
         applicationId "com.grandtour.ev.evgrandtour"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 21
-        versionName "2.1.8"
+        versionCode 22
+        versionName "2.1.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
