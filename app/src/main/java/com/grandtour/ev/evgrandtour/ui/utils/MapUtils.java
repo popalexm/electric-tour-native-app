@@ -34,6 +34,7 @@ public final class MapUtils {
     @NonNull
     public static PolylineOptions generateRoute(@NonNull List<LatLng> mapPoints) {
         PolylineOptions routePolyline = new PolylineOptions();
+        routePolyline.width(15);
         routePolyline.color(Injection.provideGlobalContext()
                 .getResources()
                 .getColor(R.color.colorBlue));

@@ -32,7 +32,7 @@ public class ElevationPresenter extends BasePresenter implements ElevationContra
                 .doOnSuccess(elevationPoints -> {
                     if (isViewAttached) {
                         List<Entry> elevationPointEntries = new ArrayList<>();
-                        for (int i = 0; i < 10; i++) {
+                        for (int i = 0; i < elevationPoints.size(); i++) {
                             elevationPointEntries.add(new Entry(i, (float) elevationPoints.get(i)
                                     .getElevation()));
                         }
