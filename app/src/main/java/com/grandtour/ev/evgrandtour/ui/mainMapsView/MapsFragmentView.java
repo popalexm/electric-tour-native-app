@@ -19,13 +19,13 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
-import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
+import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
+import com.grandtour.ev.evgrandtour.domain.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationFragment;
+import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationInfoFragment;
 import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
@@ -408,8 +408,8 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void showRouteAltitudeInfoDialog(@NonNull Integer routeLegId) {
-        ElevationFragment elevationFragment = ElevationFragment.newInstance(routeLegId);
-        showDialog(elevationFragment, this, ElevationFragment.TAG, 500);
+        ElevationInfoFragment elevationInfoFragment = ElevationInfoFragment.newInstance(routeLegId);
+        showDialog(elevationInfoFragment, this, ElevationInfoFragment.TAG, 500);
     }
 
     public void onChooseTourClicked() {

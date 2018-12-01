@@ -14,14 +14,14 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class ElevationPresenter extends BasePresenter implements ElevationContract.Presenter {
+public class ElevationInfoPresenter extends BasePresenter implements ElevationInfoContract.Presenter {
 
     @NonNull
-    private final ElevationContract.View view;
+    private final ElevationInfoContract.View view;
     @NonNull
     private final LocalStorageManager localStorageManager;
 
-    ElevationPresenter(@NonNull ElevationContract.View view) {
+    ElevationInfoPresenter(@NonNull ElevationInfoContract.View view) {
         this.view = view;
         localStorageManager = Injection.provideStorageManager();
     }

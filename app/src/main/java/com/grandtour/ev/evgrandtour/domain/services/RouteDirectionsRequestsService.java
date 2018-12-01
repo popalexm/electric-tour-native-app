@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.services;
+package com.grandtour.ev.evgrandtour.domain.services;
 
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;

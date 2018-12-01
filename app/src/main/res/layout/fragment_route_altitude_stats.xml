@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.elevationView.ElevationContract.Presenter"></variable>
+            type="com.grandtour.ev.evgrandtour.ui.elevationView.ElevationInfoContract.Presenter" />
 
     </data>
 

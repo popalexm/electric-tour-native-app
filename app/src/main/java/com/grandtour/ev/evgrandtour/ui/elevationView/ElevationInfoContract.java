@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public class ElevationContract extends BaseContract {
+public class ElevationInfoContract extends BaseContract {
 
     public interface View {
 

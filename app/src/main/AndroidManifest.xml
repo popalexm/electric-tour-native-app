@@ -31,9 +31,9 @@
         </activity>
 
         <service
-            android:name=".services.RouteDirectionsRequestsService"
+            android:name=".domain.services.RouteDirectionsRequestsService"
             android:enabled="true" />
-        <service android:name=".services.LocationsUpdatesService" />
+        <service android:name=".domain.services.LocationsUpdatesService" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

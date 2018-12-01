@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.services;
+package com.grandtour.ev.evgrandtour.domain.services;
 
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
@@ -6,7 +6,7 @@ import com.google.android.gms.location.LocationResult;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
-import com.grandtour.ev.evgrandtour.services.notifications.NotificationsUtils;
+import com.grandtour.ev.evgrandtour.ui.notifications.NotificationsUtils;
 
 import android.Manifest;
 import android.app.Notification;

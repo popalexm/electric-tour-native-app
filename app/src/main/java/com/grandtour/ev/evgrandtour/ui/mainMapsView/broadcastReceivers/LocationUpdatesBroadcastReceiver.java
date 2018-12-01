@@ -1,6 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers;
 
-import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
+import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentContract;
 
 import android.content.BroadcastReceiver;

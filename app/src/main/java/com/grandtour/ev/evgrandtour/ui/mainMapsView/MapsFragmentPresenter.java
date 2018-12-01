@@ -13,6 +13,8 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
+import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
+import com.grandtour.ev.evgrandtour.domain.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
@@ -21,12 +23,10 @@ import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelected
 import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
-import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
-import com.grandtour.ev.evgrandtour.services.notifications.NotificationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
+import com.grandtour.ev.evgrandtour.ui.notifications.NotificationManager;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
 

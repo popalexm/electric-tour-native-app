@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.services.notifications;
+package com.grandtour.ev.evgrandtour.ui.notifications;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
