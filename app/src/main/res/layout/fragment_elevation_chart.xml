@@ -5,7 +5,7 @@
     <data>
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.elevationView.ElevationInfoContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.elevationView.ElevationChartContract.Presenter" />
 
     </data>
 

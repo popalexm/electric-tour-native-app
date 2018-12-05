@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public class ElevationInfoContract extends BaseContract {
+public class ElevationChartContract extends BaseContract {
 
     public interface View {
 
@@ -19,7 +19,9 @@ public class ElevationInfoContract extends BaseContract {
 
     public interface Presenter {
 
-        void onFragmentReady(@NonNull Integer routeLegId);
+        void onDisplayElevationChartForRouteLeg(@NonNull Integer routeLegId);
+
+        void onDisplayElevationChartForEntireTour();
 
         void onDismissButtonClicked();
     }

@@ -233,6 +233,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
+    public void onRouteElevationChartClicked() {
+        if (isViewAttached) {
+            view.showEntireRouteElevationChartDialog();
+        }
+    }
+
+    @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         if (name.getClassName()
                 .equals(LocationsUpdatesService.class.getName())) {
@@ -274,7 +281,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onPolylineClicked(Integer routeLegId) {
-        view.showRouteAltitudeInfoDialog(routeLegId);
+        view.showElevationChartForRouteLegDialog(routeLegId);
     }
 
     private void displayShortMessage(@NonNull String msg) {

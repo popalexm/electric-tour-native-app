@@ -15,4 +15,11 @@
         android:title="Calculate distance"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_view_route_altitude"
+        android:icon="@drawable/ic_altitude"
+        android:orderInCategory="4"
+        android:title="Calculate distance"
+        app:showAsAction="always" />
+
 </menu>

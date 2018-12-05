@@ -69,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mapsFragmentView.openSettingsDialog();
                 }
                 break;
+            case R.id.action_view_route_altitude:
+                if (mapsFragmentView != null) {
+                    mapsFragmentView.openEntireTourElevationChart();
+                }
+                break;
         }
         return true;
     }

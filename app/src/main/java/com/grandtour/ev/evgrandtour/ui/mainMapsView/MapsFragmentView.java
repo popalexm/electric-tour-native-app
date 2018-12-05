@@ -25,7 +25,7 @@ import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationInfoFragment;
+import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationChartFragment;
 import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
@@ -407,9 +407,15 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void showRouteAltitudeInfoDialog(@NonNull Integer routeLegId) {
-        ElevationInfoFragment elevationInfoFragment = ElevationInfoFragment.newInstance(routeLegId);
-        showDialog(elevationInfoFragment, this, ElevationInfoFragment.TAG, 500);
+    public void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId) {
+        ElevationChartFragment elevationInfoFragment = ElevationChartFragment.newChartForRouteLegInstance(routeLegId);
+        showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
+    }
+
+    @Override
+    public void showEntireRouteElevationChartDialog() {
+        ElevationChartFragment elevationInfoFragment = ElevationChartFragment.newChartForEntireRouteInstance();
+        showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
     }
 
     public void onChooseTourClicked() {
@@ -422,6 +428,10 @@ public class MapsFragmentView extends BaseFragment
 
     public void openSettingsDialog() {
         presenter.onSettingsClicked();
+    }
+
+    public void openEntireTourElevationChart() {
+        presenter.onRouteElevationChartClicked();
     }
 
     @Override

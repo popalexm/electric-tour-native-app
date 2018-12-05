@@ -6,7 +6,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
-import com.grandtour.ev.evgrandtour.databinding.FragmentRouteAltitudeStatsBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentElevationChartBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseBottomDialogFragment;
 
 import android.content.Context;
@@ -21,24 +21,28 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public class ElevationInfoFragment extends BaseBottomDialogFragment implements ElevationInfoContract.View {
+public class ElevationChartFragment extends BaseBottomDialogFragment implements ElevationChartContract.View {
 
     @NonNull
     private static final String BUNDLE_ROUTE_LEG_ID = "routeLegId";
     @NonNull
-    public static final String TAG = ElevationInfoFragment.class.getSimpleName();
+    public static final String TAG = ElevationChartFragment.class.getSimpleName();
     @NonNull
-    private final ElevationInfoPresenter presenter = new ElevationInfoPresenter(this);
+    private final ElevationChartPresenter presenter = new ElevationChartPresenter(this);
     @Nullable
     private Integer routeLegId;
-    private FragmentRouteAltitudeStatsBinding viewBinding;
+    private FragmentElevationChartBinding viewBinding;
 
-    public static ElevationInfoFragment newInstance(int routeLegId) {
-        ElevationInfoFragment elevationInfoFragment = new ElevationInfoFragment();
+    public static ElevationChartFragment newChartForRouteLegInstance(int routeLegId) {
+        ElevationChartFragment elevationInfoFragment = new ElevationChartFragment();
         Bundle args = new Bundle();
-        args.putInt(ElevationInfoFragment.BUNDLE_ROUTE_LEG_ID, routeLegId);
+        args.putInt(ElevationChartFragment.BUNDLE_ROUTE_LEG_ID, routeLegId);
         elevationInfoFragment.setArguments(args);
         return elevationInfoFragment;
+    }
+
+    public static ElevationChartFragment newChartForEntireRouteInstance() {
+        return new ElevationChartFragment();
     }
 
     @Override
@@ -46,13 +50,13 @@ public class ElevationInfoFragment extends BaseBottomDialogFragment implements E
         super.onCreate(savedInstanceState);
         Bundle bundle = getArguments();
         if (bundle != null) {
-            routeLegId = bundle.getInt(ElevationInfoFragment.BUNDLE_ROUTE_LEG_ID);
+            routeLegId = bundle.getInt(ElevationChartFragment.BUNDLE_ROUTE_LEG_ID);
         }
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_route_altitude_stats, null, false);
+        viewBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_elevation_chart, null, false);
         viewBinding.setPresenter(presenter);
         return viewBinding.getRoot();
     }
@@ -73,7 +77,9 @@ public class ElevationInfoFragment extends BaseBottomDialogFragment implements E
     public void onStart() {
         super.onStart();
         if (routeLegId != null) {
-            presenter.onFragmentReady(routeLegId);
+            presenter.onDisplayElevationChartForRouteLeg(routeLegId);
+        } else {
+            presenter.onDisplayElevationChartForEntireTour();
         }
     }
 
@@ -98,6 +104,9 @@ public class ElevationInfoFragment extends BaseBottomDialogFragment implements E
             dataSet.setValueTextColor(Color.WHITE);
             dataSet.setColor(accentColor);
             dataSet.setCircleColor(accentColor);
+
+            dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            dataSet.setDrawCircles(false);
 
             LineData lineData = new LineData(dataSet);
 

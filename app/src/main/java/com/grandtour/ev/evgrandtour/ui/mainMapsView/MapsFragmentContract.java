@@ -54,7 +54,9 @@ public class MapsFragmentContract {
 
         void animateInfoText();
 
-        void showRouteAltitudeInfoDialog(@NonNull Integer routeLegId);
+        void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId);
+
+        void showEntireRouteElevationChartDialog();
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
@@ -84,6 +86,8 @@ public class MapsFragmentContract {
         void onSearchQueryCleared();
 
         void onSettingsClicked();
+
+        void onRouteElevationChartClicked();
 
         void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
 

@@ -26,6 +26,9 @@ public interface ElevationPointDao {
     @Query("SELECT * FROM elevationpoint WHERE routeLegId IN (:routeLegId)")
     List<ElevationPoint> getElevationPointsForRouteLegIds(List<Long> routeLegId);
 
+    @Query("SELECT * FROM elevationpoint")
+    Maybe<List<ElevationPoint>> getAllElevationPoints();
+
     @Query("SELECT * FROM elevationpoint WHERE routeLegId =:routeLegId")
     Maybe<List<ElevationPoint>> getElevationPointsForRouteLegId(Integer routeLegId);
 
