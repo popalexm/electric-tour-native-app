@@ -12,7 +12,9 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
+import com.grandtour.ev.evgrandtour.data.network.models.request.RouteDirectionsRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
+import com.grandtour.ev.evgrandtour.domain.services.DirectionsAndElevationService;
 import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.domain.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
@@ -205,7 +207,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                         .subscribe(() -> addSubscription(
                                 new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
                                         tourId).perform()
-                                        .doOnComplete(this::startRouteDirectionsRequests)
+                                        .doOnComplete(this::startNewRouteDirectionsRequests)
                                         .doOnError(Throwable::printStackTrace)
                                         .subscribe())));
     }
@@ -288,6 +290,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (isViewAttached) {
             view.showMessage(msg);
         }
+    }
+
+
+    private void startNewRouteDirectionsRequests() {
+        Context context = Injection.provideGlobalContext();
+        Intent serviceIntent = new Intent(context, DirectionsAndElevationService.class);
+        context.startService(serviceIntent);
     }
 
     private void startRouteDirectionsRequests() {
