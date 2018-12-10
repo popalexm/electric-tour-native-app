@@ -30,11 +30,8 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".domain.services.RouteDirectionsRequestsService"
-            android:enabled="true" />
         <service android:name=".domain.services.LocationsUpdatesService" />
-        <service android:name=".domain.services.DirectionsAndElevationService" />
+        <service android:name=".domain.services.DirectionsElevationService" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

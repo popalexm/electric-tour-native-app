@@ -1,6 +1,5 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers;
 
-import com.grandtour.ev.evgrandtour.domain.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentContract;
 
 import android.content.BroadcastReceiver;
@@ -10,6 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 public class RouteRequestsBroadcastReceiver extends BroadcastReceiver {
+
+    @NonNull
+    public static final String ROUTE_START_REQUESTS_BUNDLE = "routeDirectionsRequestsStart";
+    @NonNull
+    public static final String REQUEST_ERROR_CODE = "requestErrorCode";
 
     @NonNull
     private final MapsFragmentContract.Presenter presenter;
@@ -25,15 +29,15 @@ public class RouteRequestsBroadcastReceiver extends BroadcastReceiver {
             if (bundleContent != null) {
                 for (String keySet : bundleContent.keySet()) {
                     switch (keySet) {
-                        case RouteDirectionsRequestsService.REQUEST_ERROR_CODE:
-                            String errorType = bundleContent.getString(RouteDirectionsRequestsService.REQUEST_ERROR_CODE);
+                        case RouteRequestsBroadcastReceiver.REQUEST_ERROR_CODE:
+                            String errorType = bundleContent.getString(RouteRequestsBroadcastReceiver.REQUEST_ERROR_CODE);
                             if (errorType != null) {
                                 presenter.onRoutesRequestsError(errorType);
                             }
                             break;
 
-                        case RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE:
-                            boolean areRoutesRequestsInProgress = bundleContent.getBoolean(RouteDirectionsRequestsService.ROUTE_START_REQUESTS_BUNDLE);
+                        case RouteRequestsBroadcastReceiver.ROUTE_START_REQUESTS_BUNDLE:
+                            boolean areRoutesRequestsInProgress = bundleContent.getBoolean(RouteRequestsBroadcastReceiver.ROUTE_START_REQUESTS_BUNDLE);
                             if (areRoutesRequestsInProgress) {
                                 presenter.onCalculatingRoutesStarted();
                             } else {

@@ -1,6 +1,5 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers;
 
-import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentContract;
 
 import android.content.BroadcastReceiver;
@@ -11,6 +10,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {
+
+    @NonNull
+    public static final String LOCATION_REQUESTS_BUNDLE = "CurrentLocationBundle";
 
     @NonNull
     private final MapsFragmentContract.Presenter presenter;
@@ -26,8 +28,8 @@ public class LocationUpdatesBroadcastReceiver extends BroadcastReceiver {
             if (bundleContent != null) {
                 for (String keySet : bundleContent.keySet()) {
                     switch (keySet) {
-                        case LocationsUpdatesService.LOCATION_REQUESTS_BUNDLE:
-                            Location currentLocation = bundleContent.getParcelable(LocationsUpdatesService.LOCATION_REQUESTS_BUNDLE);
+                        case LocationUpdatesBroadcastReceiver.LOCATION_REQUESTS_BUNDLE:
+                            Location currentLocation = bundleContent.getParcelable(LocationUpdatesBroadcastReceiver.LOCATION_REQUESTS_BUNDLE);
                             if (currentLocation != null) {
                                 presenter.onCurrentLocationChanged(currentLocation);
                             }

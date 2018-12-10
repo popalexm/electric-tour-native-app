@@ -19,8 +19,6 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
-import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.domain.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
@@ -63,6 +61,11 @@ public class MapsFragmentView extends BaseFragment
         implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>,
         ClusterManager.OnClusterClickListener<MapCheckpoint> {
+
+    @NonNull
+    private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
+    @NonNull
+    private static final String ACTION_LOCATION_BROADCAST = "LocationResultsBroadcast";
 
     public static final int ZOOM_LEVEL = 13;
     @NonNull
@@ -139,9 +142,9 @@ public class MapsFragmentView extends BaseFragment
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
-                    .registerReceiver(routeDirectionsBroadcastReceiver, new IntentFilter(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST));
+                    .registerReceiver(routeDirectionsBroadcastReceiver, new IntentFilter(MapsFragmentView.ACTION_ROUTE_BROADCAST));
             LocalBroadcastManager.getInstance(activity)
-                    .registerReceiver(locationUpdatesBroadcastReceiver, new IntentFilter(LocationsUpdatesService.ACTION_LOCATION_BROADCAST));
+                    .registerReceiver(locationUpdatesBroadcastReceiver, new IntentFilter(MapsFragmentView.ACTION_LOCATION_BROADCAST));
         }
     }
 

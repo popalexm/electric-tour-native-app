@@ -22,7 +22,7 @@ public final class NetworkResponseConverter {
     }
 
     @NonNull
-    public static Route convertResponseToRoute(@NonNull String routePolyline, @NonNull String tourId) {
+    public static Route convertToRouteDatabaseModel(@NonNull String routePolyline, @NonNull String tourId) {
         Route route = new Route();
         route.setTourId(tourId);
         route.setRoutePolyline(routePolyline);

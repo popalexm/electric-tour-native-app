@@ -12,11 +12,9 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
-import com.grandtour.ev.evgrandtour.data.network.models.request.RouteDirectionsRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
-import com.grandtour.ev.evgrandtour.domain.services.DirectionsAndElevationService;
+import com.grandtour.ev.evgrandtour.domain.services.DirectionsElevationService;
 import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.domain.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
@@ -207,7 +205,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                         .subscribe(() -> addSubscription(
                                 new SetTourSelectionStatusUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
                                         tourId).perform()
-                                        .doOnComplete(this::startNewRouteDirectionsRequests)
+                                        .doOnComplete(this::startRouteDirectionsRequests)
                                         .doOnError(Throwable::printStackTrace)
                                         .subscribe())));
     }
@@ -248,8 +246,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             LocationsUpdatesService.LocationServiceBinder binder = (LocationsUpdatesService.LocationServiceBinder) service;
             locationUpdatesService = binder.getService();
         } else if (name.getClassName()
-                .equals(RouteDirectionsRequestsService.class.getName())) {
-            RouteDirectionsRequestsService.RouteDirectionsLocalBinder binder = (RouteDirectionsRequestsService.RouteDirectionsLocalBinder) service;
+                .equals(DirectionsElevationService.class.getName())) {
+            DirectionsElevationService.RouteDirectionsLocalBinder binder = (DirectionsElevationService.RouteDirectionsLocalBinder) service;
             routeDirectionsRequestService = binder.getService();
         }
     }
@@ -260,7 +258,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 .equals(LocationsUpdatesService.class.getName())) {
             locationUpdatesService = null;
         } else if (name.getClassName()
-                .equals(RouteDirectionsRequestsService.class.getName())) {
+                .equals(DirectionsElevationService.class.getName())) {
             routeDirectionsRequestService = null;
         }
     }
@@ -292,16 +290,9 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         }
     }
 
-
-    private void startNewRouteDirectionsRequests() {
-        Context context = Injection.provideGlobalContext();
-        Intent serviceIntent = new Intent(context, DirectionsAndElevationService.class);
-        context.startService(serviceIntent);
-    }
-
     private void startRouteDirectionsRequests() {
         Context context = Injection.provideGlobalContext();
-        Intent serviceIntent = new Intent(context, RouteDirectionsRequestsService.class);
+        Intent serviceIntent = new Intent(context, DirectionsElevationService.class);
         context.startService(serviceIntent);
         context.bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         isServiceBound = true;
