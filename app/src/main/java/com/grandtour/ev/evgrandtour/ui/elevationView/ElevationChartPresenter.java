@@ -3,6 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.elevationView;
 import com.github.mikephil.charting.data.Entry;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
+import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForClickedPolyline;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
@@ -30,16 +31,7 @@ public class ElevationChartPresenter extends BasePresenter implements ElevationC
     @Override
     public void onDisplayElevationChartForRouteLeg(@NonNull Integer routeLegId) {
         addSubscription(new LoadElevationPointsForClickedPolyline(Schedulers.io(), AndroidSchedulers.mainThread(), localStorageManager, routeLegId).perform()
-                .doOnSuccess(elevationPoints -> {
-                    if (isViewAttached) {
-                        List<Entry> elevationPointEntries = new ArrayList<>();
-                        for (int i = 0; i < elevationPoints.size(); i++) {
-                            elevationPointEntries.add(new Entry(i, (float) elevationPoints.get(i)
-                                    .getElevation()));
-                        }
-                        view.displayChart(elevationPointEntries);
-                    }
-                })
+                .doOnSuccess(this::displayElevationPoints)
                 .subscribe());
     }
 
@@ -47,16 +39,7 @@ public class ElevationChartPresenter extends BasePresenter implements ElevationC
     public void onDisplayElevationChartForEntireTour() {
         addSubscription(
                 new LoadElevationPointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
-                        .doOnSuccess(elevationPoints -> {
-                            if (isViewAttached) {
-                                List<Entry> elevationPointEntries = new ArrayList<>();
-                                for (int i = 0; i < elevationPoints.size(); i++) {
-                                    elevationPointEntries.add(new Entry(i, (float) elevationPoints.get(i)
-                                            .getElevation()));
-                                }
-                                view.displayChart(elevationPointEntries);
-                            }
-                        })
+                        .doOnSuccess(this::displayElevationPoints)
                         .subscribe());
     }
 
@@ -64,6 +47,19 @@ public class ElevationChartPresenter extends BasePresenter implements ElevationC
     public void onDismissButtonClicked() {
         if (isViewAttached) {
             view.dismissDialog();
+        }
+    }
+
+    private void displayElevationPoints(List<ElevationPoint> elevationPoints) {
+        if (isViewAttached) {
+            List<Entry> elevationPointEntries = new ArrayList<>();
+            int XAxisIndex = 0;
+            for (int i = 0; i < elevationPoints.size(); i++) {
+                elevationPointEntries.add(new Entry(XAxisIndex, (float) elevationPoints.get(i)
+                        .getElevation()));
+                XAxisIndex += 2;
+            }
+            view.displayChart(elevationPointEntries);
         }
     }
 }

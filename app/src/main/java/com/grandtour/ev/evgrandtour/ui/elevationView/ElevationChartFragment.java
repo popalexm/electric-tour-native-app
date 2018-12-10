@@ -1,9 +1,13 @@
 package com.grandtour.ev.evgrandtour.ui.elevationView;
 
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.databinding.FragmentElevationChartBinding;
@@ -19,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class ElevationChartFragment extends BaseBottomDialogFragment implements ElevationChartContract.View {
@@ -129,5 +134,41 @@ public class ElevationChartFragment extends BaseBottomDialogFragment implements 
         viewBinding.routeLineElevationChart.getLegend()
                 .setTextColor(Color.WHITE);
         viewBinding.routeLineElevationChart.invalidate();
+        viewBinding.routeLineElevationChart.animateY(1000);
+
+        XAxis xAxis = viewBinding.routeLineElevationChart.getXAxis();
+        YAxis yAxisLeft = viewBinding.routeLineElevationChart.getAxisLeft();
+        YAxis yAxisRight = viewBinding.routeLineElevationChart.getAxisRight();
+
+        yAxisLeft.setTextColor(Color.WHITE);
+        yAxisLeft.setValueFormatter(new YAxisValueFormatter());
+        yAxisRight.setTextColor(Color.WHITE);
+        yAxisRight.setValueFormatter(new YAxisValueFormatter());
+
+        xAxis.setTextColor(Color.WHITE);
+        xAxis.setValueFormatter(new XAxisValueFormatter());
     }
+
+    public static class YAxisValueFormatter implements IAxisValueFormatter {
+
+        @NonNull
+        private final DecimalFormat mFormat = new DecimalFormat("###,###,###");
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return mFormat.format(value) + " m";
+        }
+    }
+
+    public static class XAxisValueFormatter implements IAxisValueFormatter {
+
+        @NonNull
+        private final DecimalFormat mFormat = new DecimalFormat("#");
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return mFormat.format(value) + " Km";
+        }
+    }
+
 }
