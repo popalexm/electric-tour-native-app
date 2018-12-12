@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.elevationView;
 
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -129,16 +130,20 @@ public class ElevationChartFragment extends BaseBottomDialogFragment implements 
     }
 
     private void initChartView(@NonNull LineData lineData, @NonNull Description description) {
-        viewBinding.routeLineElevationChart.setDescription(description);
-        viewBinding.routeLineElevationChart.setData(lineData);
-        viewBinding.routeLineElevationChart.getLegend()
+        LineChart chartView = viewBinding.routeLineElevationChart;
+        chartView.setDescription(description);
+        chartView.setData(lineData);
+        chartView.getLegend()
                 .setTextColor(Color.WHITE);
-        viewBinding.routeLineElevationChart.invalidate();
-        viewBinding.routeLineElevationChart.animateY(1000);
+        chartView.invalidate();
+        chartView.animateY(1000);
+        setupChartViewAxisStyling(chartView);
+    }
 
-        XAxis xAxis = viewBinding.routeLineElevationChart.getXAxis();
-        YAxis yAxisLeft = viewBinding.routeLineElevationChart.getAxisLeft();
-        YAxis yAxisRight = viewBinding.routeLineElevationChart.getAxisRight();
+    private void setupChartViewAxisStyling(@NonNull LineChart chartView) {
+        XAxis xAxis = chartView.getXAxis();
+        YAxis yAxisLeft = chartView.getAxisLeft();
+        YAxis yAxisRight = chartView.getAxisRight();
 
         yAxisLeft.setTextColor(Color.WHITE);
         yAxisLeft.setValueFormatter(new YAxisValueFormatter());
@@ -167,7 +172,7 @@ public class ElevationChartFragment extends BaseBottomDialogFragment implements 
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            return mFormat.format(value) + " Km";
+            return mFormat.format(value);
         }
     }
 

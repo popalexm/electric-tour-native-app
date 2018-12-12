@@ -12,6 +12,7 @@ public class ElevationPoint {
     @PrimaryKey(autoGenerate = true)
     private int elevationPointId;
     private int routeLegId;
+    private int startCheckpointOrderId;
     private double latitude;
     private double longitude;
     private double elevation;
@@ -54,6 +55,14 @@ public class ElevationPoint {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public int getStartCheckpointOrderId() {
+        return startCheckpointOrderId;
+    }
+
+    public void setStartCheckpointOrderId(int startCheckpointOrderId) {
+        this.startCheckpointOrderId = startCheckpointOrderId;
     }
 
 }

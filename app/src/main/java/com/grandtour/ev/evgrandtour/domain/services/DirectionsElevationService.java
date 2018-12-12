@@ -205,12 +205,17 @@ public class DirectionsElevationService extends Service {
 
                                 int checkpointId = routeRequestCheckpoints.get(i)
                                         .getCheckpointId();
+
+                                int checkpointOrderInTourId = routeRequestCheckpoints.get(i)
+                                        .getOrderInTourId();
+
                                 Long routeLegId = routeLegIdAndElevationLatLngPoints.first;
                                 List<LatLng> elevationLatLngList = routeLegIdAndElevationLatLngPoints.second;
 
                                 insertedRouteLegIds.add(routeLegId);
                                 updateDistanceAndDurationForCheckpointId(legResponse, checkpointId);
-                                insertElevationPointsToDatabase(routeLegId, elevationLatLngList);
+
+                                insertElevationPointsToDatabase(routeLegId, checkpointOrderInTourId, elevationLatLngList);
                             }
                             return insertedRouteLegIds;
                         });
@@ -252,8 +257,9 @@ public class DirectionsElevationService extends Service {
      * @param routeLegId            associated with the route
      * @param elevationLatLngPoints List of LatLng coordinates that need to be converted to database models and saved
      */
-    private void insertElevationPointsToDatabase(long routeLegId, @NonNull Iterable<LatLng> elevationLatLngPoints) {
-        List<ElevationPoint> elevationPoints = NetworkResponseConverter.convertCoordinatesToElevationPoints(routeLegId, elevationLatLngPoints);
+    private void insertElevationPointsToDatabase(long routeLegId, int checkpointOrderId, @NonNull Iterable<LatLng> elevationLatLngPoints) {
+        List<ElevationPoint> elevationPoints = NetworkResponseConverter.convertCoordinatesToElevationPoints(routeLegId, elevationLatLngPoints,
+                checkpointOrderId);
         storageManager.elevationPointDao()
                 .insert(elevationPoints);
     }

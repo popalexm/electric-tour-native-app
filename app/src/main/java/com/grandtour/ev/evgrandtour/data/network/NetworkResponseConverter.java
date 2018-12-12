@@ -78,11 +78,13 @@ public final class NetworkResponseConverter {
     }
 
     @NonNull
-    public static List<ElevationPoint> convertCoordinatesToElevationPoints(long routeLegId, @NonNull Iterable<LatLng> elevationLatLngList) {
+    public static List<ElevationPoint> convertCoordinatesToElevationPoints(long routeLegId, @NonNull Iterable<LatLng> elevationLatLngList,
+            int startCheckpointOrderId) {
         List<ElevationPoint> elevationPoints = new ArrayList<>();
         for (LatLng point : elevationLatLngList) {
             ElevationPoint elevationPoint = new ElevationPoint();
             elevationPoint.setRouteLegId((int) routeLegId);
+            elevationPoint.setStartCheckpointOrderId(startCheckpointOrderId);
             elevationPoint.setLatitude(point.latitude);
             elevationPoint.setLongitude(point.longitude);
             elevationPoints.add(elevationPoint);

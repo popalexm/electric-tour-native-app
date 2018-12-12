@@ -53,11 +53,13 @@ public class ElevationChartPresenter extends BasePresenter implements ElevationC
     private void displayElevationPoints(List<ElevationPoint> elevationPoints) {
         if (isViewAttached) {
             List<Entry> elevationPointEntries = new ArrayList<>();
-            int XAxisIndex = 0;
             for (int i = 0; i < elevationPoints.size(); i++) {
-                elevationPointEntries.add(new Entry(XAxisIndex, (float) elevationPoints.get(i)
+
+                ElevationPoint elevationPoint = elevationPoints.get(i);
+
+                int startCheckpointId = elevationPoint.getStartCheckpointOrderId();
+                elevationPointEntries.add(new Entry(startCheckpointId, (float) elevationPoint
                         .getElevation()));
-                XAxisIndex += 2;
             }
             view.displayChart(elevationPointEntries);
         }

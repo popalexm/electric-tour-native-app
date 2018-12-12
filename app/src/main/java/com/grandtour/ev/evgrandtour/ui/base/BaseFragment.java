@@ -16,17 +16,15 @@ import android.widget.Toast;
 public class BaseFragment extends Fragment implements BaseContract.View {
 
     public void showDialog(@NonNull DialogFragment dialogFrag, @NonNull Fragment targetFrag, @NonNull String tag, int reqCode) {
-        FragmentManager fm = getFragmentManager();
-        if (fm != null) {
-            FragmentTransaction fragmentTransaction = fm.beginTransaction();
-            Fragment previousDialog = getFragmentManager().findFragmentByTag(tag);
-            if (previousDialog != null) {
-                fragmentTransaction.remove(previousDialog);
-            }
-            fragmentTransaction.addToBackStack(null);
-            dialogFrag.setTargetFragment(targetFrag, reqCode);
-            dialogFrag.show(fragmentTransaction, tag);
+        FragmentManager childFragmentManager = getChildFragmentManager();
+        FragmentTransaction fragmentTransaction = childFragmentManager.beginTransaction();
+        Fragment previousDialog = childFragmentManager.findFragmentByTag(tag);
+        if (previousDialog != null) {
+            fragmentTransaction.remove(previousDialog);
         }
+        fragmentTransaction.addToBackStack(null);
+        dialogFrag.setTargetFragment(targetFrag.getParentFragment(), reqCode);
+        dialogFrag.show(fragmentTransaction, tag);
     }
 
     @Override
