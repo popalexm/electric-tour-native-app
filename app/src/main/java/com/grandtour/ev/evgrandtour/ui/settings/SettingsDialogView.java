@@ -65,7 +65,7 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        UpdateSettingsListener callback = (UpdateSettingsListener) getTargetFragment();
+        UpdateSettingsListener callback = (UpdateSettingsListener) getParentFragment();
         switch (buttonView.getId()) {
             case R.id.switchLocation:
                 if (callback != null) {

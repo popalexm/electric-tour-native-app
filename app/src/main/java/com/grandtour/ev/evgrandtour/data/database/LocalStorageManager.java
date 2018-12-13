@@ -19,7 +19,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-@Database(entities = {Checkpoint.class, Route.class, Tour.class, RouteStep.class, RouteLeg.class, ElevationPoint.class}, version = 4)
+@Database(entities = {Checkpoint.class, Route.class, Tour.class, RouteStep.class, RouteLeg.class, ElevationPoint.class}, version = 5)
 public abstract class LocalStorageManager extends RoomDatabase {
 
     @NonNull

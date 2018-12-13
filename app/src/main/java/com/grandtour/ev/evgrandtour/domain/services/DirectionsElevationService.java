@@ -88,9 +88,9 @@ public class DirectionsElevationService extends Service {
     }
 
     private void startRouteDirectionsRequests(@NonNull List<Checkpoint> checkpoints) {
-        List<Maybe<Boolean>> routeUseCases = generateDirectionsRequestsList(checkpoints);
+        List<Maybe<Boolean>> routeDirectionsRequestCalls = generateDirectionsRequestsList(checkpoints);
 
-        directionsRequestsDisposable = Maybe.concat(routeUseCases)
+        directionsRequestsDisposable = Maybe.concat(routeDirectionsRequestCalls)
                 .doOnSubscribe(subscription -> {
                     ServiceStatusBroadcastManager.getInstance()
                             .broadcastDirectionRequestProgress(true);

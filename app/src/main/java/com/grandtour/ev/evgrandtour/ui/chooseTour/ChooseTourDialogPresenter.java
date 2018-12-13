@@ -61,8 +61,7 @@ public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTo
                 })
                 .doOnEach(new Subscriber<Response<TourDataResponse>>() {
                     @Override
-                    public void onSubscribe(Subscription s) {
-                    }
+                    public void onSubscribe(Subscription s) { }
 
                     @Override
                     public void onNext(Response<TourDataResponse> response) {
@@ -74,6 +73,8 @@ public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTo
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
+                        view.showMessage("Server is currently down, probably due to maintenance reasons!");
+                        view.dismissDialog();
                     }
 
                     @Override
