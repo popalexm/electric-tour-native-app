@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.signIn.SignInViewModel" />
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.signIn.SignInContract.Presenter" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/start_vertical_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.10" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/end_vertical_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.90" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/top_horizontal_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.30" />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/middle_horizontal_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.45" />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/bottom_horizontal_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.66" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/button_bottom_horizontal_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.80" />
+
+        <ImageView
+            android:id="@+id/ic_icon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/ic_logo_white"
+            app:layout_constraintBottom_toBottomOf="@id/middle_horizontal_guideline"
+            app:layout_constraintEnd_toStartOf="@id/end_vertical_guideline"
+            app:layout_constraintStart_toEndOf="@id/start_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@id/top_horizontal_guideline" />
+
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/buttonGoogleSignIn"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> presenter.onGoogleSignInButtonClicked()}"
+            android:paddingBottom="@dimen/margin_medium"
+            android:paddingEnd="@dimen/margin_large"
+            android:paddingStart="@dimen/margin_large"
+            android:paddingTop="@dimen/margin_medium"
+            android:text="@string/btn_sign_in"
+            android:textColor="@android:color/black"
+            app:cornerRadius="@dimen/margin_normal"
+            app:icon="@drawable/ic_google_logo"
+            app:iconSize="@dimen/margin_large"
+            app:iconTint="@android:color/black"
+            app:layout_constraintEnd_toStartOf="@id/end_vertical_guideline"
+            app:layout_constraintStart_toEndOf="@id/start_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@id/bottom_horizontal_guideline" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.INVISIBLE}"
+            app:layout_constraintEnd_toStartOf="@id/end_vertical_guideline"
+            app:layout_constraintStart_toEndOf="@id/start_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@id/button_bottom_horizontal_guideline">
+
+        </ProgressBar>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>
+
