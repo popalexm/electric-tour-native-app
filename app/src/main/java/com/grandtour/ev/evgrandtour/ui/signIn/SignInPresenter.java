@@ -18,18 +18,17 @@ import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 public class SignInPresenter extends BasePresenter implements SignInContract.Presenter, OnCompleteListener<AuthResult> {
 
     @NonNull
     private static final String TAG = SignInPresenter.class.getSimpleName();
     static final int RC_SIGN_IN = 9001;
+    @NonNull
+    private static final String PREFERENCES_TOKEN = "user_token";
     @NonNull
     private final SignInContract.View view;
     @NonNull
@@ -41,6 +40,12 @@ public class SignInPresenter extends BasePresenter implements SignInContract.Pre
         this.view = view;
         mGoogleSignInClient = GoogleSignIn.getClient(Injection.provideGlobalContext(), googleSignInOptions);
         mFireBaseAuth = FirebaseAuth.getInstance();
+    }
+
+    @Override
+    public void onAttach() {
+        super.onAttach();
+        checkPreviousLoginStatus();
     }
 
     @Override
@@ -83,6 +88,14 @@ public class SignInPresenter extends BasePresenter implements SignInContract.Pre
         }
     }
 
+    private void checkPreviousLoginStatus() {
+        String token = Injection.provideSharedPreferences()
+                .getString(SignInPresenter.PREFERENCES_TOKEN, "");
+        if (token != null && token.length() > 0) {
+            view.moveToMainMapScreen();
+        }
+    }
+
     private void validateUserTokenOnBackend(@NonNull FirebaseUser user) {
         user.getIdToken(true)
                 .addOnCompleteListener(task -> {
@@ -93,19 +106,25 @@ public class SignInPresenter extends BasePresenter implements SignInContract.Pre
                                 .validateUserToken(token)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(new Consumer<Response>() {
-                                    @Override
-                                    public void accept(Response response) {
-                                        if (response.isSuccessful()) {
-                                            Log.e(TAG, "Response is ok");
-                                        } else {
-                                            Log.e(TAG, "Response is not ok , " + response.code());
-                                            if (isViewAttached) {
-                                                view.showLoadingView(false);
-                                            }
-                                        }
+                                .doOnError(throwable -> {
+                                    if (isViewAttached) {
+                                        view.showLoadingView(false);
+                                        view.showMessage(Injection.provideGlobalContext()
+                                                .getString(R.string.message_account_not_authorized));
                                     }
-                                }));
+                                })
+                                .doOnComplete(() -> {
+                                    if (isViewAttached) {
+                                        Injection.provideSharedPreferences()
+                                                .edit()
+                                                .putString(SignInPresenter.PREFERENCES_TOKEN, token)
+                                                .apply();
+                                        view.showLoadingView(false);
+                                        view.moveToMainMapScreen();
+                                    }
+
+                                })
+                                .subscribe());
                     }
                 });
     }

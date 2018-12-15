@@ -13,6 +13,7 @@ public class SignInContract {
 
         void openGoogleSignInDialog(@NonNull Intent googleSignInIntent);
 
+        void moveToMainMapScreen();
     }
 
     public interface Presenter {

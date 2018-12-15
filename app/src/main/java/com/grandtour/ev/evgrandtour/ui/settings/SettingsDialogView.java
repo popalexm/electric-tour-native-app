@@ -4,63 +4,58 @@ import com.grandtour.ev.evgrandtour.BuildConfig;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
+import com.grandtour.ev.evgrandtour.databinding.FragmentDialogSettingsBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.signIn.SignInActivityView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.TextView;
 
-public class SettingsDialogView extends BaseDialogFragment implements CompoundButton.OnCheckedChangeListener, View.OnClickListener {
+public class SettingsDialogView extends BaseDialogFragment implements SettingsDialogContract.View, CompoundButton.OnCheckedChangeListener {
 
     @NonNull
     public static final String TAG = SettingsDialogView.class.getSimpleName();
     @NonNull
     private final SharedPreferences preferences = Injection.provideSharedPreferences();
     @NonNull
-    private Switch switchRouteDeviationNotification;
+    private final SettingsDialogPresenter presenter = new SettingsDialogPresenter(this);
     @NonNull
-    private Switch switchLocationTracking;
+    private final SettingsDialogViewModel viewModel = new SettingsDialogViewModel();
     @NonNull
-    private Button btnDismiss;
-    @NonNull
-    private TextView txtAppVersion;
+    private FragmentDialogSettingsBinding viewBinding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_dialog_settings, null);
-        switchLocationTracking = view.findViewById(R.id.switchLocation);
-        switchRouteDeviationNotification = view.findViewById(R.id.switchDeviationNotifications);
-        btnDismiss = view.findViewById(R.id.buttonDismiss);
-        txtAppVersion = view.findViewById(R.id.txtAppVersion);
-
-        btnDismiss.setOnClickListener(this);
-        switchLocationTracking.setOnCheckedChangeListener(this);
-        switchRouteDeviationNotification.setOnCheckedChangeListener(this);
-
+        viewBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_settings, null, false);
+        viewBinding.setPresenter(presenter);
+        viewBinding.setViewModel(viewModel);
+        viewBinding.switchLocation.setOnCheckedChangeListener(this);
+        viewBinding.switchDeviationNotifications.setOnCheckedChangeListener(this);
         setupCurrentSettings();
         setupTransparentDialogBackground();
-        return view;
+        return viewBinding.getRoot();
     }
 
     private void setupCurrentSettings() {
-        boolean areLocationUpdatesEnabled = preferences.getBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, true);
-        boolean areDeviationNotificationsEnabled = preferences.getBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, true);
+        boolean areLocationUpdatesEnabled = preferences.getBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, false);
+        boolean areDeviationNotificationsEnabled = preferences.getBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, false);
         if (areLocationUpdatesEnabled) {
-            switchLocationTracking.setChecked(true);
+            viewBinding.switchLocation.setChecked(true);
         }
         if (areDeviationNotificationsEnabled) {
-            switchRouteDeviationNotification.setChecked(true);
+            viewBinding.switchDeviationNotifications.setChecked(true);
         }
         String appVersion = BuildConfig.VERSION_NAME;
         String appVersionPrefix = getString(R.string.application_version);
-        txtAppVersion.setText(getString(R.string.format_app_version, appVersionPrefix, appVersion));
+        viewModel.appVersion.set(getString(R.string.format_app_version, appVersionPrefix, appVersion));
     }
 
     @Override
@@ -69,32 +64,49 @@ public class SettingsDialogView extends BaseDialogFragment implements CompoundBu
         switch (buttonView.getId()) {
             case R.id.switchLocation:
                 if (callback != null) {
-                    updateLocationUpdateStatus(isChecked, callback);
+                    updateLocationUpdateStatus(isChecked);
+                    callback.OnLocationTrackingSettingsUpdate(isChecked);
                 }
                 break;
             case R.id.switchDeviationNotifications:
-                if (callback != null) {
-                    updateRouteDeviationNotificationStatus(isChecked);
-                }
+                updateRouteDeviationNotificationStatus(isChecked);
                 break;
         }
     }
 
-    private void updateLocationUpdateStatus(boolean areLocationTrackingEnabled, @NonNull UpdateSettingsListener listener) {
-        preferences.edit()
+    private boolean updateLocationUpdateStatus(boolean areLocationTrackingEnabled) {
+        return preferences.edit()
                 .putBoolean(SharedPreferencesKeys.KEY_LOCATION_TRACKING_ENABLED, areLocationTrackingEnabled)
                 .commit();
-        listener.OnLocationTrackingSettingsUpdate(areLocationTrackingEnabled);
+
     }
 
-    private void updateRouteDeviationNotificationStatus(boolean areRouteDeviationNotificationEnabled) {
-        preferences.edit()
+    private boolean updateRouteDeviationNotificationStatus(boolean areRouteDeviationNotificationEnabled) {
+        return preferences.edit()
                 .putBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, areRouteDeviationNotificationEnabled)
                 .commit();
     }
 
     @Override
-    public void onClick(View v) {
+    public void dismissDialog() {
         dismiss();
+    }
+
+    @Override
+    public void switchToLoginScreen() {
+        Activity activity = getActivity();
+        if (activity != null) {
+            Intent startMapsActivity = new Intent(getActivity(), SignInActivityView.class);
+            startActivity(startMapsActivity);
+            activity.finish();
+        }
+    }
+
+    @Override
+    public void showLoadingView(boolean isLoading) {
+    }
+
+    @Override
+    public void showMessage(@NonNull String msg) {
     }
 }

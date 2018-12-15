@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.chooseTour;
 
+import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
@@ -73,7 +74,8 @@ public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTo
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
-                        view.showMessage("Server is currently down, probably due to maintenance reasons!");
+                        view.showMessage(Injection.provideGlobalContext()
+                                .getString(R.string.message_server_down));
                         view.dismissDialog();
                     }
 

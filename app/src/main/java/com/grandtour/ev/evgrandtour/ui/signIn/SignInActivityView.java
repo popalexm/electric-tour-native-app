@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Task;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.ActivitySignInBinding;
+import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -86,4 +87,10 @@ public class SignInActivityView extends Activity implements SignInContract.View 
         startActivityForResult(googleSignInIntent, SignInPresenter.RC_SIGN_IN);
     }
 
+    @Override
+    public void moveToMainMapScreen() {
+        Intent startMapsActivity = new Intent(this, MainActivity.class);
+        startActivity(startMapsActivity);
+        finish();
+    }
 }
