@@ -67,6 +67,7 @@ public class SignInActivityView extends Activity implements SignInContract.View 
                 }
             } catch (ApiException exception) {
                 exception.printStackTrace();
+                presenter.onGoogleSignInFailed(exception);
             }
         }
     }

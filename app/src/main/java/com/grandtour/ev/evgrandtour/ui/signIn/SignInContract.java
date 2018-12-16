@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.signIn;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 
@@ -21,5 +22,7 @@ public class SignInContract {
         void onGoogleSignInButtonClicked();
 
         void onGoogleSingInComplete(@NonNull GoogleSignInAccount googleSignInAccount);
+
+        void onGoogleSignInFailed(@NonNull ApiException exception);
     }
 }

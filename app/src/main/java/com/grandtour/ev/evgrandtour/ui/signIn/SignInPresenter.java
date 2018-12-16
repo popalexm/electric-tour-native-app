@@ -4,6 +4,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -62,6 +63,14 @@ public class SignInPresenter extends BasePresenter implements SignInContract.Pre
         AuthCredential credential = GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null);
         mFireBaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this);
+    }
+
+    @Override
+    public void onGoogleSignInFailed(@NonNull ApiException exception) {
+        String error = exception.getMessage();
+        if (error != null && isViewAttached) {
+            view.showMessage("Sign in with Google account failed!");
+        }
     }
 
     @Override
