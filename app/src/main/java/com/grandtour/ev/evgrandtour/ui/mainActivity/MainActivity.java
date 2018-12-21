@@ -18,29 +18,29 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener , Toolbar.OnMenuItemClickListener{
 
     @Nullable
-    private ActivityMainBinding binding;
+    private ActivityMainBinding viewBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setupViews();
         setupGeoFenceMapFragment();
     }
 
     private void setupViews() {
-        if (binding != null) {
-            binding.fabOpenTourSelection.setOnClickListener(this);
-            binding.bottomAppBar.replaceMenu(R.menu.menu_main);
-            binding.bottomAppBar.setNavigationOnClickListener(this);
-            binding.bottomAppBar.setOnMenuItemClickListener(this);
+        if (viewBinding != null) {
+            viewBinding.fabOpenTourSelection.setOnClickListener(this);
+            viewBinding.bottomAppBar.replaceMenu(R.menu.menu_main);
+            viewBinding.bottomAppBar.setNavigationOnClickListener(this);
+            viewBinding.bottomAppBar.setOnMenuItemClickListener(this);
         }
     }
 
     public void animateRouteSelectionButton() {
-        if (binding != null) {
+        if (viewBinding != null) {
             AnimationManager.getInstance()
-                    .startBounceAnimation(binding.fabOpenTourSelection);
+                    .startBounceAnimation(viewBinding.fabOpenTourSelection);
         }
     }
 
@@ -67,6 +67,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.action_settings:
                 if (mapsFragmentView != null) {
                     mapsFragmentView.openSettingsDialog();
+                }
+                break;
+            case R.id.action_view_route_altitude:
+                if (mapsFragmentView != null) {
+                    mapsFragmentView.openEntireTourElevationChart();
                 }
                 break;
         }

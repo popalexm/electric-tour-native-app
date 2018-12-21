@@ -4,15 +4,22 @@
     <item
         android:id="@+id/action_distance_between_2_checkpoints"
         android:icon="@drawable/ic_playlist_add_white_24dp"
-        android:orderInCategory="4"
+        android:orderInCategory="1"
         android:title="Calculate distance"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:orderInCategory="4"
-        android:title="Calculate distance"
+        android:orderInCategory="3"
+        android:title="Settings"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_view_route_altitude"
+        android:icon="@drawable/ic_elevation_chart_logo"
+        android:orderInCategory="2"
+        android:title="Altitute chart"
         app:showAsAction="always" />
 
 </menu>

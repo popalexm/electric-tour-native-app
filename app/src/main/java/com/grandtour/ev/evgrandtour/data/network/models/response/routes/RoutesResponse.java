@@ -12,7 +12,7 @@ public class RoutesResponse {
     private List<GeocodedWaypoint> geocodedWaypoints = null;
     @SerializedName("routes")
     @Expose
-    private List<Route> routes = null;
+    private List<RouteResponse> routes = null;
     @SerializedName("status")
     @Expose
     private String status;
@@ -25,11 +25,11 @@ public class RoutesResponse {
         this.geocodedWaypoints = geocodedWaypoints;
     }
 
-    public List<Route> getRoutes() {
+    public List<RouteResponse> getRoutes() {
         return routes;
     }
 
-    public void setRoutes(List<Route> routes) {
+    public void setRoutes(List<RouteResponse> routes) {
         this.routes = routes;
     }
 

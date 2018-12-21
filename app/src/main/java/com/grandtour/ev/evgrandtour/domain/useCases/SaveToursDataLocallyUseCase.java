@@ -3,6 +3,7 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.Tour;
+import com.grandtour.ev.evgrandtour.data.network.NetworkResponseConverter;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourCheckpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
@@ -33,9 +34,7 @@ public class SaveToursDataLocallyUseCase extends BaseUseCase implements BaseUseC
     @Override
     public Completable perform() {
         return Completable.fromAction(() -> {
-            localStorageManager.tourDao().deleteAll();
-            localStorageManager.routeDao().deleteAll();
-            localStorageManager.checkpointsDao().deleteAll();
+            purgeEntireDatabase();
 
             List<Tour> tours = new ArrayList<>();
             for (TourDataResponse response : tourDataList) {
@@ -50,7 +49,7 @@ public class SaveToursDataLocallyUseCase extends BaseUseCase implements BaseUseC
                 String tourId = response.getId();
                 List<TourCheckpoint> tourResponseCheckpoints = response.getTourCheckpoints();
                 try {
-                    List<Checkpoint> toSaveCheckpoints = SaveToursDataLocallyUseCase.convertToCheckpoints(tourResponseCheckpoints, tourId);
+                    List<Checkpoint> toSaveCheckpoints = NetworkResponseConverter.convertResponseToCheckpoints(tourResponseCheckpoints, tourId);
                     localStorageManager.checkpointsDao().insert(toSaveCheckpoints);
                 } catch (NullPointerException e) {
                     e.printStackTrace();
@@ -59,20 +58,22 @@ public class SaveToursDataLocallyUseCase extends BaseUseCase implements BaseUseC
         });
     }
 
-    @NonNull
-    private static List<Checkpoint> convertToCheckpoints(@NonNull Iterable<TourCheckpoint> tourResponseCheckpoints, @NonNull String tourId)
-            throws NullPointerException {
-        List<Checkpoint> toSaveCheckpoints = new ArrayList<>();
-        for (TourCheckpoint tourCheckpoint : tourResponseCheckpoints) {
-            Checkpoint checkpoint = new Checkpoint();
-            checkpoint.setOrderInTourId(tourCheckpoint.getTourOrderId());
-            checkpoint.setCheckpointName(tourCheckpoint.getDescription());
-            checkpoint.setTourId(tourId);
-            checkpoint.setLatitude(tourCheckpoint.getLatitude());
-            checkpoint.setLongitude(tourCheckpoint.getLongitude());
-            toSaveCheckpoints.add(checkpoint);
-        }
-        return toSaveCheckpoints;
+    /**
+     * Deletes entire database
+     */
+    private void purgeEntireDatabase() {
+        localStorageManager.tourDao()
+                .deleteAll();
+        localStorageManager.routeDao()
+                .deleteAll();
+        localStorageManager.checkpointsDao()
+                .deleteAll();
+        localStorageManager.routeLegDao()
+                .deleteAll();
+        localStorageManager.routeStepDao()
+                .deleteAll();
+        localStorageManager.elevationPointDao()
+                .deleteAll();
     }
 }
 

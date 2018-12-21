@@ -12,6 +12,7 @@ apply plugin: 'io.fabric'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://jitpack.io' }
 }
 
 
@@ -21,8 +22,8 @@ android {
         applicationId "com.grandtour.ev.evgrandtour"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 21
-        versionName "2.1.8"
+        versionCode 27
+        versionName "2.4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -38,6 +39,10 @@ android {
     dataBinding {
         enabled = true
     }
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
+
 }
 
 dependencies {
@@ -69,7 +74,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-
     implementation 'com.facebook.stetho:stetho:1.5.0'
 
     implementation 'com.google.maps.android:android-maps-utils:0.4'
@@ -77,4 +81,13 @@ dependencies {
         transitive = true;
     }
 
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
+
+    // Firebase Auth implementation
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.elevationView.ElevationChartContract.Presenter" />
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/margin_normal"
+        android:orientation="vertical">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/routeLineElevationChart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="@dimen/margin_medium" />
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/buttonDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/margin_medium"
+            android:onClick="@{()-> presenter.onDismissButtonClicked()}"
+            android:paddingEnd="@dimen/margin_large"
+            android:paddingStart="@dimen/margin_large"
+            android:text="@string/btn_dimiss"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@android:color/holo_red_light"
+            app:cornerRadius="@dimen/margin_normal" />
+
+    </LinearLayout>
+
+</layout>
+

@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.Polyline;
 
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 
 import android.databinding.BindingAdapter;
 import android.databinding.ObservableArrayList;
@@ -19,9 +20,9 @@ public class MapsViewModel {
     @NonNull
     public final ObservableBoolean isLoadingInProgress = new ObservableBoolean();
     @NonNull
-    public final ObservableArrayList<Marker> checkpoints = new ObservableArrayList<>();
+    public final ObservableArrayList<Polyline> routePolyLine = new ObservableArrayList<>();
     @NonNull
-    public final ObservableArrayList<Polyline> routes = new ObservableArrayList<>();
+    public final ObservableArrayList<MapCheckpoint> routeCheckpoints = new ObservableArrayList<>();
     @NonNull
     public final ObservableField<CurrentUserLocation> currentUserLocation = new ObservableField<>();
     @NonNull

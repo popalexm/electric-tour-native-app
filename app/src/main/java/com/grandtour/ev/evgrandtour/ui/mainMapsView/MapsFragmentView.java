@@ -2,7 +2,6 @@ package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -12,22 +11,25 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
-import com.grandtour.ev.evgrandtour.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.services.RouteDirectionsRequestsService;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationChartFragment;
 import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultsListViewModel;
 import com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogView;
@@ -47,7 +49,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,16 +58,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsFragmentView extends BaseFragment
-        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, SearchView.OnQueryTextListener, SearchView.OnCloseListener,
-        View.OnClickListener {
+        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
+        SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>,
+        ClusterManager.OnClusterClickListener<MapCheckpoint> {
+
+    @NonNull
+    private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
+    @NonNull
+    private static final String ACTION_LOCATION_BROADCAST = "LocationResultsBroadcast";
 
     public static final int ZOOM_LEVEL = 13;
     @NonNull
     public static final String TAG = MapsFragmentView.class.getSimpleName();
-    @NonNull
-    private GoogleMap googleMap;
-    @NonNull
-    private MapView mapView;
     @NonNull
     private final MapsViewModel mapsViewModel = new MapsViewModel();
     @NonNull
@@ -77,6 +80,12 @@ public class MapsFragmentView extends BaseFragment
     private final RouteRequestsBroadcastReceiver routeDirectionsBroadcastReceiver = new RouteRequestsBroadcastReceiver(presenter);
     @NonNull
     private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(presenter);
+    @NonNull
+    private GoogleMap googleMap;
+    @NonNull
+    private FragmentMainMapViewBinding viewBinding;
+    @Nullable
+    private ClusterManager<MapCheckpoint> clusterManager;
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -86,18 +95,18 @@ public class MapsFragmentView extends BaseFragment
     @Override
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentMainMapViewBinding mapFragmentBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_map_view, container, false);
-        mapFragmentBinding.setViewModel(mapsViewModel);
-        mapFragmentBinding.setSearchViewModel(searchResultViewModel);
-        mapFragmentBinding.setPresenter(presenter);
-        mapFragmentBinding.searchViewCheckpoints.setOnQueryTextListener(this);
-        mapFragmentBinding.searchViewCheckpoints.setOnSearchClickListener(this);
-        mapFragmentBinding.searchViewCheckpoints.setOnCloseListener(this);
-        mapView = mapFragmentBinding.getRoot()
-                .findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-        return mapFragmentBinding.getRoot();
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_map_view, container, false);
+        viewBinding.setViewModel(mapsViewModel);
+        viewBinding.setSearchViewModel(searchResultViewModel);
+        viewBinding.setPresenter(presenter);
+
+        viewBinding.searchViewCheckpoints.setOnQueryTextListener(this);
+        viewBinding.searchViewCheckpoints.setOnSearchClickListener(this);
+        viewBinding.searchViewCheckpoints.setOnCloseListener(this);
+
+        viewBinding.mapView.onCreate(savedInstanceState);
+        viewBinding.mapView.getMapAsync(this);
+        return viewBinding.getRoot();
     }
 
     @Override
@@ -129,29 +138,28 @@ public class MapsFragmentView extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
-        mapView.onResume();
+        viewBinding.mapView.onResume();
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
-                    .registerReceiver(routeDirectionsBroadcastReceiver, new IntentFilter(RouteDirectionsRequestsService.ACTION_ROUTE_BROADCAST));
+                    .registerReceiver(routeDirectionsBroadcastReceiver, new IntentFilter(MapsFragmentView.ACTION_ROUTE_BROADCAST));
             LocalBroadcastManager.getInstance(activity)
-                    .registerReceiver(locationUpdatesBroadcastReceiver, new IntentFilter(LocationsUpdatesService.ACTION_LOCATION_BROADCAST));
+                    .registerReceiver(locationUpdatesBroadcastReceiver, new IntentFilter(MapsFragmentView.ACTION_LOCATION_BROADCAST));
         }
     }
 
     @Override
     public void onPause() {
-        mapView.onPause();
+        viewBinding.mapView.onPause();
         super.onPause();
     }
-
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
-        mapsViewModel.checkpoints.clear();
-        mapsViewModel.routes.clear();
+        viewBinding.mapView.onDestroy();
+        mapsViewModel.routeCheckpoints.clear();
+        mapsViewModel.routePolyLine.clear();
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
@@ -165,7 +173,7 @@ public class MapsFragmentView extends BaseFragment
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+        viewBinding.mapView.onLowMemory();
     }
 
     @Override
@@ -180,14 +188,13 @@ public class MapsFragmentView extends BaseFragment
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        this.googleMap.setOnMarkerClickListener(this);
         presenter.onAttach();
         Activity activity = getActivity();
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 this.googleMap.setMyLocationEnabled(true);
-                this.googleMap.setInfoWindowAdapter(new GoogleMapInfoWindow(getActivity()));
-                this.googleMap.setOnInfoWindowLongClickListener(this);
+                setupClusterManager(activity);
+                setupGoogleMapCallbacks();
                 presenter.onMapReady();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -195,11 +202,30 @@ public class MapsFragmentView extends BaseFragment
         }
     }
 
+    private void setupClusterManager(@NonNull Activity activity) {
+        clusterManager = new ClusterManager<>(activity, this.googleMap);
+        clusterManager.setOnClusterItemInfoWindowClickListener(this);
+        clusterManager.setOnClusterClickListener(this);
+        clusterManager.setRenderer(new MapsClusterRenderer(activity, googleMap, clusterManager));
+        clusterManager.getMarkerCollection()
+                .setOnInfoWindowAdapter(new GoogleMapInfoWindow(activity));
+    }
+
+    private void setupGoogleMapCallbacks() {
+        if (clusterManager != null) {
+            googleMap.setOnCameraChangeListener(clusterManager);
+            googleMap.setOnMarkerClickListener(clusterManager);
+            googleMap.setOnInfoWindowClickListener(clusterManager);
+            googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+        }
+        googleMap.setOnPolylineClickListener(this);
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
             @NonNull int[] grantResults) {
         if (requestCode == PermissionUtils.LOCATION_REQUEST_PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            mapView.getMapAsync(this);
+            viewBinding.mapView.getMapAsync(this);
         }
     }
 
@@ -231,17 +257,21 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void loadCheckpoints(@NonNull List<Pair<Integer, MarkerOptions>> checkpoints) {
-        for (Pair<Integer, MarkerOptions> checkpoint : checkpoints) {
-            Marker checkpointMarker = googleMap.addMarker(checkpoint.second);
-            checkpointMarker.setTag(checkpoint.first);
-            mapsViewModel.checkpoints.add(checkpointMarker);
+    public void loadCheckpoints(@NonNull List<MapCheckpoint> checkpoints) {
+        Activity activity = getActivity();
+        if (clusterManager != null && activity != null) {
+            clusterManager.clearItems();
+            mapsViewModel.routeCheckpoints.clear();
+            for (MapCheckpoint mapCheckpoint : checkpoints) {
+                clusterManager.addItem(mapCheckpoint);
+                mapsViewModel.routeCheckpoints.add(mapCheckpoint);
+            }
         }
     }
 
     @Override
     public void centerMapToCurrentSelectedRoute() {
-        List<Marker> routeCheckpoints = mapsViewModel.checkpoints;
+        List<MapCheckpoint> routeCheckpoints = mapsViewModel.routeCheckpoints;
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (int i = 0; i < routeCheckpoints.size(); i++) {
             LatLng position = routeCheckpoints.get(i)
@@ -254,39 +284,40 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void moveToMarker(@NonNull Integer markerCheckpointId) {
-        for (Marker checkpoint : mapsViewModel.checkpoints) {
-            Integer checkpointId = (Integer) checkpoint.getTag();
-            if (checkpointId != null) {
-                if (checkpointId.equals(markerCheckpointId)) {
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(checkpoint.getPosition(), MapsFragmentView.ZOOM_LEVEL));
-                }
+        for (MapCheckpoint checkpoint : mapsViewModel.routeCheckpoints) {
+            Integer checkpointId = checkpoint.getMapCheckpointId();
+            if (checkpointId.equals(markerCheckpointId)) {
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(checkpoint.getPosition(), MapsFragmentView.ZOOM_LEVEL));
             }
         }
     }
 
     @Override
     public void clearMapCheckpoints() {
-        for (Marker checkpoint : mapsViewModel.checkpoints) {
-            checkpoint.remove();
+        if (clusterManager != null) {
+            clusterManager.clearItems();
+            mapsViewModel.routeCheckpoints.clear();
+            clusterManager.cluster();
         }
-        mapsViewModel.checkpoints.clear();
     }
 
     @Override
     public void clearMapRoutes() {
-        for (Polyline route : mapsViewModel.routes) {
+        for (Polyline route : mapsViewModel.routePolyLine) {
             route.remove();
         }
-        mapsViewModel.routes.clear();
+        mapsViewModel.routePolyLine.clear();
     }
 
     @Override
-    public void drawCheckpointsRoute(@NonNull PolylineOptions routePolyOptions) {
-        routePolyOptions.color(getContext().getResources()
-                .getColor(R.color.colorBlue));
-
-        Polyline route = googleMap.addPolyline(routePolyOptions);
-        mapsViewModel.routes.add(route);
+    public void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            Polyline routePolyline = googleMap.addPolyline(routePolyOptions);
+            routePolyline.setTag(routeStepId);
+            routePolyline.setClickable(true);
+            mapsViewModel.routePolyLine.add(routePolyline);
+        }
     }
 
     @Override
@@ -354,11 +385,6 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void onInfoWindowLongClick(Marker navigateToMarker) {
-        presenter.onNavigationClicked(navigateToMarker);
-    }
-
-    @Override
     public void hideSoftKeyboard() {
         Activity activity = getActivity();
         if (activity != null) {
@@ -383,6 +409,18 @@ public class MapsFragmentView extends BaseFragment
         mapsViewModel.isWarningState.set(true);
     }
 
+    @Override
+    public void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId) {
+        ElevationChartFragment elevationInfoFragment = ElevationChartFragment.newChartForRouteLegInstance(routeLegId);
+        showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
+    }
+
+    @Override
+    public void showEntireRouteElevationChartDialog() {
+        ElevationChartFragment elevationInfoFragment = ElevationChartFragment.newChartForEntireRouteInstance();
+        showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
+    }
+
     public void onChooseTourClicked() {
         presenter.onChooseTourClicked();
     }
@@ -393,6 +431,10 @@ public class MapsFragmentView extends BaseFragment
 
     public void openSettingsDialog() {
         presenter.onSettingsClicked();
+    }
+
+    public void openEntireTourElevationChart() {
+        presenter.onRouteElevationChartClicked();
     }
 
     @Override
@@ -418,5 +460,27 @@ public class MapsFragmentView extends BaseFragment
                 mapsViewModel.isSearchViewOpen.set(true);
                 break;
         }
+    }
+
+    @Override
+    public void onClusterItemInfoWindowClick(MapCheckpoint mapCheckpoint) {
+        presenter.onNavigationClicked(mapCheckpoint);
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<MapCheckpoint> cluster) {
+        LatLngBounds.Builder builder = LatLngBounds.builder();
+        for (ClusterItem item : cluster.getItems()) {
+            builder.include(item.getPosition());
+        }
+        final LatLngBounds bounds = builder.build();
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+        return true;
+    }
+
+    @Override
+    public void onPolylineClick(Polyline polyline) {
+        Integer routeLegId = (Integer) polyline.getTag();
+        presenter.onPolylineClicked(routeLegId);
     }
 }

@@ -3,6 +3,13 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogViewModel" />
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogContract.Presenter" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -45,8 +52,28 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/margin_normal"
+            android:text="@={viewModel.appVersion}"
             android:textSize="12sp"
             android:textStyle="italic" />
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/btnSignOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/margin_medium"
+            android:onClick="@{()-> presenter.onSignOutButtonClicked()}"
+            android:paddingEnd="@dimen/margin_large"
+            android:paddingStart="@dimen/margin_large"
+            android:text="@string/btn_sign_out"
+            android:textColor="@android:color/black"
+            app:backgroundTint="@color/colorAccent"
+            app:cornerRadius="@dimen/margin_normal" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent" />
 
         <android.support.design.button.MaterialButton
             android:id="@+id/buttonDismiss"
@@ -58,6 +85,7 @@
             android:paddingEnd="@dimen/margin_large"
             android:layout_gravity="center_horizontal"
             android:paddingStart="@dimen/margin_large"
+            android:onClick="@{()-> presenter.onDismissButtonClicked()}"
             android:text="@string/btn_dimiss"
             android:textColor="@android:color/white" />
 

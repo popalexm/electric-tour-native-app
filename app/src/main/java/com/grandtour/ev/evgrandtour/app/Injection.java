@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.app;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
-import com.grandtour.ev.evgrandtour.data.network.DirectionsAPI;
+import com.grandtour.ev.evgrandtour.data.network.GoogleMapsAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
 
 import android.annotation.SuppressLint;
@@ -40,7 +40,9 @@ public class Injection {
     }
 
     @NonNull
-    public static DirectionsAPI provideDirectionsApi() {return NetworkManager.getDirectionsAPIService(Injection.directionsBaseUrl);}
+    public static GoogleMapsAPI provideDirectionsApi() {
+        return NetworkManager.getDirectionsAPIService(Injection.directionsBaseUrl);
+    }
 
     @NonNull
     public static BackendAPI provideBackendApi() {return NetworkManager.getBackendAPIService(Injection.baseBackendUrl);}

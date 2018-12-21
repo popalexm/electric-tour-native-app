@@ -12,20 +12,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class NetworkManager {
 
-    private static DirectionsAPI directionsAPI;
+    private static GoogleMapsAPI googleMapsAPI;
     private static BackendAPI backendAPI;
 
     private NetworkManager() { }
 
     @Nonnull
-    public static DirectionsAPI getDirectionsAPIService(@NonNull String baseUrl) {
-        if (NetworkManager.directionsAPI == null) {
+    public static GoogleMapsAPI getDirectionsAPIService(@NonNull String baseUrl) {
+        if (NetworkManager.googleMapsAPI == null) {
              OkHttpClient okHttpClient = NetworkManager.buildOkHttpClient();
              Retrofit retrofit = NetworkManager.buildRetrofit(baseUrl, okHttpClient);
-             NetworkManager.directionsAPI = retrofit.create(DirectionsAPI.class);
-             return NetworkManager.directionsAPI;
+            NetworkManager.googleMapsAPI = retrofit.create(GoogleMapsAPI.class);
+            return NetworkManager.googleMapsAPI;
         }
-        return NetworkManager.directionsAPI;
+        return NetworkManager.googleMapsAPI;
     }
 
     @Nonnull
@@ -52,7 +52,7 @@ public final class NetworkManager {
     @NonNull
     private static OkHttpClient buildOkHttpClient() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         return new OkHttpClient.Builder().addInterceptor(logging)
                 .build();
     }

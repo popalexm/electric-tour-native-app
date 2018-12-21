@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -57,7 +58,8 @@ public class ChooseTourDialogFragment extends BaseDialogFragment implements Choo
 
     @Override
     public void showMessage(@NonNull String msg) {
-
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT)
+                .show();
     }
 
     @Override
@@ -73,7 +75,7 @@ public class ChooseTourDialogFragment extends BaseDialogFragment implements Choo
 
     @Override
     public void saveSelectionAndDismiss(@NonNull String tourId) {
-        SelectedTourListener callback = (SelectedTourListener) getTargetFragment();
+        SelectedTourListener callback = (SelectedTourListener) getParentFragment();
         if (callback != null) {
             presenter.OnSelectionSaved(callback, tourId);
         }

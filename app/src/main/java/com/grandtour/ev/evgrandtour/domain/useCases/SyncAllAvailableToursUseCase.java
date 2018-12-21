@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
+import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.AvailableToursResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
@@ -20,6 +21,9 @@ import retrofit2.Response;
 public class SyncAllAvailableToursUseCase extends BaseUseCase implements BaseUseCaseFlowable {
 
     @NonNull
+    private static String USER_TOKEN = "user_token";
+
+    @NonNull
     private final BackendAPI backendAPI;
 
     public SyncAllAvailableToursUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull BackendAPI backendAPI) {
@@ -29,7 +33,9 @@ public class SyncAllAvailableToursUseCase extends BaseUseCase implements BaseUse
 
     @Override
     public Flowable<Response<TourDataResponse>> perform() {
-     return backendAPI.getAllTours()
+        String accessToken = Injection.provideSharedPreferences()
+                .getString(SyncAllAvailableToursUseCase.USER_TOKEN, "");
+        return backendAPI.getAllTours(accessToken)
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread)
                 .toFlowable()
@@ -40,7 +46,7 @@ public class SyncAllAvailableToursUseCase extends BaseUseCase implements BaseUse
                 if (listResponse.body() != null ){
                     List<AvailableToursResponse> tours = listResponse.body();
                     for (AvailableToursResponse toursResponse : tours) {
-                        Maybe<Response<TourDataResponse>> tourRequest = backendAPI.getTourById(toursResponse.getId())
+                        Maybe<Response<TourDataResponse>> tourRequest = backendAPI.getTourById(accessToken, toursResponse.getId())
                                 .subscribeOn(executorThread)
                                 .observeOn(postExecutionThread);
                         tourRequests.add(tourRequest);
