@@ -37,7 +37,8 @@
                          app:theme="@style/SearchViewStyle.ActionBar"
                          android:id="@+id/searchViewCheckpoints"
                          android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
+                         android:layout_height="match_parent"
+                         android:maxWidth="@dimen/search_view_max_width"
                          android:layout_gravity="start|center_vertical"
                          android:focusable="false"
                          app:queryHint="@string/hint_search_checkpoints">
@@ -57,7 +58,7 @@
                              android:gravity="center"
                              android:maxLines="1"
                              android:text="@={viewModel.totalRouteInformation}"
-                             android:textColor="@color/colorAccent"
+                             android:textColor="@android:color/white"
                              android:textSize="16sp"
                              android:textStyle="bold"
                              app:isWarningState="@{viewModel.isWarningState}"

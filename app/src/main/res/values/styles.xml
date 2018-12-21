@@ -32,7 +32,7 @@
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="searchIcon">@drawable/ic_search_accent_24dp</item>
+        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
         <item name="searchHintIcon">@drawable/ic_search_white_24dp</item>
         <item name="closeIcon">@drawable/ic_close_white_24dp</item>
     </style>
