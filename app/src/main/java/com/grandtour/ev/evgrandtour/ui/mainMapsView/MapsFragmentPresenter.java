@@ -4,10 +4,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
@@ -19,6 +24,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.CalculateTotalRoutesLengthUs
 import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadCheckpointsForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
@@ -37,6 +43,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -319,8 +326,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.clearMapRoutes();
         }
 
-        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesSteps = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(),
-                AndroidSchedulers.mainThread(),
+        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesSteps = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
                 .doOnSuccess(routeLegsStepsList -> {
                     if (isViewAttached) {
@@ -351,26 +357,78 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 })
                 .doOnError(Throwable::printStackTrace);
 
-        Maybe.concat(getAvailableCheckpoints, getAvailableRoutesSteps)
+        addSubscription(Maybe.concat(getAvailableCheckpoints, getAvailableRoutesSteps)
                 .doOnComplete(() -> {
                     if (isViewAttached) {
                         view.showLoadingView(false);
                     }
                 })
-                .subscribe();
+                .subscribe());
 
         addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnComplete(() -> {
-                    view.showTotalRouteInformation(Injection.provideGlobalContext()
-                            .getString(R.string.title_no_tour_selected), true);
+                    view.showTotalRouteInformation("", Injection.provideGlobalContext()
+                            .getString(R.string.title_no_tour_selected));
                     view.animateRouteSelectionButton();
-                    view.animateInfoText();
+                    view.animateRouteInformationText();
                 })
                 .subscribe(distanceDurationPair -> {
-                    String infoMessage = MapUtils.generateInfoMessage(distanceDurationPair);
-                    view.showTotalRouteInformation(infoMessage, true);
+                    Pair<String, String> formattedRouteInfo = MapUtils.generateInfoMessage(distanceDurationPair);
+                    view.showTotalRouteInformation(formattedRouteInfo.first, formattedRouteInfo.second);
 
                 }, Throwable::printStackTrace));
+
+        addSubscription(
+                new LoadElevationPointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                        .doOnSuccess(this::createChartViewEntryData)
+                        .subscribe());
+    }
+
+    private void createChartViewEntryData(@NonNull List<ElevationPoint> elevationPoints) {
+        if (isViewAttached) {
+            List<Entry> elevationPointEntries = new ArrayList<>();
+            for (int i = 0; i < elevationPoints.size(); i++) {
+                ElevationPoint elevationPoint = elevationPoints.get(i);
+                int startCheckpointId = elevationPoint.getStartCheckpointOrderId();
+                elevationPointEntries.add(new Entry(startCheckpointId, (float) elevationPoint.getElevation()));
+            }
+            prepareChartViewData(elevationPointEntries);
+        }
+    }
+
+    private void prepareChartViewData(@NonNull List<Entry> elevationPointsList) {
+        if (elevationPointsList.size() > 0) {
+            int labelColor = Injection.provideGlobalContext()
+                    .getResources()
+                    .getColor(R.color.colorLightGrey);
+            int accentColor = Injection.provideGlobalContext()
+                    .getResources()
+                    .getColor(R.color.colorAccent);
+
+            String lineLabel = Injection.provideGlobalContext()
+                    .getResources()
+                    .getString(R.string.label_line_chart);
+            String lineChartDescription = Injection.provideGlobalContext()
+                    .getResources()
+                    .getString(R.string.label_line_chart_values);
+
+            LineDataSet dataSet = new LineDataSet(elevationPointsList, lineLabel);
+            dataSet.setValueTextColor(Color.WHITE);
+            dataSet.setColor(accentColor);
+            dataSet.setCircleColor(accentColor);
+
+            dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+            dataSet.setDrawCircles(false);
+
+            LineData lineData = new LineData(dataSet);
+
+            Description description = new Description();
+            description.setText(lineChartDescription);
+            description.setTextColor(labelColor);
+            if (isViewAttached) {
+                view.showChartView(lineData, description);
+            }
+        }
     }
 
     private void drawRouteStepFromMapPoints(@NonNull List<LatLng> routeMapPoints, int routeStepId) {

@@ -51,14 +51,15 @@ public final class MapUtils {
 
 
     @NonNull
-    public static String generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {
+    public static Pair<String, String> generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {
         Pair<Integer, Integer> distanceDuration = routeInfoPair.first;
         int lengthInKm = distanceDuration.first / 1000;
         int duration = distanceDuration.second;
         String routeName = routeInfoPair.second;
         String convertedDuration = TimeUtils.convertFromSecondsToFormattedTime(duration);
         Context ctx = Injection.provideGlobalContext();
-        return ctx.getString(R.string.format_route_inf_message, routeName, lengthInKm, ctx.getString(R.string.suffix_kilometers), convertedDuration);
+        String routeInfo = ctx.getString(R.string.format_route_inf_message, lengthInKm, ctx.getString(R.string.suffix_kilometers), convertedDuration);
+        return new Pair<>(routeName, routeInfo);
     }
 
     @NonNull

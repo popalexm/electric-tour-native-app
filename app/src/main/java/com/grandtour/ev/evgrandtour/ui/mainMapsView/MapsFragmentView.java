@@ -15,6 +15,9 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
@@ -24,7 +27,6 @@ import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationChartFragment;
-import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
@@ -43,10 +45,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
@@ -74,6 +78,7 @@ public class MapsFragmentView extends BaseFragment
     private final MapsViewModel mapsViewModel = new MapsViewModel();
     @NonNull
     private final SearchResultsListViewModel searchResultViewModel = new SearchResultsListViewModel();
+
     @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
     @NonNull
@@ -84,6 +89,7 @@ public class MapsFragmentView extends BaseFragment
     private GoogleMap googleMap;
     @NonNull
     private FragmentMainMapViewBinding viewBinding;
+
     @Nullable
     private ClusterManager<MapCheckpoint> clusterManager;
 
@@ -103,10 +109,16 @@ public class MapsFragmentView extends BaseFragment
         viewBinding.searchViewCheckpoints.setOnQueryTextListener(this);
         viewBinding.searchViewCheckpoints.setOnSearchClickListener(this);
         viewBinding.searchViewCheckpoints.setOnCloseListener(this);
-
         viewBinding.mapView.onCreate(savedInstanceState);
         viewBinding.mapView.getMapAsync(this);
+        setupFloatingActionButtonRevealHideAnimation();
         return viewBinding.getRoot();
+    }
+
+    private void setupFloatingActionButtonRevealHideAnimation() {
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(viewBinding.getRoot()
+                .findViewById(R.id.bottomSheetRouteInfo));
+        bottomSheetBehavior.setBottomSheetCallback(new RouteInfoBottomSheetCallback());
     }
 
     @Override
@@ -321,16 +333,11 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void showTotalRouteInformation(@NonNull String infoMessage, boolean shouldShowInfoCard) {
+    public void showTotalRouteInformation(@NonNull String routeTitle, @NonNull String routeInfo) {
         Context context = getContext();
         if (context != null) {
-            if (shouldShowInfoCard) {
-                mapsViewModel.isRouteLengthAvailable.set(true);
-                mapsViewModel.totalRouteInformation.set(infoMessage);
-            } else {
-                mapsViewModel.totalRouteInformation.set("");
-                mapsViewModel.isRouteLengthAvailable.set(false);
-            }
+            mapsViewModel.routeInformation.set(routeInfo);
+            mapsViewModel.routeTitle.set(routeTitle);
         }
     }
 
@@ -398,14 +405,11 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void animateRouteSelectionButton() {
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity != null) {
-            activity.animateRouteSelectionButton();
-        }
+        mapsViewModel.isButtonBouncing.set(true);
     }
 
     @Override
-    public void animateInfoText() {
+    public void animateRouteInformationText() {
         mapsViewModel.isWarningState.set(true);
     }
 
@@ -421,8 +425,16 @@ public class MapsFragmentView extends BaseFragment
         showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
     }
 
-    public void onChooseTourClicked() {
-        presenter.onChooseTourClicked();
+    @Override
+    public void showChartView(@NonNull LineData lineData, @NonNull Description description) {
+        LineChart chartView = viewBinding.getRoot()
+                .findViewById(R.id.routeElevationChart);
+        chartView.setDescription(description);
+        chartView.setData(lineData);
+        chartView.getLegend()
+                .setTextColor(Color.WHITE);
+        chartView.invalidate();
+        chartView.animateY(1000);
     }
 
     public void onCalculateDistanceBetweenCheckpoints() {
@@ -482,5 +494,23 @@ public class MapsFragmentView extends BaseFragment
     public void onPolylineClick(Polyline polyline) {
         Integer routeLegId = (Integer) polyline.getTag();
         presenter.onPolylineClicked(routeLegId);
+    }
+
+    private class RouteInfoBottomSheetCallback extends BottomSheetBehavior.BottomSheetCallback {
+
+        @Override
+        public void onStateChanged(@NonNull View view, int newState) {
+            // this part hides the button immediately and waits bottom sheet
+            if (BottomSheetBehavior.STATE_DRAGGING == newState) {
+                mapsViewModel.isSelectTourButtonDisplayed.set(false);
+            } else if (BottomSheetBehavior.STATE_COLLAPSED == newState) {
+                mapsViewModel.isSelectTourButtonDisplayed.set(true);
+            }
+        }
+
+        @Override
+        public void onSlide(@NonNull View view, float v) {
+
+        }
     }
 }

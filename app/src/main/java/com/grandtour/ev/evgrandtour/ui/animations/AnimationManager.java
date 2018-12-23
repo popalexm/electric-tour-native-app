@@ -20,6 +20,8 @@ public final class AnimationManager {
 
     private static final double BOUNCE_ANIM_AMPLITUDE = 0.2;
     private static final double BOUNCE_ANIM_FREQUENCY = 20;
+    private static final int REVEAL_HIDE_ANIM_DURATION = 300;
+
     private static AnimationManager sInstance;
 
     private AnimationManager() {
@@ -58,5 +60,21 @@ public final class AnimationManager {
     public void shakeTextView(@NonNull TextView textView) {
         Animation animShake = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.shake_animation);
         textView.startAnimation(animShake);
+    }
+
+    public void revealButtonAnimation(@NonNull FloatingActionButton button) {
+        button.animate()
+                .scaleX(1)
+                .scaleY(1)
+                .setDuration(AnimationManager.REVEAL_HIDE_ANIM_DURATION)
+                .start();
+    }
+
+    public void hideButtonAnimation(@NonNull FloatingActionButton button) {
+        button.animate()
+                .scaleX(0)
+                .scaleY(0)
+                .setDuration(AnimationManager.REVEAL_HIDE_ANIM_DURATION)
+                .start();
     }
 }

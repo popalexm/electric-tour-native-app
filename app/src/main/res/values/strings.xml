@@ -12,7 +12,7 @@
     <string name="error_message_could_not_calculate_routes">Please make sure second checkpoint has a higher number than the first one !</string>
     <string name="suffix_kilometers"> Km</string>
     <string name="hint_click_to_start_navigation">Click to start navigation\nfrom your current location</string>
-    <string name="lorem_ipsum">Lorem Ipsum</string>
+    <string name="hint_swipe_up_to_see_details">Swipe up to see details</string>
     <string name="btn_dimiss">Dismiss</string>
     <string name="btn_sign_in">Sign In With Google Account</string>
     <string name="hint_distance_between">Distance between…</string>
@@ -35,5 +35,9 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="message_server_down">Server is currently down, probably due to maintenance reasons!</string>
     <string name="application_version">App Version</string>
+
+    // Dummy testing strings
+    <string name="lorem_ipsum">Lorem Ipsum</string>
+    <string name="lorem_ipsum_longer">Lorem Ipsum Lorem Ipsum</string>
 
 </resources>

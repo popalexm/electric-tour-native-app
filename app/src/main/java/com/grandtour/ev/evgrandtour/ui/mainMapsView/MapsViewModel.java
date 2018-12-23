@@ -12,6 +12,7 @@ import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,13 +29,17 @@ public class MapsViewModel {
     @NonNull
     public final ObservableField<Marker> currentSelectedMarker = new ObservableField<>();
     @NonNull
-    public final ObservableField<String> totalRouteInformation = new ObservableField<>("");
-    @NonNull
-    public final ObservableBoolean isRouteLengthAvailable = new ObservableBoolean();
-    @NonNull
     public final ObservableBoolean isSearchViewOpen = new ObservableBoolean();
     @NonNull
     public final ObservableBoolean isWarningState = new ObservableBoolean();
+    @NonNull
+    public final ObservableBoolean isSelectTourButtonDisplayed = new ObservableBoolean(true);
+    @NonNull
+    public final ObservableBoolean isButtonBouncing = new ObservableBoolean(false);
+    @NonNull
+    public final ObservableField<String> routeTitle = new ObservableField<>("");
+    @NonNull
+    public final ObservableField<String> routeInformation = new ObservableField<>("");
 
     @BindingAdapter("isWarningState")
     public static void setViewStateAsWarning(View view, boolean isWarning) {
@@ -43,6 +48,24 @@ public class MapsViewModel {
                     .shakeTextView((TextView) view);
         } else {
             view.setAnimation(null);
+        }
+    }
+
+    @BindingAdapter("isButtonRevealed")
+    public static void setRevealButtonState(@NonNull View view, boolean shouldButtonBeRevealed) {
+        AnimationManager animationManager = AnimationManager.getInstance();
+        if (shouldButtonBeRevealed) {
+            animationManager.revealButtonAnimation((FloatingActionButton) view);
+        } else {
+            animationManager.hideButtonAnimation((FloatingActionButton) view);
+        }
+    }
+
+    @BindingAdapter("isButtonBounced")
+    public static void setBounceAnimation(@NonNull View view, boolean shouldButtonBeBounced) {
+        AnimationManager animationManager = AnimationManager.getInstance();
+        if (shouldButtonBeBounced) {
+            animationManager.startBounceAnimation((FloatingActionButton) view);
         }
     }
 }

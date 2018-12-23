@@ -3,6 +3,8 @@ package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
@@ -34,7 +36,7 @@ public class MapsFragmentContract {
 
         void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId);
 
-        void showTotalRouteInformation(@NonNull String infoMessage, boolean shouldShowInfoCard);
+        void showTotalRouteInformation(@NonNull String routeTitle, @NonNull String routeInfo);
 
         void startGoogleMapsDirections(@NonNull String navigationUri);
 
@@ -52,11 +54,13 @@ public class MapsFragmentContract {
 
         void animateRouteSelectionButton();
 
-        void animateInfoText();
+        void animateRouteInformationText();
 
         void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId);
 
         void showEntireRouteElevationChartDialog();
+
+        void showChartView(@NonNull LineData lineData, @NonNull Description description);
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {

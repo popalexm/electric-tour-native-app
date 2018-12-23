@@ -20,6 +20,17 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="TextViewStyleHeader" parent="android:Widget.TextView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextViewStyleHint" parent="android:Widget.TextView">
+        <item name="android:textColorHint">@color/colorLightGrey</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
     <style name="SwitchStyle" parent="Theme.AppCompat.NoActionBar">
         <!-- active thumb & track color (30% transparency) -->
         <item name="colorControlActivated">@color/colorAccent</item>
