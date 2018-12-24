@@ -63,17 +63,17 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
-    @Nullable
-    private Service routeDirectionsRequestService;
-    @Nullable
-    private Service locationUpdatesService;
     @NonNull
     private final ServiceConnection serviceConnection = this;
-    private boolean isServiceBound;
     @NonNull
     private final MapsFragmentContract.View view;
     @NonNull
     private final GpsLocationManager gpsLocationManager = GpsLocationManager.getInstance();
+    @Nullable
+    private Service routeDirectionsRequestService;
+    @Nullable
+    private Service locationUpdatesService;
+    private boolean isServiceBound;
     @NonNull
     private List<LatLng> currentSelectedRoutePoints = new ArrayList<>();
 
@@ -240,6 +240,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
+    public void onFilterButtonClicked() {
+        if (isViewAttached) {
+            view.showFilteringOptionsView();
+        }
+    }
+
+    @Override
     public void onRouteElevationChartClicked() {
         if (isViewAttached) {
             view.showEntireRouteElevationChartDialog();
@@ -326,8 +333,8 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             view.clearMapRoutes();
         }
 
-        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesSteps = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
-                Injection.provideStorageManager()).perform()
+        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesSteps = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(),
+                AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(routeLegsStepsList -> {
                     if (isViewAttached) {
                         for (Pair<RouteLeg, List<RouteStep>> routeLegStepsPair : routeLegsStepsList) {
@@ -348,11 +355,9 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         Maybe<List<MapCheckpoint>> getAvailableCheckpoints = new LoadMapCheckpointForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
                 .doOnSuccess(checkpoints -> {
-                    if (isViewAttached) {
-                        if (checkpoints.size() > 0) {
-                            view.loadCheckpoints(checkpoints);
-                            view.centerMapToCurrentSelectedRoute();
-                        }
+                    if (isViewAttached && checkpoints.size() > 0) {
+                        view.loadCheckpoints(checkpoints);
+                        view.centerMapToCurrentSelectedRoute();
                     }
                 })
                 .doOnError(Throwable::printStackTrace);
@@ -367,15 +372,18 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
         addSubscription(new CalculateTotalRoutesLengthUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnComplete(() -> {
-                    view.showTotalRouteInformation("", Injection.provideGlobalContext()
-                            .getString(R.string.title_no_tour_selected));
-                    view.animateRouteSelectionButton();
-                    view.animateRouteInformationText();
+                    if (isViewAttached) {
+                        view.showTotalRouteInformation("", Injection.provideGlobalContext()
+                                .getString(R.string.title_no_tour_selected));
+                        view.animateRouteSelectionButton();
+                        view.animateRouteInformationText();
+                    }
                 })
                 .subscribe(distanceDurationPair -> {
                     Pair<String, String> formattedRouteInfo = MapUtils.generateInfoMessage(distanceDurationPair);
-                    view.showTotalRouteInformation(formattedRouteInfo.first, formattedRouteInfo.second);
-
+                    if (isViewAttached) {
+                        view.showTotalRouteInformation(formattedRouteInfo.first, formattedRouteInfo.second);
+                    }
                 }, Throwable::printStackTrace));
 
         addSubscription(

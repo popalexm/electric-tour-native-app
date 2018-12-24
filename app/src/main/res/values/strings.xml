@@ -34,6 +34,8 @@
     <string name="message_account_not_authorized">This Google Account is not authorized to use this application, please contact the administrator to gain access rights!</string>
     <string name="btn_sign_out">Sign Out</string>
     <string name="message_server_down">Server is currently down, probably due to maintenance reasons!</string>
+    <string name="btn_filter">Filter</string>
+    <string name="btn_clear">Clear</string>
     <string name="application_version">App Version</string>
 
     // Dummy testing strings

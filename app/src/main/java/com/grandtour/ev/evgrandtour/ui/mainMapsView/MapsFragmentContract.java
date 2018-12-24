@@ -61,6 +61,8 @@ public class MapsFragmentContract {
         void showEntireRouteElevationChartDialog();
 
         void showChartView(@NonNull LineData lineData, @NonNull Description description);
+
+        void showFilteringOptionsView();
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
@@ -91,10 +93,13 @@ public class MapsFragmentContract {
 
         void onSettingsClicked();
 
+        void onFilterButtonClicked();
+
         void onRouteElevationChartClicked();
 
         void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
 
         void onPolylineClicked(Integer routeLegId);
+
     }
 }

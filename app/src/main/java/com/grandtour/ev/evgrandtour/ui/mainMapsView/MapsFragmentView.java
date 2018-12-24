@@ -39,6 +39,7 @@ import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -50,13 +51,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,6 +201,7 @@ public class MapsFragmentView extends BaseFragment
         }
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -277,8 +282,24 @@ public class MapsFragmentView extends BaseFragment
             for (MapCheckpoint mapCheckpoint : checkpoints) {
                 clusterManager.addItem(mapCheckpoint);
                 mapsViewModel.routeCheckpoints.add(mapCheckpoint);
+
+                // TODO Implement proper chip loading in viewModel
+                Chip filterChip = new Chip(getActivity());
+                filterChip.setTag(mapCheckpoint);
+                filterChip.setCheckable(true);
+                filterChip.setText(mapCheckpoint.getOrderInRouteId() + " " + mapCheckpoint.getMapCheckpointTitle());
+                filterChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        MapCheckpoint checkpoint = (MapCheckpoint) buttonView.getTag();
+                        Log.e(TAG, "Chip for checkpoint " + checkpoint.getMapCheckpointTitle() + " is checked " + isChecked);
+                    }
+                });
+                viewBinding.chipGroupFilteringOptions.addView(filterChip);
             }
         }
+
+
     }
 
     @Override
@@ -435,6 +456,16 @@ public class MapsFragmentView extends BaseFragment
                 .setTextColor(Color.WHITE);
         chartView.invalidate();
         chartView.animateY(1000);
+    }
+
+    @Override
+    public void showFilteringOptionsView() {
+        boolean areFilteringOptionsVisible = mapsViewModel.isFilteringLayoutVisible.get();
+        if (areFilteringOptionsVisible) {
+            mapsViewModel.isFilteringLayoutVisible.set(false);
+        } else {
+            mapsViewModel.isFilteringLayoutVisible.set(true);
+        }
     }
 
     public void onCalculateDistanceBetweenCheckpoints() {

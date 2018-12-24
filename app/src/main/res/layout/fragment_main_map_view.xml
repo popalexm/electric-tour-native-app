@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/dialog_background"
+            android:background="@drawable/top_rounded_bars"
             android:orientation="horizontal"
             android:paddingEnd="@dimen/margin_small"
             android:paddingStart="@dimen/margin_small">
@@ -72,34 +72,78 @@
                 android:focusable="false"
                 android:maxWidth="@dimen/search_view_max_width"
                 app:queryHint="@string/hint_search_checkpoints"
-                app:theme="@style/SearchViewStyle.ActionBar"></android.support.v7.widget.SearchView>
+                app:theme="@style/SearchViewStyle.ActionBar" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:visibility="@{viewModel.isSearchViewOpen == false ? View.VISIBLE: View.GONE}">
 
-                <TextView
+                <View
                     android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/btnFilter"
+                    style="@style/buttonFilterStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:onClick="@{()-> presenter.onFilterButtonClicked()}"
+                    android:text="@string/btn_filter"
+                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.GONE: View.VISIBLE}"
+                    app:icon="@drawable/ic_filter_list_white_24dp"
+                    app:toggleButtonState="@{viewModel.isFilteringLayoutVisible}" />
+
+                <ImageView
+                    android:id="@+id/btn_settings"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_weight="0.85"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_gravity="center_vertical"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()-> presenter.onSettingsClicked()}"
+                    android:padding="@dimen/margin_small"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_settings_white_24dp"
+                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.GONE: View.VISIBLE}" />
 
                 <ProgressBar
-                    android:layout_width="0dp"
+                    android:id="@+id/progressBarLoading"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_weight="0.15"
+                    android:layout_gravity="center_vertical"
                     android:padding="@dimen/margin_small"
-                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.INVISIBLE}" />
+                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}" />
             </LinearLayout>
         </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_below="@id/topBar"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:background="@drawable/top_rounded_bars"
+            android:paddingEnd="@dimen/margin_medium"
+            android:paddingStart="@dimen/margin_medium"
+            android:scrollbars="none"
+            app:areFilteringOptionsDisplayed="@{viewModel.isFilteringLayoutVisible}">
+
+            <android.support.design.chip.ChipGroup
+                android:id="@+id/chipGroupFilteringOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="@dimen/margin_medium"
+                app:chipSpacing="@dimen/margin_medium"
+                app:singleLine="true">
+
+            </android.support.design.chip.ChipGroup>
+
+        </HorizontalScrollView>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_view"
