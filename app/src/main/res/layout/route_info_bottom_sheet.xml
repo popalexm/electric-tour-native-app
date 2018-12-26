@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@={viewModel.routeDrivingDistance}" />
-                <!-- app:isWarningState="@{viewModel.isWarningState}" -->
+                <!--  -->
 
                 <TextView
                     style="@style/TextViewStyle"

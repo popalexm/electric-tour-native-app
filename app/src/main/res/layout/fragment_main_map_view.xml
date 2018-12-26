@@ -80,6 +80,35 @@
                 android:orientation="horizontal"
                 android:visibility="@{viewModel.isSearchViewOpen == false ? View.VISIBLE: View.GONE}">
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin_title"
+                    android:layout_marginTop="@dimen/margin_title"
+                    android:paddingEnd="@dimen/margin_medium"
+                    android:paddingStart="@dimen/margin_medium">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@{viewModel.routeTitle}"
+                        android:textAllCaps="true"
+                        android:visibility="@{viewModel.isLoadingInProgress == true ? View.INVISIBLE: View.VISIBLE}"
+                        app:isWarningState="@{viewModel.isWarningState}" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarLoading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="@dimen/margin_small"
+                        android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.INVISIBLE}" />
+
+                </FrameLayout>
+
                 <View
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -91,10 +120,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
-                    android:onClick="@{()-> presenter.onFilterButtonClicked()}"
                     android:text="@string/btn_filter"
-                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.GONE: View.VISIBLE}"
                     app:icon="@drawable/ic_filter_list_white_24dp"
+                    android:onClick="@{()-> presenter.onFilterButtonClicked()}"
                     app:toggleButtonState="@{viewModel.isFilteringLayoutVisible}" />
 
                 <ImageView
@@ -102,22 +130,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:adjustViewBounds="true"
+                    android:layout_margin="@dimen/margin_medium"
+                    android:background="@drawable/title_background"
                     android:clickable="true"
+                    android:adjustViewBounds="true"
                     android:focusable="true"
                     android:onClick="@{()-> presenter.onSettingsClicked()}"
-                    android:padding="@dimen/margin_small"
                     android:scaleType="center"
-                    android:src="@drawable/ic_settings_white_24dp"
-                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.GONE: View.VISIBLE}" />
-
-                <ProgressBar
-                    android:id="@+id/progressBarLoading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
                     android:padding="@dimen/margin_small"
-                    android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.GONE}" />
+                    android:src="@drawable/ic_settings_white_24dp" />
+
             </LinearLayout>
         </LinearLayout>
 

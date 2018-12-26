@@ -56,7 +56,6 @@ import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -416,7 +415,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId) {
-        Log.e(TAG, "Clicked on routeLeg id" + routeLegId);
+        // Log.e(TAG, "Clicked on routeLeg id" + routeLegId);
         // TODO Implement elevation data in the new Modal Bottom Sheet
     }
 

@@ -329,7 +329,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
      * between the 2
      */
     private void loadTourDataBetweenTwoCheckpointsOfARoute(int startCheckpointId, int endCheckpointId) {
-        clearMapAndDisplayLoadingProgressBar();
 
         Maybe<List<MapCheckpoint>> getAllMapCheckpointsBetweenFilterCheckpoints = new LoadMapCheckpointsForFilteredCheckpointsUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId).perform()
@@ -364,6 +363,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         addSubscription(Maybe.concat(getAllMapCheckpointsBetweenFilterCheckpoints, getRouteLegsAndStepsBetweenFilterCheckpoints, getRouteInformationUseCase,
                 elevationPointsUseCase)
                 .doOnComplete(this::dismissLoadingView)
+                .doOnSubscribe(subscription -> clearMapAndDisplayLoadingProgressBar())
                 .doOnError(throwable -> {
                     throwable.printStackTrace();
                     dismissLoadingView();
@@ -375,7 +375,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
      * Loads entire tour with associated checkpoints and polyline extracted from the RouteSteps and Legs that form the route
      */
     private void loadEntireTourDataOnMap() {
-        clearMapAndDisplayLoadingProgressBar();
 
         Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesStepsUseCase = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
@@ -417,6 +416,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
         addSubscription(Maybe.concat(getAvailableCheckpointsUseCase, getAvailableRoutesStepsUseCase, loadRouteInformationUseCase, elevationPointsUseCase)
                 .doOnComplete(this::dismissLoadingView)
+                .doOnSubscribe(subscription -> clearMapAndDisplayLoadingProgressBar())
                 .doOnError(throwable -> {
                     throwable.printStackTrace();
                     dismissLoadingView();
@@ -434,7 +434,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (isViewAttached) {
             Context context = Injection.provideGlobalContext();
             String noInfoAvailable = context.getString(R.string.message_no_information_available);
-            view.showTotalRouteInformation(context.getString(R.string.title_no_tour_selected), noInfoAvailable, noInfoAvailable);
+            view.showTotalRouteInformation(noInfoAvailable, noInfoAvailable, context.getString(R.string.title_no_tour_selected));
             view.animateRouteSelectionButton();
             view.animateRouteInformationText();
         }
