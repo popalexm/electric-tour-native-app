@@ -30,21 +30,23 @@
                 android:id="@+id/routeInfoMainHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/margin_small"
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/TextViewStyleHeader"
+                    style="@style/TextViewStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@={viewModel.routeInformation}"
-                    app:isWarningState="@{viewModel.isWarningState}" />
+                    android:text="@={viewModel.routeDrivingDistance}" />
+                <!-- app:isWarningState="@{viewModel.isWarningState}" -->
 
                 <TextView
+                    style="@style/TextViewStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@={viewModel.routeTitle}" />
+                    android:text="@={viewModel.routeDrivingDuration}" />
 
             </LinearLayout>
 

@@ -343,8 +343,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId).perform()
                 .doOnComplete(this::displayNoRouteSelectedWarning)
                 .doOnSuccess(routeInformation -> {
-                    Pair<String, String> formattedRouteInfo = MapUtils.generateInfoMessage(routeInformation);
-                    displayRouteInformation(formattedRouteInfo);
+                    Pair<Integer, Integer> routeDistanceDurationPair = routeInformation.first;
+                    Pair<String, String> formattedRouteInfo = MapUtils.generateInfoMessage(routeDistanceDurationPair);
+                    String routeTitle = routeInformation.second;
+                    displayRouteInformation(formattedRouteInfo, routeTitle);
                 })
                 .doOnError(throwable -> {
                     throwable.printStackTrace();
@@ -382,7 +384,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
         Maybe<List<MapCheckpoint>> getAvailableCheckpointsUseCase = new LoadMapCheckpointForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager()).perform()
-                .doOnSuccess(this::loadMapCheckpointsOnMapView)
+                .doOnSuccess(mapCheckpoints -> {
+                    loadMapCheckpointsOnMapView(mapCheckpoints);
+                    loadFilteringOptions(mapCheckpoints);
+                })
                 .doOnError(throwable -> {
                     throwable.printStackTrace();
                     dismissLoadingView();
@@ -392,8 +397,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), null, null).perform()
                 .doOnComplete(this::displayNoRouteSelectedWarning)
                 .doOnSuccess(routeInformation -> {
-                    Pair<String, String> formattedRouteInfo = MapUtils.generateInfoMessage(routeInformation);
-                    displayRouteInformation(formattedRouteInfo);
+                    Pair<Integer, Integer> routeDistanceDuration = routeInformation.first;
+                    Pair<String, String> formattedRouteDistanceDurationPair = MapUtils.generateInfoMessage(routeDistanceDuration);
+                    String routeTitle = routeInformation.second;
+                    displayRouteInformation(formattedRouteDistanceDurationPair, routeTitle);
                 })
                 .doOnError(throwable -> {
                     throwable.printStackTrace();
@@ -417,16 +424,17 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 .subscribe());
     }
 
-    private void displayRouteInformation(@NonNull Pair<String, String> formattedRouteInfo) {
+    private void displayRouteInformation(@NonNull Pair<String, String> formattedRouteInfo, @NonNull String routeTitle) {
         if (isViewAttached) {
-            view.showTotalRouteInformation(formattedRouteInfo.first, formattedRouteInfo.second);
+            view.showTotalRouteInformation(formattedRouteInfo.first, formattedRouteInfo.second, routeTitle);
         }
     }
 
     private void displayNoRouteSelectedWarning() {
         if (isViewAttached) {
-            view.showTotalRouteInformation("", Injection.provideGlobalContext()
-                    .getString(R.string.title_no_tour_selected));
+            Context context = Injection.provideGlobalContext();
+            String noInfoAvailable = context.getString(R.string.message_no_information_available);
+            view.showTotalRouteInformation(context.getString(R.string.title_no_tour_selected), noInfoAvailable, noInfoAvailable);
             view.animateRouteSelectionButton();
             view.animateRouteInformationText();
         }
@@ -444,6 +452,12 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (isViewAttached && mapCheckpoints.size() > 0) {
             view.loadCheckpointsOnMapView(mapCheckpoints);
             view.centerMapToCurrentSelectedRoute();
+        }
+    }
+
+    private void loadFilteringOptions(@NonNull List<MapCheckpoint> mapCheckpoints) {
+        if (isViewAttached) {
+            view.loadAvailableFilterPoints(mapCheckpoints);
         }
     }
 

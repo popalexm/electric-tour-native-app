@@ -56,6 +56,7 @@ import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -283,16 +284,6 @@ public class MapsFragmentView extends BaseFragment
             for (MapCheckpoint mapCheckpoint : checkpoints) {
                 clusterManager.addItem(mapCheckpoint);
                 mapsViewModel.routeCheckpoints.add(mapCheckpoint);
-
-                // TODO Implement proper chip loading in viewModel
-                String filterOptionTitle = getString(R.string.format_filter_option, mapCheckpoint.getOrderInRouteId(), mapCheckpoint.getMapCheckpointTitle());
-                Chip filterChip = new Chip(getActivity());
-                filterChip.setTag(mapCheckpoint);
-                filterChip.setCheckable(true);
-                filterChip.setText(filterOptionTitle);
-                filterChip.setOnCheckedChangeListener(this);
-                viewBinding.chipGroupFilteringOptions.addView(filterChip);
-                mapsViewModel.filteringOptions.add(filterChip);
             }
         }
     }
@@ -349,10 +340,11 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void showTotalRouteInformation(@NonNull String routeTitle, @NonNull String routeInfo) {
+    public void showTotalRouteInformation(@NonNull String routeDrivingDistance, @NonNull String routeDrivingDuration, @NonNull String routeTitle) {
         Context context = getContext();
         if (context != null) {
-            mapsViewModel.routeInformation.set(routeInfo);
+            mapsViewModel.routeDrivingDistance.set(routeDrivingDistance);
+            mapsViewModel.routeDrivingDuration.set(routeDrivingDuration);
             mapsViewModel.routeTitle.set(routeTitle);
         }
     }
@@ -424,6 +416,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId) {
+        Log.e(TAG, "Clicked on routeLeg id" + routeLegId);
         // TODO Implement elevation data in the new Modal Bottom Sheet
     }
 
@@ -438,6 +431,27 @@ public class MapsFragmentView extends BaseFragment
         chartView.invalidate();
         chartView.animateY(1000);
         setupChartViewAxisStyling(chartView);
+    }
+
+    @Override
+    public void loadAvailableFilterPoints(@NonNull List<MapCheckpoint> availableFilterPoints) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            mapsViewModel.filteringOptions.clear();
+            viewBinding.chipGroupFilteringOptions.removeAllViews();
+
+            // TODO Implement proper chip loading in viewModel
+            for (MapCheckpoint mapCheckpoint : availableFilterPoints) {
+                String filterOptionTitle = getString(R.string.format_filter_option, mapCheckpoint.getOrderInRouteId(), mapCheckpoint.getMapCheckpointTitle());
+                Chip filterChip = new Chip(getActivity());
+                filterChip.setTag(mapCheckpoint);
+                filterChip.setCheckable(true);
+                filterChip.setText(filterOptionTitle);
+                filterChip.setOnCheckedChangeListener(this);
+                viewBinding.chipGroupFilteringOptions.addView(filterChip);
+                mapsViewModel.filteringOptions.add(filterChip);
+            }
+        }
     }
 
     private void setupChartViewAxisStyling(@NonNull LineChart chartView) {

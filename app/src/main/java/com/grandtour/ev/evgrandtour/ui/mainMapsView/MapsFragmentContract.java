@@ -35,7 +35,7 @@ public class MapsFragmentContract {
 
         void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId);
 
-        void showTotalRouteInformation(@NonNull String routeTitle, @NonNull String routeInfo);
+        void showTotalRouteInformation(@NonNull String routeTitle, @NonNull String routeDrivingDistance, @NonNull String routeDrivingDuration);
 
         void startGoogleMapsDirections(@NonNull String navigationUri);
 
@@ -56,6 +56,8 @@ public class MapsFragmentContract {
         void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId);
 
         void showChartView(@NonNull LineData lineData, @NonNull Description description);
+
+        void loadAvailableFilterPoints(List<MapCheckpoint> availableFilterPoints);
 
         void showFilteringOptionsView();
 
@@ -99,6 +101,5 @@ public class MapsFragmentContract {
         void onClearFilteredRouteClicked();
 
         void onFilterChipSelectionRemoved();
-
     }
 }

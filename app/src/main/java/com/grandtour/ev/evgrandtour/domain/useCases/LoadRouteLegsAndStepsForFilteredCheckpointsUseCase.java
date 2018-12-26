@@ -35,8 +35,9 @@ public class LoadRouteLegsAndStepsForFilteredCheckpointsUseCase extends BaseUseC
 
     @Override
     public Maybe<List<Pair<RouteLeg, List<RouteStep>>>> perform() {
+        // Substract -1 from endCheckpoint so you won't receive the next routeLeg and steps after the final id
         return storageManager.routeLegDao()
-                .getRouteLegsForStartAndEndCheckpoints(startCheckpointId, endCheckpointId)
+                .getRouteLegsForStartAndEndCheckpoints(startCheckpointId, endCheckpointId - 1)
                 .flatMap((Function<List<RouteLeg>, MaybeSource<List<Pair<RouteLeg, List<RouteStep>>>>>) routeLegs -> Maybe.fromCallable(
                         new Callable<List<Pair<RouteLeg, List<RouteStep>>>>() {
                             @Override

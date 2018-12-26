@@ -50,18 +50,18 @@ public final class MapUtils {
     }
 
     /**
-     * @param routeInfoPair Pair that contains the route info
+     * @param distanceDuration Pair that contains the route info
      */
     @NonNull
-    public static Pair<String, String> generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {
-        Pair<Integer, Integer> distanceDuration = routeInfoPair.first;
+    public static Pair<String, String> generateInfoMessage(@NonNull Pair<Integer, Integer> distanceDuration) {
         int lengthInKm = distanceDuration.first / 1000;
         int duration = distanceDuration.second;
-        String routeName = routeInfoPair.second;
         String convertedDuration = TimeUtils.convertFromSecondsToFormattedTime(duration);
         Context ctx = Injection.provideGlobalContext();
-        String routeInfo = ctx.getString(R.string.format_route_inf_message, lengthInKm, ctx.getString(R.string.suffix_kilometers), convertedDuration);
-        return new Pair<>(routeName, routeInfo);
+        String routeDistance = ctx.getString(R.string.format_route_distance_info, ctx.getString(R.string.prefix_driving_distance), lengthInKm,
+                ctx.getString(R.string.suffix_kilometers));
+        String routeDuration = ctx.getString(R.string.format_route_duration_info, ctx.getString(R.string.prefix_driving_duration), convertedDuration);
+        return new Pair<>(routeDistance, routeDuration);
     }
 
     @NonNull

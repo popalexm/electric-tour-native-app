@@ -46,7 +46,9 @@ public class MapsViewModel {
     @NonNull
     public final ObservableField<String> routeTitle = new ObservableField<>("");
     @NonNull
-    public final ObservableField<String> routeInformation = new ObservableField<>("");
+    public final ObservableField<String> routeDrivingDistance = new ObservableField<>("");
+    @NonNull
+    public final ObservableField<String> routeDrivingDuration = new ObservableField<>("");
     @NonNull
     public final ObservableBoolean isFilteringLayoutVisible = new ObservableBoolean(false);
     @NonNull
