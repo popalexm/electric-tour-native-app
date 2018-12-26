@@ -49,7 +49,9 @@ public final class MapUtils {
         return PolyUtil.decode(polyline);
     }
 
-
+    /**
+     * @param routeInfoPair Pair that contains the route info
+     */
     @NonNull
     public static Pair<String, String> generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {
         Pair<Integer, Integer> distanceDuration = routeInfoPair.first;

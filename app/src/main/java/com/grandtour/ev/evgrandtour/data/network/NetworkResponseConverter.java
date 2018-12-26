@@ -46,9 +46,12 @@ public final class NetworkResponseConverter {
     }
 
     @NonNull
-    public static RouteLeg convertResponseToRouteLeg(@NonNull Leg legResponse, int routeId) {
+    public static RouteLeg convertResponseToRouteLeg(@NonNull Leg legResponse, int routeId, int routeStartCheckpointId, int routeEndCheckpointId) {
         RouteLeg routeLeg = new RouteLeg();
         routeLeg.setRouteId(routeId);
+        routeLeg.setStartCheckpointId(routeStartCheckpointId);
+        routeLeg.setEndCheckpointId(routeEndCheckpointId);
+
         routeLeg.setRouteLegStartLatitude(legResponse.getStartLocation()
                 .getLat());
         routeLeg.setRouteLegStartLongitude(legResponse.getStartLocation()

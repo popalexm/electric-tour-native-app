@@ -128,8 +128,8 @@
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginStart="@dimen/margin_medium"
             android:background="@drawable/top_rounded_bars"
-            android:paddingEnd="@dimen/margin_medium"
-            android:paddingStart="@dimen/margin_medium"
+            android:paddingEnd="@dimen/margin_medium_large"
+            android:paddingStart="@dimen/margin_medium_large"
             android:scrollbars="none"
             app:areFilteringOptionsDisplayed="@{viewModel.isFilteringLayoutVisible}">
 

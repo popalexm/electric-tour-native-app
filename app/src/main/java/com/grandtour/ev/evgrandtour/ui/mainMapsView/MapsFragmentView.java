@@ -17,18 +17,19 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.distancePicker.DistancePickerDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.elevationView.ElevationChartFragment;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartViewFormaters.XAxisValueFormatter;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartViewFormaters.YAxisValueFormatter;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
@@ -55,7 +56,6 @@ import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +68,7 @@ import java.util.List;
 public class MapsFragmentView extends BaseFragment
         implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>,
-        ClusterManager.OnClusterClickListener<MapCheckpoint> {
+        ClusterManager.OnClusterClickListener<MapCheckpoint>, CompoundButton.OnCheckedChangeListener {
 
     @NonNull
     private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
@@ -96,6 +96,8 @@ public class MapsFragmentView extends BaseFragment
 
     @Nullable
     private ClusterManager<MapCheckpoint> clusterManager;
+    @NonNull
+    private List<MapCheckpoint> filterSelection = new ArrayList<>();
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -239,8 +241,7 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-            @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PermissionUtils.LOCATION_REQUEST_PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             viewBinding.mapView.getMapAsync(this);
         }
@@ -274,7 +275,7 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void loadCheckpoints(@NonNull List<MapCheckpoint> checkpoints) {
+    public void loadCheckpointsOnMapView(@NonNull List<MapCheckpoint> checkpoints) {
         Activity activity = getActivity();
         if (clusterManager != null && activity != null) {
             clusterManager.clearItems();
@@ -284,22 +285,16 @@ public class MapsFragmentView extends BaseFragment
                 mapsViewModel.routeCheckpoints.add(mapCheckpoint);
 
                 // TODO Implement proper chip loading in viewModel
+                String filterOptionTitle = getString(R.string.format_filter_option, mapCheckpoint.getOrderInRouteId(), mapCheckpoint.getMapCheckpointTitle());
                 Chip filterChip = new Chip(getActivity());
                 filterChip.setTag(mapCheckpoint);
                 filterChip.setCheckable(true);
-                filterChip.setText(mapCheckpoint.getOrderInRouteId() + " " + mapCheckpoint.getMapCheckpointTitle());
-                filterChip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        MapCheckpoint checkpoint = (MapCheckpoint) buttonView.getTag();
-                        Log.e(TAG, "Chip for checkpoint " + checkpoint.getMapCheckpointTitle() + " is checked " + isChecked);
-                    }
-                });
+                filterChip.setText(filterOptionTitle);
+                filterChip.setOnCheckedChangeListener(this);
                 viewBinding.chipGroupFilteringOptions.addView(filterChip);
+                mapsViewModel.filteringOptions.add(filterChip);
             }
         }
-
-
     }
 
     @Override
@@ -364,15 +359,8 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void startGoogleMapsDirections(@NonNull String navigationUri) {
-         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUri));
-         startActivity(mapIntent);
-    }
-
-    @Override
-    public void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints) {
-        DistancePickerDialogFragment dialog = new DistancePickerDialogFragment();
-        dialog.setTotalCheckpoints(checkpoints);
-        showDialog(dialog, this, DistancePickerDialogFragment.TAG, 400);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(navigationUri));
+        startActivity(mapIntent);
     }
 
     @Override
@@ -436,14 +424,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId) {
-        ElevationChartFragment elevationInfoFragment = ElevationChartFragment.newChartForRouteLegInstance(routeLegId);
-        showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
-    }
-
-    @Override
-    public void showEntireRouteElevationChartDialog() {
-        ElevationChartFragment elevationInfoFragment = ElevationChartFragment.newChartForEntireRouteInstance();
-        showDialog(elevationInfoFragment, this, ElevationChartFragment.TAG, 500);
+        // TODO Implement elevation data in the new Modal Bottom Sheet
     }
 
     @Override
@@ -456,6 +437,21 @@ public class MapsFragmentView extends BaseFragment
                 .setTextColor(Color.WHITE);
         chartView.invalidate();
         chartView.animateY(1000);
+        setupChartViewAxisStyling(chartView);
+    }
+
+    private void setupChartViewAxisStyling(@NonNull LineChart chartView) {
+        XAxis xAxis = chartView.getXAxis();
+        YAxis yAxisLeft = chartView.getAxisLeft();
+        YAxis yAxisRight = chartView.getAxisRight();
+
+        yAxisLeft.setTextColor(Color.WHITE);
+        yAxisLeft.setValueFormatter(new YAxisValueFormatter());
+        yAxisRight.setTextColor(Color.WHITE);
+        yAxisRight.setValueFormatter(new YAxisValueFormatter());
+
+        xAxis.setTextColor(Color.WHITE);
+        xAxis.setValueFormatter(new XAxisValueFormatter());
     }
 
     @Override
@@ -463,21 +459,18 @@ public class MapsFragmentView extends BaseFragment
         boolean areFilteringOptionsVisible = mapsViewModel.isFilteringLayoutVisible.get();
         if (areFilteringOptionsVisible) {
             mapsViewModel.isFilteringLayoutVisible.set(false);
+            presenter.onClearFilteredRouteClicked();
         } else {
             mapsViewModel.isFilteringLayoutVisible.set(true);
         }
     }
 
-    public void onCalculateDistanceBetweenCheckpoints() {
-        presenter.onCalculateDistanceBetweenTwoCheckpointsClicked();
-    }
-
-    public void openSettingsDialog() {
-        presenter.onSettingsClicked();
-    }
-
-    public void openEntireTourElevationChart() {
-        presenter.onRouteElevationChartClicked();
+    @Override
+    public void clearFilteringChipsSelectionStatus() {
+        for (Chip filterChipOption : mapsViewModel.filteringOptions) {
+            filterChipOption.setChecked(false);
+            filterSelection.clear();
+        }
     }
 
     @Override
@@ -527,6 +520,32 @@ public class MapsFragmentView extends BaseFragment
         presenter.onPolylineClicked(routeLegId);
     }
 
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (buttonView instanceof Chip) {
+            MapCheckpoint selectedFilterCheckpoint = (MapCheckpoint) buttonView.getTag();
+            if (selectedFilterCheckpoint != null) {
+                if (isChecked) {
+                    if (filterSelection.size() < 2) {
+                        filterSelection.add(selectedFilterCheckpoint);
+                        if (filterSelection.size() == 2) {
+                            presenter.onSelectedCheckpointRouteFilters(filterSelection);
+                        }
+                    } else {
+                        buttonView.setChecked(false);
+                    }
+                }
+                if (!isChecked) {
+                    if (filterSelection.size() == 2) {
+                        presenter.onFilterChipSelectionRemoved();
+                    }
+                    filterSelection.remove(selectedFilterCheckpoint);
+                }
+            }
+
+        }
+    }
+
     private class RouteInfoBottomSheetCallback extends BottomSheetBehavior.BottomSheetCallback {
 
         @Override
@@ -541,7 +560,6 @@ public class MapsFragmentView extends BaseFragment
 
         @Override
         public void onSlide(@NonNull View view, float v) {
-
         }
     }
 }

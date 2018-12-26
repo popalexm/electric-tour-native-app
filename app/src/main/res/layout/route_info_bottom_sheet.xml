@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <import type="android.view.View" />
-
         <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsViewModel" />
@@ -14,7 +12,7 @@
     <android.support.design.card.MaterialCardView
         android:id="@+id/bottomSheetRouteInfo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="500dp"
         app:behavior_hideable="false"
         app:behavior_peekHeight="@dimen/bottom_info_card_height_header"
         app:cardBackgroundColor="@color/colorPrimaryDark"
@@ -24,7 +22,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:padding="@dimen/margin_medium">
 
@@ -67,13 +65,10 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/routeElevationChart"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium" />
 
         </LinearLayout>
-
     </android.support.design.card.MaterialCardView>
-
-
 </layout>

@@ -6,6 +6,7 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -16,16 +17,27 @@ public class LoadElevationPointsForSelectedTourUseCase extends BaseUseCase imple
 
     @NonNull
     private final LocalStorageManager localStorageManager;
+    @Nullable
+    private final Integer startCheckpointId;
+    @Nullable
+    private final Integer endCheckpointId;
 
     public LoadElevationPointsForSelectedTourUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
-            @NonNull LocalStorageManager localStorageManager) {
+            @NonNull LocalStorageManager localStorageManager, @Nullable Integer startCheckpointId, @Nullable Integer endCheckpointId) {
         super(executorThread, postExecutionThread);
         this.localStorageManager = localStorageManager;
+        this.startCheckpointId = startCheckpointId;
+        this.endCheckpointId = endCheckpointId;
     }
 
     @Override
     public Maybe<List<ElevationPoint>> perform() {
-        return localStorageManager.elevationPointDao()
-                .getAllElevationPoints();
+        if (startCheckpointId != null && endCheckpointId != null) {
+            return localStorageManager.elevationPointDao()
+                    .getElevationPointsBetweenTwoCheckpoints(startCheckpointId, endCheckpointId);
+        } else {
+            return localStorageManager.elevationPointDao()
+                    .getAllElevationPoints();
+        }
     }
 }

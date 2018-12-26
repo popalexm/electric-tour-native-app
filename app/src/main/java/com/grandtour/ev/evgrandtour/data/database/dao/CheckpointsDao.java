@@ -34,14 +34,17 @@ public interface CheckpointsDao {
     Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);
 
     @Query("SELECT DISTINCT SUM(distanceToNextCheckpoint) FROM Checkpoint")
-    Maybe<Integer> getTotalDistanceForTour();
+    Maybe<Integer> getDistanceForEntireTour();
 
     @Query("SELECT DISTINCT SUM(durationToNextCheckpoint) FROM Checkpoint")
-    Maybe<Integer> getTotalRouteTimeForTour();
+    Maybe<Integer> getDrivingTimeForEntireTour();
 
     @Query("SELECT SUM(distanceToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
-    Single<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+    Maybe<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
 
     @Query("SELECT SUM(durationToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
-    Single<Integer> getDrivingTimeBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+    Maybe<Integer> getDrivingTimeBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+
+    @Query("SELECT * FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
+    Maybe<List<Checkpoint>> getAllCheckpointsBetweenStartAndEndCheckpointIds(int startCheckpointId, int endCheckPointId);
 }

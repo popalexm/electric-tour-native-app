@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 
+// TODO Remove this if no other bottom sheet are need
+@Deprecated
 public class BaseBottomDialogFragment extends BottomSheetDialogFragment implements DialogInterface.OnShowListener {
 
     @NonNull
