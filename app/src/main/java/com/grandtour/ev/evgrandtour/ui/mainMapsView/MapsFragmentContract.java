@@ -62,6 +62,8 @@ public class MapsFragmentContract {
         void showFilteringOptionsView();
 
         void clearFilteringChipsSelectionStatus();
+
+        void moveCameraToCurrentLocation(@NonNull LatLng location);
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
@@ -101,5 +103,7 @@ public class MapsFragmentContract {
         void onClearFilteredRouteClicked();
 
         void onFilterChipSelectionRemoved();
+
+        void onMyLocationButtonClicked();
     }
 }

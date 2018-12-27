@@ -71,33 +71,34 @@ public class MapsFragmentView extends BaseFragment
         ClusterManager.OnClusterClickListener<MapCheckpoint>, CompoundButton.OnCheckedChangeListener {
 
     @NonNull
+    public static final String TAG = MapsFragmentView.class.getSimpleName();
+
+    @NonNull
     private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
     @NonNull
     private static final String ACTION_LOCATION_BROADCAST = "LocationResultsBroadcast";
-
     public static final int ZOOM_LEVEL = 13;
-    @NonNull
-    public static final String TAG = MapsFragmentView.class.getSimpleName();
+
     @NonNull
     private final MapsViewModel mapsViewModel = new MapsViewModel();
     @NonNull
     private final SearchResultsListViewModel searchResultViewModel = new SearchResultsListViewModel();
-
     @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
+
     @NonNull
     private final RouteRequestsBroadcastReceiver routeDirectionsBroadcastReceiver = new RouteRequestsBroadcastReceiver(presenter);
     @NonNull
     private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(presenter);
-    @NonNull
-    private GoogleMap googleMap;
+
     @NonNull
     private FragmentMainMapViewBinding viewBinding;
-
+    @NonNull
+    private final List<MapCheckpoint> filterSelection = new ArrayList<>();
     @Nullable
     private ClusterManager<MapCheckpoint> clusterManager;
     @NonNull
-    private List<MapCheckpoint> filterSelection = new ArrayList<>();
+    private GoogleMap googleMap;
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -212,6 +213,8 @@ public class MapsFragmentView extends BaseFragment
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 this.googleMap.setMyLocationEnabled(true);
+                this.googleMap.getUiSettings()
+                        .setMyLocationButtonEnabled(false);
                 setupClusterManager(activity);
                 setupGoogleMapCallbacks();
                 presenter.onMapReady();
@@ -484,6 +487,11 @@ public class MapsFragmentView extends BaseFragment
             filterChipOption.setChecked(false);
             filterSelection.clear();
         }
+    }
+
+    @Override
+    public void moveCameraToCurrentLocation(@NonNull LatLng location) {
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, MapsFragmentView.ZOOM_LEVEL));
     }
 
     @Override

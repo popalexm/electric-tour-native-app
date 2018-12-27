@@ -2,6 +2,7 @@ package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.PolyUtil;
 
 import com.github.mikephil.charting.components.Description;
@@ -60,7 +61,7 @@ import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection {
+public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection, OnSuccessListener<Location> {
 
     @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
@@ -294,6 +295,14 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onFilterChipSelectionRemoved() {
         loadEntireTourDataOnMap();
+    }
+
+    @Override
+    public void onMyLocationButtonClicked() {
+        if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            gpsLocationManager.getLastKnownLocation(this);
+        }
     }
 
     private void displayShortMessage(@NonNull String msg) {
@@ -546,5 +555,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             searchResultViewModels.add(viewModel);
         }
         return searchResultViewModels;
+    }
+
+    @Override
+    public void onSuccess(Location location) {
+        if (location != null) {
+            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            view.moveCameraToCurrentLocation(currentLocation);
+        }
     }
 }

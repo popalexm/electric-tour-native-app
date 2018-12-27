@@ -20,9 +20,38 @@
             type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentContract.Presenter" />
     </data>
 
-    <RelativeLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/leftVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/rightVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/fabStartPointRightVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="64dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/horizontalBottomGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="160dp" />
 
         <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -43,7 +72,9 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
                 android:onClick="@{()-> presenter.onChooseTourClicked()}"
+                app:fabSize="normal"
                 android:src="@mipmap/ic_route"
+                app:rippleColor="@color/colorAccent"
                 app:backgroundTint="@android:color/white"
                 app:elevation="@dimen/fab_elevation"
                 app:isButtonBounced="@{viewModel.isButtonBouncing}"
@@ -55,9 +86,13 @@
 
         <LinearLayout
             android:id="@+id/topBar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/top_bar_height"
-            android:layout_margin="@dimen/margin_small"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toTopOf="parent"
             android:background="@drawable/top_rounded_bars"
             android:orientation="horizontal"
             android:paddingEnd="@dimen/margin_small"
@@ -144,11 +179,12 @@
         </LinearLayout>
 
         <HorizontalScrollView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/top_bar_height"
-            android:layout_below="@id/topBar"
-            android:layout_marginEnd="@dimen/margin_medium"
-            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_small"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/topBar"
             android:background="@drawable/top_rounded_bars"
             android:paddingEnd="@dimen/margin_medium_large"
             android:paddingStart="@dimen/margin_medium_large"
@@ -169,15 +205,34 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/list_view"
-            android:layout_below="@+id/topBar"
-            android:layout_marginEnd="@dimen/margin_large"
-            android:layout_marginStart="@dimen/margin_large"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_medium_large"
+            android:layout_marginStart="@dimen/margin_medium_large"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/topBar"
+            android:layout_marginTop="@dimen/margin_small"
             android:background="@drawable/dialog_background"
             app:itemBinding="@{searchViewModel.itemBinding}"
             app:items="@{searchViewModel.parameters}"
             app:layoutManager="@{LayoutManagers.linear()}" />
-    </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:onClick="@{() -> presenter.onMyLocationButtonClicked()}"
+            android:src="@drawable/ic_location_searching_black_24dp"
+            app:backgroundTint="@android:color/white"
+            app:fabSize="mini"
+            app:isButtonRevealed="@{viewModel.isSelectTourButtonDisplayed}"
+            app:layout_constraintEnd_toEndOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/fabStartPointRightVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/horizontalBottomGuide"
+            app:rippleColor="@color/colorAccent" />
+
+    </android.support.constraint.ConstraintLayout>
 </layout>
