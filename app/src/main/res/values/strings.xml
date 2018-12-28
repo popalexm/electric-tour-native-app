@@ -9,24 +9,17 @@
     <string name="message_location_updates">Monitoring your location in the background !</string>
     <string name="error_message_no_internet_connection">Error while trying to connect to the internet !</string>
     <string name="error_message_internet_connection_intrerupted">Network connection was interrupted, aborting !</string>
-    <string name="error_message_could_not_calculate_routes">Please make sure second checkpoint has a higher number than the first one !</string>
     <string name="suffix_kilometers"> Km</string>
     <string name="hint_click_to_start_navigation">Click to start navigation\nfrom your current location</string>
     <string name="hint_swipe_up_to_see_details">Swipe up to see details</string>
     <string name="btn_dimiss">Dismiss</string>
     <string name="btn_sign_in">Sign In With Google Account</string>
-    <string name="hint_distance_between">Distance between…</string>
-    <string name="label_end_checkpoint">Second Checkpoint</string>
-    <string name="label_start_checkpoint">First Checkpoint</string>
-    <string name="btn_calculate">Calculate</string>
     <string name="hint_enable_route_deviation">Enable route deviation notifications</string>
     <string name="hint_enable_current_location_monitoring">Enable current location tracking</string>
     <string name="message_notify_deviation">You are deviating from the selected route !</string>
     <string name="title_warning">Warning !</string>
     <string name="title_no_tour_selected">No route</string>
     <string name="title_please_select_tour">Please select the desired route</string>
-    <string name="hint_select_2_checkpoints_for_distance_calculation">Select 2 checkpoints to calculate the distance between them on the current route</string>
-    <string name="error_please_select_a_route">Please select a route from the available routes list first before using the distance calculator !</string>
     <string name="label_line_chart">Selected route altitude</string>
     <string name="label_line_chart_values">Values are expressed in meters</string>
     <string name="message_sign_in_successful">Signed in successfully !</string>
@@ -43,6 +36,5 @@
 
     // Dummy testing strings
     <string name="lorem_ipsum">Lorem Ipsum</string>
-    <string name="lorem_ipsum_longer">Lorem Ipsum Lorem Ipsum</string>
 
 </resources>
