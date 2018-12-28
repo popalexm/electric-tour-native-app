@@ -417,12 +417,6 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId) {
-        // Log.e(TAG, "Clicked on routeLeg id" + routeLegId);
-        // TODO Implement elevation data in the new Modal Bottom Sheet
-    }
-
-    @Override
     public void showChartView(@NonNull LineData lineData, @NonNull Description description) {
         LineChart chartView = viewBinding.getRoot()
                 .findViewById(R.id.routeElevationChart);
@@ -439,19 +433,17 @@ public class MapsFragmentView extends BaseFragment
     public void loadAvailableFilterPoints(@NonNull List<MapCheckpoint> availableFilterPoints) {
         Activity activity = getActivity();
         if (activity != null) {
-            mapsViewModel.filteringOptions.clear();
-            viewBinding.chipGroupFilteringOptions.removeAllViews();
-
-            // TODO Implement proper chip loading in viewModel
+            mapsViewModel.checkPointFilteringOptions.clear();
+            mapsViewModel.removeFilteringOptions.set(true);
+            mapsViewModel.removeFilteringOptions.set(false);
             for (MapCheckpoint mapCheckpoint : availableFilterPoints) {
                 String filterOptionTitle = getString(R.string.format_filter_option, mapCheckpoint.getOrderInRouteId(), mapCheckpoint.getMapCheckpointTitle());
-                Chip filterChip = new Chip(getActivity());
+                Chip filterChip = new Chip(activity);
                 filterChip.setTag(mapCheckpoint);
                 filterChip.setCheckable(true);
                 filterChip.setText(filterOptionTitle);
                 filterChip.setOnCheckedChangeListener(this);
-                viewBinding.chipGroupFilteringOptions.addView(filterChip);
-                mapsViewModel.filteringOptions.add(filterChip);
+                mapsViewModel.checkPointFilteringOptions.add(filterChip);
             }
         }
     }
@@ -463,8 +455,7 @@ public class MapsFragmentView extends BaseFragment
 
         yAxisLeft.setTextColor(Color.WHITE);
         yAxisLeft.setValueFormatter(new YAxisValueFormatter());
-        yAxisRight.setTextColor(Color.WHITE);
-        yAxisRight.setValueFormatter(new YAxisValueFormatter());
+        yAxisRight.setEnabled(false);
 
         xAxis.setTextColor(Color.WHITE);
         xAxis.setValueFormatter(new XAxisValueFormatter());
@@ -483,7 +474,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void clearFilteringChipsSelectionStatus() {
-        for (Chip filterChipOption : mapsViewModel.filteringOptions) {
+        for (Chip filterChipOption : mapsViewModel.checkPointFilteringOptions) {
             filterChipOption.setChecked(false);
             filterSelection.clear();
         }

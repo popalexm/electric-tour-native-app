@@ -268,7 +268,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @Override
     public void onPolylineClicked(Integer routeLegId) {
-        view.showElevationChartForRouteLegDialog(routeLegId);
+        // TODO Implement toast that displays distance for specific route leg
     }
 
     @Override

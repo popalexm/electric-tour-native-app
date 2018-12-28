@@ -196,6 +196,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:padding="@dimen/margin_medium"
+                app:chipGroupItems="@{viewModel.checkPointFilteringOptions}"
+                app:removeChipGroupItems="@{viewModel.removeFilteringOptions}"
                 app:chipSpacing="@dimen/margin_medium"
                 app:singleLine="true">
 

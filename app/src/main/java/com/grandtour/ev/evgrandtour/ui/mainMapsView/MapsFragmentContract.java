@@ -53,8 +53,6 @@ public class MapsFragmentContract {
 
         void animateRouteInformationText();
 
-        void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId);
-
         void showChartView(@NonNull LineData lineData, @NonNull Description description);
 
         void loadAvailableFilterPoints(List<MapCheckpoint> availableFilterPoints);

@@ -18,6 +18,7 @@ import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
+import android.support.design.chip.ChipGroup;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -52,7 +53,9 @@ public class MapsViewModel {
     @NonNull
     public final ObservableBoolean isFilteringLayoutVisible = new ObservableBoolean(false);
     @NonNull
-    public final ObservableArrayList<Chip> filteringOptions = new ObservableArrayList<>();
+    public final ObservableBoolean removeFilteringOptions = new ObservableBoolean(false);
+    @NonNull
+    public final ObservableArrayList<Chip> checkPointFilteringOptions = new ObservableArrayList<>();
 
     @BindingAdapter("isWarningState")
     public static void setViewStateAsWarning(View view, boolean isWarning) {
@@ -111,6 +114,20 @@ public class MapsViewModel {
                     .getColor(R.color.colorPrimaryDark)));
             btnFilter.setText(context.getResources()
                     .getText(R.string.btn_filter));
+        }
+    }
+
+    @BindingAdapter("chipGroupItems")
+    public static void setChipGroupItems(@NonNull ChipGroup chipGroup, @NonNull Iterable<Chip> chipArrayList) {
+        for (Chip chip : chipArrayList) {
+            chipGroup.addView(chip);
+        }
+    }
+
+    @BindingAdapter("removeChipGroupItems")
+    public static void removeChipGroupItems(@NonNull ChipGroup chipGroup, boolean shouldRemoveFilteringOptions) {
+        if (shouldRemoveFilteringOptions) {
+            chipGroup.removeAllViews();
         }
     }
 }
