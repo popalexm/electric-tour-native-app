@@ -9,13 +9,11 @@ import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
-import android.widget.HorizontalScrollView;
-import android.widget.TextView;
 
 public final class AnimationManager {
 
@@ -51,40 +49,40 @@ public final class AnimationManager {
         animator.start();
     }
 
-    public void startBounceAnimation(@NonNull FloatingActionButton button) {
+    public void startBounceAnimation(@NonNull View view) {
         Animation bounceAnimation = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.bounce_animation);
         Interpolator interpolator = new BounceAnimationInterpolator(AnimationManager.BOUNCE_ANIM_AMPLITUDE, AnimationManager.BOUNCE_ANIM_FREQUENCY);
         bounceAnimation.setInterpolator(interpolator);
-        button.startAnimation(bounceAnimation);
+        view.startAnimation(bounceAnimation);
     }
 
-    public void shakeTextView(@NonNull TextView textView) {
+    public void shakeTextView(@NonNull View view) {
         Animation animShake = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.shake_animation);
-        textView.startAnimation(animShake);
+        view.startAnimation(animShake);
     }
 
-    public void revealButtonAnimation(@NonNull FloatingActionButton button) {
-        button.animate()
+    public void revealButtonAnimation(@NonNull View view) {
+        view.animate()
                 .scaleX(1)
                 .scaleY(1)
                 .setDuration(AnimationManager.REVEAL_HIDE_ANIM_DURATION)
                 .start();
     }
 
-    public void hideButtonAnimation(@NonNull FloatingActionButton button) {
-        button.animate()
+    public void hideButtonAnimation(@NonNull View view) {
+        view.animate()
                 .scaleX(0)
                 .scaleY(0)
                 .setDuration(AnimationManager.REVEAL_HIDE_ANIM_DURATION)
                 .start();
     }
 
-    public void slideAnimationDown(@NonNull HorizontalScrollView view) {
+    public void slideAnimationDown(@NonNull View view) {
         Animation animSlideFromTop = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.slide_in_from_top);
         view.startAnimation(animSlideFromTop);
     }
 
-    public void slideAnimationUp(@NonNull HorizontalScrollView view) {
+    public void slideAnimationUp(@NonNull View view) {
         Animation animSlideFromTop = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.slide_out_to_top);
         view.startAnimation(animSlideFromTop);
     }

@@ -19,10 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
-import android.support.design.widget.FloatingActionButton;
 import android.view.View;
-import android.widget.HorizontalScrollView;
-import android.widget.TextView;
 
 public class MapsViewModel {
 
@@ -61,7 +58,7 @@ public class MapsViewModel {
     public static void setViewStateAsWarning(View view, boolean isWarning) {
         if (isWarning) {
             AnimationManager.getInstance()
-                    .shakeTextView((TextView) view);
+                    .shakeTextView(view);
         } else {
             view.setAnimation(null);
         }
@@ -71,9 +68,9 @@ public class MapsViewModel {
     public static void setRevealButtonState(@NonNull View view, boolean shouldButtonBeRevealed) {
         AnimationManager animationManager = AnimationManager.getInstance();
         if (shouldButtonBeRevealed) {
-            animationManager.revealButtonAnimation((FloatingActionButton) view);
+            animationManager.revealButtonAnimation(view);
         } else {
-            animationManager.hideButtonAnimation((FloatingActionButton) view);
+            animationManager.hideButtonAnimation(view);
         }
     }
 
@@ -81,7 +78,7 @@ public class MapsViewModel {
     public static void setBounceAnimation(@NonNull View view, boolean shouldButtonBeBounced) {
         AnimationManager animationManager = AnimationManager.getInstance();
         if (shouldButtonBeBounced) {
-            animationManager.startBounceAnimation((FloatingActionButton) view);
+            animationManager.startBounceAnimation(view);
         }
     }
 
@@ -89,10 +86,10 @@ public class MapsViewModel {
     public static void setRevealHideFilteringOptions(@NonNull View view, boolean areFilteringOptionsVisible) {
         AnimationManager animationManager = AnimationManager.getInstance();
         if (areFilteringOptionsVisible) {
-            animationManager.slideAnimationDown((HorizontalScrollView) view);
+            animationManager.slideAnimationDown(view);
             view.setVisibility(View.VISIBLE);
         } else {
-            animationManager.slideAnimationUp((HorizontalScrollView) view);
+            animationManager.slideAnimationUp(view);
             view.setVisibility(View.GONE);
         }
     }
