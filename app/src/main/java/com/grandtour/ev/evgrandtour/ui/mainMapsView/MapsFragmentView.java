@@ -474,10 +474,11 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void clearFilteringChipsSelectionStatus() {
+        mapsViewModel.removeFilteringOptions.set(true);
         for (Chip filterChipOption : mapsViewModel.checkPointFilteringOptions) {
             filterChipOption.setChecked(false);
-            filterSelection.clear();
         }
+        filterSelection.clear();
     }
 
     @Override
