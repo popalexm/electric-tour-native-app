@@ -73,7 +73,7 @@
                 android:layout_margin="@dimen/margin_medium"
                 android:onClick="@{()-> presenter.onChooseTourClicked()}"
                 app:fabSize="normal"
-                android:src="@mipmap/ic_route"
+                android:src="@drawable/ic_route_selection_24dp"
                 app:rippleColor="@color/colorAccent"
                 app:backgroundTint="@android:color/white"
                 app:elevation="@dimen/fab_elevation"
