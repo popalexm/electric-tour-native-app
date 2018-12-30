@@ -20,13 +20,13 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.services.DirectionsElevationService;
 import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetNextTenCheckpointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForSelectedTourUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadEntireTripRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointsForFilteredCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadNextCheckpointsFromOriginPoint;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteInformationUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteLegsAndStepsForFilteredCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteLegsAndStepsForBetweenCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteLegsAndStepsForEntireTripUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.QueryForCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
@@ -155,19 +155,21 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onNavigationClicked(@NonNull MapCheckpoint originMarker) {
-        Integer checkpointId = originMarker.getMapCheckpointId();
-        addSubscription(new GetNextTenCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
-                checkpointId).perform()
-                .subscribe(checkpoints -> {
+    public void onNavigationClicked(@NonNull MapCheckpoint originMarker, int startCheckpoint, int endCheckpoint) {
+        Integer originCheckpointId = originMarker.getMapCheckpointId();
+        addSubscription(
+                new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), originCheckpointId,
+                        10, startCheckpoint, endCheckpoint).perform()
+                        .doOnSuccess(checkpoints -> {
                     if (checkpoints.size() != 0) {
                         String navUri = MapUtils.composeUriForMapsIntentRequest(checkpoints);
                         if (isViewAttached) {
                             view.startGoogleMapsDirections(navUri);
                         }
                     }
-                }));
-
+                        })
+                        .doOnError(Throwable::printStackTrace)
+                        .subscribe());
     }
 
     @Override
@@ -343,7 +345,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId).perform()
                 .doOnSuccess(this::loadMapCheckpointsOnMapView);
 
-        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getRouteLegsAndStepsBetweenFilterCheckpoints = new LoadRouteLegsAndStepsForFilteredCheckpointsUseCase(
+        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getRouteLegsAndStepsBetweenFilterCheckpoints = new LoadRouteLegsAndStepsForBetweenCheckpointsUseCase(
                 Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), startCheckpointId, endCheckpointId).perform()
                 .doOnSuccess(this::loadRoutePolylineOnMapView);
 
@@ -385,7 +387,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
      */
     private void loadEntireTourDataOnMap() {
 
-        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesStepsUseCase = new LoadEntireTripRouteLegsAndStepsUseCase(Schedulers.io(),
+        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesStepsUseCase = new LoadRouteLegsAndStepsForEntireTripUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(this::loadRoutePolylineOnMapView)
                 .doOnError(Throwable::printStackTrace);
@@ -475,13 +477,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
             for (Pair<RouteLeg, List<RouteStep>> routeLegStepsPair : routeLegsStepsList) {
                 List<RouteStep> steps = routeLegStepsPair.second;
                 int routeLegId = routeLegStepsPair.first.getRouteLegId();
-                List<LatLng> routeLegPolyline = new ArrayList<>();
+                List<LatLng> routeLegPolylinePoints = new ArrayList<>();
                 for (RouteStep routeStep : steps) {
                     List<LatLng> stepLinePoints = MapUtils.convertPolyLineToMapPoints(routeStep.getRouteStepPolyline());
-                    routeLegPolyline.addAll(stepLinePoints);
+                    routeLegPolylinePoints.addAll(stepLinePoints);
                 }
-                drawRouteStepFromMapPoints(routeLegPolyline, routeLegId);
-                currentSelectedRoutePoints.addAll(routeLegPolyline);
+                drawRouteStepFromMapPoints(routeLegPolylinePoints, routeLegId);
+                currentSelectedRoutePoints.addAll(routeLegPolylinePoints);
             }
         }
     }

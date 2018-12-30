@@ -12,22 +12,29 @@ import java.util.List;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 
-public class GetNextTenCheckpointsFromOrigin extends BaseUseCase implements BaseUseCaseSingle {
+public class LoadNextCheckpointsFromOriginPoint extends BaseUseCase implements BaseUseCaseSingle {
 
     @NonNull
     private final LocalStorageManager storageManager;
     private final int checkpointId;
+    private final int maxCheckpointsToRetrieve;
+    private final int startCheckpointId;
+    private final int endCheckpointId;
 
-    public GetNextTenCheckpointsFromOrigin(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
-            @NonNull LocalStorageManager storageManager, int checkpointId) {
+    public LoadNextCheckpointsFromOriginPoint(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+            @NonNull LocalStorageManager storageManager, int checkpointId, int maxCheckpointsToRetrieve, int startCheckpointId, int endCheckpointId) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
         this.checkpointId = checkpointId;
+        this.startCheckpointId = startCheckpointId;
+        this.endCheckpointId = endCheckpointId;
+        this.maxCheckpointsToRetrieve = maxCheckpointsToRetrieve;
     }
 
     @Override
     public Single<List<Checkpoint>> perform() {
-        return storageManager.checkpointsDao().getNextTenCheckpoints(checkpointId)
+        return storageManager.checkpointsDao()
+                .getNextCheckpointsFromOrigin(checkpointId, maxCheckpointsToRetrieve, startCheckpointId, endCheckpointId)
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }

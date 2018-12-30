@@ -78,7 +78,7 @@ public class MapsFragmentContract {
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
-        void onNavigationClicked(@NonNull MapCheckpoint originMarker);
+        void onNavigationClicked(@NonNull MapCheckpoint originMarker, int startCheckpoint, int endCheckpoint);
 
         void onChooseTourClicked();
 

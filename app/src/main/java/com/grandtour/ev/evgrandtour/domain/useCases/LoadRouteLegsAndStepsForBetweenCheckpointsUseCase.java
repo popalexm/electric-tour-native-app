@@ -18,14 +18,14 @@ import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class LoadRouteLegsAndStepsForFilteredCheckpointsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadRouteLegsAndStepsForBetweenCheckpointsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
     private final int startCheckpointId;
     private final int endCheckpointId;
 
-    public LoadRouteLegsAndStepsForFilteredCheckpointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public LoadRouteLegsAndStepsForBetweenCheckpointsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager, int startCheckpointId, int endCheckpointId) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;

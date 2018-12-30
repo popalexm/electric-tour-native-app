@@ -509,7 +509,12 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void onClusterItemInfoWindowClick(MapCheckpoint mapCheckpoint) {
-        presenter.onNavigationClicked(mapCheckpoint);
+        List<MapCheckpoint> mapCheckpoints = mapsViewModel.routeCheckpoints;
+        int startCheckpointId = mapCheckpoints.get(0)
+                .getMapCheckpointId();
+        int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
+                .getMapCheckpointId();
+        presenter.onNavigationClicked(mapCheckpoint, startCheckpointId, endCheckpointId);
     }
 
     @Override

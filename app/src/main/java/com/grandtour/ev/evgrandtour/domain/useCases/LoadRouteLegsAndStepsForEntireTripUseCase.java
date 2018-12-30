@@ -18,12 +18,12 @@ import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class LoadEntireTripRouteLegsAndStepsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadRouteLegsAndStepsForEntireTripUseCase extends BaseUseCase implements BaseUseCaseMaybe {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public LoadEntireTripRouteLegsAndStepsUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public LoadRouteLegsAndStepsForEntireTripUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;
