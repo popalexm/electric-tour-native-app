@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <import type="android.view.View" />
@@ -30,6 +31,7 @@
                 android:id="@+id/routeInfoMainHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium_large"
                 android:layout_marginBottom="@dimen/margin_small"
                 android:orientation="vertical">
 
@@ -38,15 +40,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@={viewModel.routeDrivingDistance}" />
-                <!--  -->
+                    android:text="@={viewModel.routeDrivingDistance}"
+                    tools:text="@string/lorem_ipsum_medium" />
 
                 <TextView
                     style="@style/TextViewStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@={viewModel.routeDrivingDuration}" />
+                    android:text="@={viewModel.routeDrivingDuration}"
+                    tools:text="@string/lorem_ipsum_medium" />
 
             </LinearLayout>
 

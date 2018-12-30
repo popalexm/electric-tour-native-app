@@ -10,6 +10,6 @@
     <dimen name="search_view_max_width">10000dp</dimen>
     <dimen name="fab_elevation">15dp</dimen>
     <dimen name="bottom_info_card_elevation">10dp</dimen>
-    <dimen name="bottom_info_card_height_header">80dp</dimen>
+    <dimen name="bottom_info_card_height_header">90dp</dimen>
 
 </resources>

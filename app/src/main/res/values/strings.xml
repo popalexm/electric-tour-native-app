@@ -5,22 +5,22 @@
     <string name="message_eta_to_next_checkpoint">ETA to next : </string>
     <string name="title_marker_current_location">Current location</string>
     <string name="hint_search_checkpoints">Search for checkpoints…</string>
-    <string name="message_no_internet_reloading_saved_tour">Internet Connection is not available at this moment, reloading your last saved tour !</string>
+    <string name="message_no_internet_reloading_saved_tour">Internet Connection is not available at this moment, reloading your last saved trip !</string>
     <string name="message_location_updates">Monitoring your location in the background !</string>
     <string name="error_message_no_internet_connection">Error while trying to connect to the internet !</string>
     <string name="error_message_internet_connection_intrerupted">Network connection was interrupted, aborting !</string>
     <string name="suffix_kilometers"> Km</string>
     <string name="hint_click_to_start_navigation">Click to start navigation\nfrom your current location</string>
-    <string name="hint_swipe_up_to_see_details">Swipe up to see details</string>
+    <string name="hint_swipe_up_to_see_details">Swipe up to see more trip details</string>
     <string name="btn_dimiss">Dismiss</string>
     <string name="btn_sign_in">Sign In With Google Account</string>
-    <string name="hint_enable_route_deviation">Enable route deviation notifications</string>
+    <string name="hint_enable_route_deviation">Enable trip deviation notifications</string>
     <string name="hint_enable_current_location_monitoring">Enable current location tracking</string>
-    <string name="message_notify_deviation">You are deviating from the selected route !</string>
+    <string name="message_notify_deviation">You are deviating from the planned trip !</string>
     <string name="title_warning">Warning !</string>
     <string name="title_no_tour_selected">No route</string>
-    <string name="title_please_select_tour">Please select the desired route</string>
-    <string name="label_line_chart">Selected route altitude</string>
+    <string name="title_please_select_tour">Please select the desired trip for today</string>
+    <string name="label_line_chart">Selected trip altitude</string>
     <string name="label_line_chart_values">Values are expressed in meters</string>
     <string name="message_sign_in_successful">Signed in successfully !</string>
     <string name="message_sign_in_failed">Sign in failed !</string>
@@ -32,9 +32,11 @@
     <string name="prefix_driving_distance">Driving Distance</string>
     <string name="prefix_driving_duration">Driving Duration</string>
     <string name="message_no_information_available">No information available</string>
+    <string name="btn_select_trip_label">Select \n Trip</string>
     <string name="application_version">App Version</string>
 
     // Dummy testing strings
     <string name="lorem_ipsum">Lorem Ipsum</string>
+    <string name="lorem_ipsum_medium">Lorem ipsum dolor sit amet</string>
 
 </resources>
