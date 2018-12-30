@@ -12,7 +12,6 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
-import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
@@ -28,7 +27,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelected
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointsForFilteredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteInformationUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteLegsAndStepsForFilteredCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.QueryForRoutesUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.QueryForCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
@@ -198,12 +197,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onNewSearchQuery(@NonNull String text) {
+    public void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedMapCheckpoints) {
         addSubscription(
-                new QueryForRoutesUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), text.toLowerCase()).perform()
+                new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), currentlyDisplayedMapCheckpoints, text.toLowerCase()).perform()
                         .doOnSuccess(checkpoints -> {
                             view.displaySearchResults(generateSearchResults(checkpoints));
                         })
+                        .doOnError(Throwable::printStackTrace)
                         .subscribe());
     }
 
@@ -547,11 +547,11 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         }
     }
 
-    private List<SearchResultViewModel> generateSearchResults(@NonNull Iterable<Checkpoint> checkpoints) {
+    private List<SearchResultViewModel> generateSearchResults(@NonNull Iterable<MapCheckpoint> checkpoints) {
         List<SearchResultViewModel> searchResultViewModels = new ArrayList<>();
-        for (Checkpoint details : checkpoints) {
-            SearchResultViewModel viewModel = new SearchResultViewModel(details.getCheckpointId(), String.valueOf(details.getOrderInTourId()),
-                    details.getCheckpointName(), this);
+        for (MapCheckpoint details : checkpoints) {
+            SearchResultViewModel viewModel = new SearchResultViewModel(details.getMapCheckpointId(), String.valueOf(details.getOrderInRouteId()),
+                    details.getMapCheckpointTitle(), this);
             searchResultViewModels.add(viewModel);
         }
         return searchResultViewModels;

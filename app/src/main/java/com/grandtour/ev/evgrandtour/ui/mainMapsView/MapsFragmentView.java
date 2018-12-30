@@ -389,7 +389,7 @@ public class MapsFragmentView extends BaseFragment
         if (searchQuery.equals("")) {
             presenter.onSearchQueryCleared();
         } else {
-            presenter.onNewSearchQuery(searchQuery);
+            presenter.onNewSearchQuery(searchQuery, mapsViewModel.routeCheckpoints);
         }
         return false;
     }

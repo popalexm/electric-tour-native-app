@@ -84,7 +84,7 @@ public class MapsFragmentContract {
 
         void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
 
-        void onNewSearchQuery(@NonNull String text);
+        void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedCheckpoints);
 
         void onSearchQueryCleared();
 
