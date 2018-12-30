@@ -20,9 +20,9 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.services.DirectionsElevationService;
 import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetAvailableRouteLegsAndStepsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.GetFollowingCheckpointsFromOrigin;
+import com.grandtour.ev.evgrandtour.domain.useCases.GetNextTenCheckpointsFromOrigin;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadEntireTripRouteLegsAndStepsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointsForFilteredCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteInformationUseCase;
@@ -157,7 +157,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onNavigationClicked(@NonNull MapCheckpoint originMarker) {
         Integer checkpointId = originMarker.getMapCheckpointId();
-        addSubscription(new GetFollowingCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+        addSubscription(new GetNextTenCheckpointsFromOrigin(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
                 checkpointId).perform()
                 .subscribe(checkpoints -> {
                     if (checkpoints.size() != 0) {
@@ -361,7 +361,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     dismissLoadingView();
                 });
 
-        Maybe<List<ElevationPoint>> elevationPointsUseCase = new LoadElevationPointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        Maybe<List<ElevationPoint>> getElevationPointsUseCase = new LoadElevationPointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager(), startCheckpointId, endCheckpointId).perform()
                 .doOnSuccess(this::createChartViewEntryData)
                 .doOnError(throwable -> {
@@ -370,7 +370,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                 });
 
         addSubscription(Maybe.concat(getAllMapCheckpointsBetweenFilterCheckpoints, getRouteLegsAndStepsBetweenFilterCheckpoints, getRouteInformationUseCase,
-                elevationPointsUseCase)
+                getElevationPointsUseCase)
                 .doOnComplete(this::dismissLoadingView)
                 .doOnSubscribe(subscription -> clearMapAndDisplayLoadingProgressBar())
                 .doOnError(throwable -> {
@@ -385,7 +385,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
      */
     private void loadEntireTourDataOnMap() {
 
-        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesStepsUseCase = new GetAvailableRouteLegsAndStepsUseCase(Schedulers.io(),
+        Maybe<List<Pair<RouteLeg, List<RouteStep>>>> getAvailableRoutesStepsUseCase = new LoadEntireTripRouteLegsAndStepsUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
                 .doOnSuccess(this::loadRoutePolylineOnMapView)
                 .doOnError(Throwable::printStackTrace);
@@ -401,7 +401,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     dismissLoadingView();
                 });
 
-        Maybe<Pair<Pair<Integer, Integer>, String>> loadRouteInformationUseCase = new LoadRouteInformationUseCase(Schedulers.io(),
+        Maybe<Pair<Pair<Integer, Integer>, String>> getRouteInformationUseCase = new LoadRouteInformationUseCase(Schedulers.io(),
                 AndroidSchedulers.mainThread(), Injection.provideStorageManager(), null, null).perform()
                 .doOnComplete(this::displayNoRouteSelectedWarning)
                 .doOnSuccess(routeInformation -> {
@@ -415,7 +415,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     dismissLoadingView();
                 });
 
-        Maybe<List<ElevationPoint>> elevationPointsUseCase = new LoadElevationPointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
+        Maybe<List<ElevationPoint>> getElevationPointsUseCase = new LoadElevationPointsForSelectedTourUseCase(Schedulers.io(), AndroidSchedulers.mainThread(),
                 Injection.provideStorageManager(), null, null).perform()
                 .doOnSuccess(this::createChartViewEntryData)
                 .doOnError(throwable -> {
@@ -423,7 +423,7 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                     dismissLoadingView();
                 });
 
-        addSubscription(Maybe.concat(getAvailableCheckpointsUseCase, getAvailableRoutesStepsUseCase, loadRouteInformationUseCase, elevationPointsUseCase)
+        addSubscription(Maybe.concat(getAvailableCheckpointsUseCase, getAvailableRoutesStepsUseCase, getRouteInformationUseCase, getElevationPointsUseCase)
                 .doOnComplete(this::dismissLoadingView)
                 .doOnSubscribe(subscription -> clearMapAndDisplayLoadingProgressBar())
                 .doOnError(throwable -> {

@@ -12,13 +12,13 @@ import java.util.List;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 
-public class GetFollowingCheckpointsFromOrigin extends BaseUseCase implements BaseUseCaseSingle {
+public class GetNextTenCheckpointsFromOrigin extends BaseUseCase implements BaseUseCaseSingle {
 
     @NonNull
     private final LocalStorageManager storageManager;
     private final int checkpointId;
 
-    public GetFollowingCheckpointsFromOrigin(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public GetNextTenCheckpointsFromOrigin(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager, int checkpointId) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;

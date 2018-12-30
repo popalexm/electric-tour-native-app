@@ -212,8 +212,6 @@ public class DirectionsElevationService extends Service {
                                 int checkpointId = routeRequestCheckpoints.get(i)
                                         .getCheckpointId();
 
-
-
                                 Long routeLegId = routeLegIdAndElevationLatLngPoints.first;
                                 List<LatLng> elevationLatLngList = routeLegIdAndElevationLatLngPoints.second;
 
