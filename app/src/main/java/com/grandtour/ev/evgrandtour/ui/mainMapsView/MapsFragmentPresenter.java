@@ -32,7 +32,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 import com.grandtour.ev.evgrandtour.ui.notifications.NotificationManager;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.NetworkUtils;
@@ -547,14 +547,15 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         }
     }
 
-    private List<SearchResultViewModel> generateSearchResults(@NonNull Iterable<MapCheckpoint> checkpoints) {
-        List<SearchResultViewModel> searchResultViewModels = new ArrayList<>();
+    @NonNull
+    private List<SearchResultModel> generateSearchResults(@NonNull Iterable<MapCheckpoint> checkpoints) {
+        List<SearchResultModel> searchResultModels = new ArrayList<>();
         for (MapCheckpoint details : checkpoints) {
-            SearchResultViewModel viewModel = new SearchResultViewModel(details.getMapCheckpointId(), String.valueOf(details.getOrderInRouteId()),
+            SearchResultModel searchResultModel = new SearchResultModel(details.getMapCheckpointId(), String.valueOf(details.getOrderInRouteId()),
                     details.getMapCheckpointTitle(), this);
-            searchResultViewModels.add(viewModel);
+            searchResultModels.add(searchResultModel);
         }
-        return searchResultViewModels;
+        return searchResultModels;
     }
 
     @Override

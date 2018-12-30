@@ -8,10 +8,6 @@
         <import type="me.tatarka.bindingcollectionadapter2.LayoutManagers" />
 
         <variable
-            name="searchViewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultsListViewModel" />
-
-        <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsViewModel" />
 
@@ -209,16 +205,22 @@
             android:id="@+id/list_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_medium_large"
             android:layout_marginStart="@dimen/margin_medium_large"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            app:areSearchResultsVisible="@{viewModel.searchResultModels}"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toBottomOf="@id/topBar"
-            android:layout_marginTop="@dimen/margin_small"
+            app:itemBinding="@{viewModel.resultViewModelItemBinding}"
             android:background="@drawable/dialog_background"
-            app:itemBinding="@{searchViewModel.itemBinding}"
-            app:items="@{searchViewModel.parameters}"
-            app:layoutManager="@{LayoutManagers.linear()}" />
+            app:items="@{viewModel.searchResultModels}"
+            app:layoutManager="@{LayoutManagers.linear()}"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintHeight_max="300dp" />
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"

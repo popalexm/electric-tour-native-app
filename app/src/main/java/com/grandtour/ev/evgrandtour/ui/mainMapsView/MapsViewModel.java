@@ -3,11 +3,13 @@ package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 
+import com.android.databinding.library.baseAdapters.BR;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -19,7 +21,13 @@ import android.support.annotation.NonNull;
 import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import java.util.List;
+
+import me.tatarka.bindingcollectionadapter2.ItemBinding;
+import me.tatarka.bindingcollectionadapter2.collections.DiffObservableList;
 
 public class MapsViewModel {
 
@@ -53,6 +61,21 @@ public class MapsViewModel {
     public final ObservableBoolean removeFilteringOptions = new ObservableBoolean(false);
     @NonNull
     public final ObservableArrayList<Chip> checkPointFilteringOptions = new ObservableArrayList<>();
+
+    @NonNull
+    public final ItemBinding<SearchResultModel> resultViewModelItemBinding = ItemBinding.of(BR.viewModel, R.layout.item_search_view);
+    @NonNull
+    public final DiffObservableList<SearchResultModel> searchResultModels = new DiffObservableList(new DiffObservableList.Callback<SearchResultModel>() {
+        @Override
+        public boolean areItemsTheSame(SearchResultModel oldItem, SearchResultModel newItem) {
+            return oldItem.searchResultId.equals(newItem.searchResultId);
+        }
+
+        @Override
+        public boolean areContentsTheSame(SearchResultModel oldItem, SearchResultModel newItem) {
+            return oldItem.searchResultId.equals(newItem.searchResultId);
+        }
+    });
 
     @BindingAdapter("isWarningState")
     public static void setViewStateAsWarning(View view, boolean isWarning) {
@@ -125,6 +148,15 @@ public class MapsViewModel {
     public static void removeChipGroupItems(@NonNull ChipGroup chipGroup, boolean shouldRemoveFilteringOptions) {
         if (shouldRemoveFilteringOptions) {
             chipGroup.removeAllViews();
+        }
+    }
+
+    @BindingAdapter("areSearchResultsVisible")
+    public static void setRecyclerViewVisibility(@NonNull RecyclerView recyclerView, List<SearchResultModel> searchResultModels) {
+        if (searchResultModels.size() > 0) {
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.GONE);
         }
     }
 }

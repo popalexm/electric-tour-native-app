@@ -8,8 +8,8 @@ import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchViewResultClickListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchViewResultClickListener;
 import com.grandtour.ev.evgrandtour.ui.settings.UpdateSettingsListener;
 
 import android.location.Location;
@@ -43,7 +43,7 @@ public class MapsFragmentContract {
 
         void showTourPickerDialog();
 
-        void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints);
+        void displaySearchResults(@NonNull List<SearchResultModel> checkpoints);
 
         void clearSearchResults();
 

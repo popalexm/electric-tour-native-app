@@ -33,8 +33,7 @@ import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartViewFormaters.YAxisValu
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultsListViewModel;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 import com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogView;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
@@ -82,8 +81,6 @@ public class MapsFragmentView extends BaseFragment
     @NonNull
     private final MapsViewModel mapsViewModel = new MapsViewModel();
     @NonNull
-    private final SearchResultsListViewModel searchResultViewModel = new SearchResultsListViewModel();
-    @NonNull
     private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
 
     @NonNull
@@ -110,7 +107,6 @@ public class MapsFragmentView extends BaseFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_map_view, container, false);
         viewBinding.setViewModel(mapsViewModel);
-        viewBinding.setSearchViewModel(searchResultViewModel);
         viewBinding.setPresenter(presenter);
 
         viewBinding.searchViewCheckpoints.setOnQueryTextListener(this);
@@ -370,13 +366,13 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints) {
-        searchResultViewModel.parameters.update(checkpoints);
+    public void displaySearchResults(@NonNull List<SearchResultModel> checkpoints) {
+        mapsViewModel.searchResultModels.update(checkpoints);
     }
 
     @Override
     public void clearSearchResults() {
-        searchResultViewModel.parameters.update(new ArrayList<>());
+        mapsViewModel.searchResultModels.update(new ArrayList<>());
     }
 
     @Override

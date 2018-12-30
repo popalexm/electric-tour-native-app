@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.mainMapsView.search;
+package com.grandtour.ev.evgrandtour.ui.mainMapsView.models;
 
 import android.support.annotation.NonNull;
 
