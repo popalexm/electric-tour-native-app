@@ -13,29 +13,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/startNav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="31dp"
-            android:layout_marginTop="22dp"
-            android:layout_toEndOf="@id/info"
-            android:src="@drawable/ic_navigation_white_24dp"
-            app:backgroundTint="@color/colorBlue"
-            app:elevation="4dp" />
-
         <LinearLayout
             android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_sx_small"
+            android:layout_centerHorizontal="true"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/txtCheckpointName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="@dimen/margin_sx_small"
                 android:text="@string/lorem_ipsum"
                 android:textStyle="bold" />
@@ -44,6 +34,7 @@
                 android:id="@+id/txtViewLength"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="@dimen/margin_sx_small"
                 android:text="@string/lorem_ipsum" />
 
@@ -51,20 +42,11 @@
                 android:id="@+id/txtViewDuration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="@dimen/margin_sx_small"
                 android:text="@string/lorem_ipsum" />
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/txtHintNav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/info"
-            android:layout_margin="@dimen/margin_sx_small"
-            android:text="@string/hint_click_to_start_navigation"
-            android:textColor="@color/colorAccent"
-            android:textStyle="italic" />
 
     </RelativeLayout>
 

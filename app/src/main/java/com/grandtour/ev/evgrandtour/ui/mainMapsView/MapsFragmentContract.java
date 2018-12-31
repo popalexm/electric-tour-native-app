@@ -62,6 +62,10 @@ public class MapsFragmentContract {
         void clearFilteringChipsSelectionStatus();
 
         void moveCameraToCurrentLocation(@NonNull LatLng location);
+
+        void highLightNavigationPath(List<Integer> routeLegsIdsToHighLight);
+
+        void clearAllHighlightedPaths();
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
@@ -103,5 +107,9 @@ public class MapsFragmentContract {
         void onFilterChipSelectionRemoved();
 
         void onMyLocationButtonClicked();
+
+        void onMarkerClicked(int checkpointId, int startCheckpoint, int endCheckpoint);
+
+        void onMarkerInfoWindowClosed();
     }
 }

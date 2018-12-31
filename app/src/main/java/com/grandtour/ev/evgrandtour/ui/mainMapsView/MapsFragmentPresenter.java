@@ -65,6 +65,9 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
     @NonNull
+    private final int NAVIGATION_CHECKPOINTS_SIZE = 11;
+
+    @NonNull
     private final ServiceConnection serviceConnection = this;
     @NonNull
     private final MapsFragmentContract.View view;
@@ -159,14 +162,14 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         Integer originCheckpointId = originMarker.getMapCheckpointId();
         addSubscription(
                 new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), originCheckpointId,
-                        10, startCheckpoint, endCheckpoint).perform()
-                        .doOnSuccess(checkpoints -> {
-                    if (checkpoints.size() != 0) {
-                        String navUri = MapUtils.composeUriForMapsIntentRequest(checkpoints);
-                        if (isViewAttached) {
-                            view.startGoogleMapsDirections(navUri);
-                        }
-                    }
+                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpoint, endCheckpoint).perform()
+                        .doOnSuccess(navigationPathData -> {
+                            if (navigationPathData != null) {
+                                String navUri = MapUtils.composeUriForMapsIntentRequest(navigationPathData.getNavigationPathWayPoints());
+                                if (isViewAttached) {
+                                    view.startGoogleMapsDirections(navUri);
+                                }
+                            }
                         })
                         .doOnError(Throwable::printStackTrace)
                         .subscribe());
@@ -304,6 +307,29 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             gpsLocationManager.getLastKnownLocation(this);
+        }
+    }
+
+    @Override
+    public void onMarkerClicked(int markerCheckpointId, int startCheckpoint, int endCheckpoint) {
+        addSubscription(
+                new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), markerCheckpointId,
+                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpoint, endCheckpoint).perform()
+                        .doOnSuccess(navigationPathData -> {
+                            if (navigationPathData != null) {
+                                if (isViewAttached) {
+                                    view.highLightNavigationPath(navigationPathData.getNavigationPathRouteLegs());
+                                }
+                            }
+                        })
+                        .doOnError(Throwable::printStackTrace)
+                        .subscribe());
+    }
+
+    @Override
+    public void onMarkerInfoWindowClosed() {
+        if (isViewAttached) {
+            view.clearAllHighlightedPaths();
         }
     }
 

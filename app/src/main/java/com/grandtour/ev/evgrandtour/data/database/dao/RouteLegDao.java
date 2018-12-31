@@ -26,4 +26,7 @@ public interface RouteLegDao {
     @Query("SELECT * FROM RouteLeg WHERE startCheckpointId BETWEEN :startCheckpointId AND :endCheckpointId")
     Maybe<List<RouteLeg>> getRouteLegsForStartAndEndCheckpoints(int startCheckpointId, int endCheckpointId);
 
+    @Query("SELECT * FROM RouteLeg WHERE startCheckpointId =:startCheckpoint AND endCheckpointId =:endCheckpoint")
+    RouteLeg getRouteLegForStartCheckpointAndEndCheckpoint(int startCheckpoint, int endCheckpoint);
+
 }

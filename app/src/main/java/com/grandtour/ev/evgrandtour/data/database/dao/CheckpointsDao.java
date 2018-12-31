@@ -30,7 +30,7 @@ public interface CheckpointsDao {
     @Query("SELECT * FROM Checkpoint WHERE (checkpointName LIKE :queryText OR checkpointId LIKE :queryText) AND tourId = :tourId")
     Maybe<List<Checkpoint>> getCheckpointsThatMatchQuery(String queryText, String tourId);
 
-    @Query("SELECT * FROM Checkpoint WHERE checkpointId > :originCheckpointId AND checkpointId BETWEEN :startCheckPointId AND :endCheckpointId LIMIT :maximumCheckpointsToRetrieve")
+    @Query("SELECT * FROM Checkpoint WHERE checkpointId >= :originCheckpointId AND checkpointId BETWEEN :startCheckPointId AND :endCheckpointId LIMIT :maximumCheckpointsToRetrieve")
     Single<List<Checkpoint>> getNextCheckpointsFromOrigin(int originCheckpointId, int maximumCheckpointsToRetrieve, int startCheckPointId, int endCheckpointId);
 
     @Query("SELECT DISTINCT SUM(distanceToNextCheckpoint) FROM Checkpoint")

@@ -25,19 +25,19 @@ public final class MapUtils {
 
     @NonNull
     private static final String TAG = MapUtils.class.getSimpleName();
-
     public static final int LOCATION_CIRCLE_RADIUS = 1000;
+    private static final int ROUTE_POLYLINE_WIDTH = 10;
 
     private MapUtils() {
     }
 
     @NonNull
-    public static PolylineOptions generateRoute(@NonNull List<LatLng> mapPoints) {
+    public static PolylineOptions generateRoute(@NonNull Iterable<LatLng> mapPoints) {
         PolylineOptions routePolyline = new PolylineOptions();
-        routePolyline.width(15);
+        routePolyline.width(MapUtils.ROUTE_POLYLINE_WIDTH);
         routePolyline.color(Injection.provideGlobalContext()
                 .getResources()
-                .getColor(R.color.colorBlue));
+                .getColor(R.color.colorPrimary));
         for (LatLng routePoint : mapPoints) {
             routePolyline.add(routePoint);
         }
@@ -96,8 +96,8 @@ public final class MapUtils {
     @NonNull
     public static List<MapCheckpoint> convertToMapCheckpoints(@NonNull Iterable<Checkpoint> checkpoints) {
         Context ctx = Injection.provideGlobalContext();
-        int markerColor = ctx.getResources()
-                .getColor(R.color.colorAccent);
+        int markerColor = Injection.provideResources()
+                .getColor(R.color.colorBlue);
         List<MapCheckpoint> mapCheckpoints = new ArrayList<>();
         for (Checkpoint checkpoint : checkpoints) {
             LatLng position = new LatLng(checkpoint.getLatitude(), checkpoint.getLongitude());

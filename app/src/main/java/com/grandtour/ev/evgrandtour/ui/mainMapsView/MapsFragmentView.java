@@ -21,6 +21,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
@@ -67,7 +68,8 @@ import java.util.List;
 public class MapsFragmentView extends BaseFragment
         implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>,
-        ClusterManager.OnClusterClickListener<MapCheckpoint>, CompoundButton.OnCheckedChangeListener {
+        ClusterManager.OnClusterClickListener<MapCheckpoint>, CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>,
+        GoogleMap.OnInfoWindowCloseListener {
 
     @NonNull
     public static final String TAG = MapsFragmentView.class.getSimpleName();
@@ -224,6 +226,7 @@ public class MapsFragmentView extends BaseFragment
         clusterManager = new ClusterManager<>(activity, this.googleMap);
         clusterManager.setOnClusterItemInfoWindowClickListener(this);
         clusterManager.setOnClusterClickListener(this);
+        clusterManager.setOnClusterItemClickListener(this);
         clusterManager.setRenderer(new MapsClusterRenderer(activity, googleMap, clusterManager));
         clusterManager.getMarkerCollection()
                 .setOnInfoWindowAdapter(new GoogleMapInfoWindow(activity));
@@ -235,6 +238,7 @@ public class MapsFragmentView extends BaseFragment
             googleMap.setOnMarkerClickListener(clusterManager);
             googleMap.setOnInfoWindowClickListener(clusterManager);
             googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+            googleMap.setOnInfoWindowCloseListener(this);
         }
         googleMap.setOnPolylineClickListener(this);
     }
@@ -483,6 +487,30 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
+    public void highLightNavigationPath(List<Integer> routeLegsIdsToHighLight) {
+        List<Polyline> routePolyLines = mapsViewModel.routePolyLine;
+        for (Integer routeLegId : routeLegsIdsToHighLight) {
+            for (Polyline polyline : routePolyLines) {
+                Integer routeIdInPolyline = (Integer) polyline.getTag();
+                if (routeIdInPolyline != null) {
+                    if (routeIdInPolyline.equals(routeLegId)) {
+                        polyline.setColor(Injection.provideResources()
+                                .getColor(R.color.colorBlue));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void clearAllHighlightedPaths() {
+        for (Polyline polyline : mapsViewModel.routePolyLine) {
+            polyline.setColor(Injection.provideResources()
+                    .getColor(R.color.colorPrimary));
+        }
+    }
+
+    @Override
     public void OnLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled) {
         presenter.onLocationTrackingSettingsUpdate(isLocationTrackingEnabled);
     }
@@ -558,6 +586,28 @@ public class MapsFragmentView extends BaseFragment
             }
 
         }
+    }
+
+    @Override
+    public boolean onClusterItemClick(MapCheckpoint mapCheckpoint) {
+        if (mapCheckpoint != null) {
+            List<MapCheckpoint> mapCheckpoints = mapsViewModel.routeCheckpoints;
+            int startCheckpointId = mapCheckpoints.get(0)
+                    .getMapCheckpointId();
+            int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
+                    .getMapCheckpointId();
+            presenter.onMarkerClicked(mapCheckpoint.getMapCheckpointId(), startCheckpointId, endCheckpointId);
+        }
+        return false;
+    }
+
+    /**
+     * Be aware, marker object is always null here due to the fact that we are redirecting the info window callbacks via the cluster manager in MapUtils,
+     * that means the googleMap callback does not return any marker object upon info window closed callback
+     */
+    @Override
+    public void onInfoWindowClose(Marker marker) {
+        presenter.onMarkerInfoWindowClosed();
     }
 
     private class RouteInfoBottomSheetCallback extends BottomSheetBehavior.BottomSheetCallback {
