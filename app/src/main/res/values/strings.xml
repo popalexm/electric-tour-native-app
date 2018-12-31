@@ -33,6 +33,8 @@
     <string name="prefix_driving_duration">Driving Duration</string>
     <string name="message_no_information_available">No information available</string>
     <string name="btn_select_trip_label">Select \n Trip</string>
+    <string name="btn_start_navigation">Start \n Navigation</string>
+    <string name="btn_clear_navigation_selection">Clear \n Selection</string>
     <string name="application_version">App Version</string>
 
     // Dummy testing strings

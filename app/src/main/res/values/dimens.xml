@@ -5,11 +5,12 @@
     <dimen name="margin_title">11dp</dimen>
     <dimen name="margin_medium_large">12dp</dimen>
     <dimen name="margin_normal">16dp</dimen>
+    <dimen name="margin_normal_large">20dp</dimen>
     <dimen name="margin_large">24dp</dimen>
     <dimen name="top_bar_height">52dp</dimen>
     <dimen name="search_view_max_width">10000dp</dimen>
     <dimen name="fab_elevation">15dp</dimen>
     <dimen name="bottom_info_card_elevation">10dp</dimen>
-    <dimen name="bottom_info_card_height_header">90dp</dimen>
+    <dimen name="bottom_info_card_height_header">100dp</dimen>
 
 </resources>

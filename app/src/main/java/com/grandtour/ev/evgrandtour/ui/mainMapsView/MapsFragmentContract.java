@@ -63,6 +63,10 @@ public class MapsFragmentContract {
 
         void moveCameraToCurrentLocation(@NonNull LatLng location);
 
+        void showSelectTripButton(boolean shouldDisplaySelectTripButton);
+
+        void showNavigationButton(boolean shouldDisplayNavigationLayout);
+
         void highLightNavigationPath(List<Integer> routeLegsIdsToHighLight);
 
         void clearAllHighlightedPaths();
@@ -82,7 +86,7 @@ public class MapsFragmentContract {
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
-        void onNavigationClicked(@NonNull MapCheckpoint originMarker, int startCheckpoint, int endCheckpoint);
+        void onNavigationClicked();
 
         void onChooseTourClicked();
 
@@ -111,5 +115,6 @@ public class MapsFragmentContract {
         void onMarkerClicked(int checkpointId, int startCheckpoint, int endCheckpoint);
 
         void onMarkerInfoWindowClosed();
+
     }
 }

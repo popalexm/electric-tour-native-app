@@ -12,6 +12,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
+import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
@@ -64,7 +65,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
 
     @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
-    @NonNull
     private final int NAVIGATION_CHECKPOINTS_SIZE = 11;
 
     @NonNull
@@ -79,7 +79,9 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     private Service locationUpdatesService;
     private boolean isServiceBound;
     @NonNull
-    private List<LatLng> currentSelectedRoutePoints = new ArrayList<>();
+    private final List<LatLng> currentSelectedRoutePoints = new ArrayList<>();
+    @NonNull
+    private final List<Checkpoint> navigationPathWayPoints = new ArrayList<>();
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -158,21 +160,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     @Override
-    public void onNavigationClicked(@NonNull MapCheckpoint originMarker, int startCheckpoint, int endCheckpoint) {
-        Integer originCheckpointId = originMarker.getMapCheckpointId();
-        addSubscription(
-                new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), originCheckpointId,
-                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpoint, endCheckpoint).perform()
-                        .doOnSuccess(navigationPathData -> {
-                            if (navigationPathData != null) {
-                                String navUri = MapUtils.composeUriForMapsIntentRequest(navigationPathData.getNavigationPathWayPoints());
-                                if (isViewAttached) {
-                                    view.startGoogleMapsDirections(navUri);
-                                }
-                            }
-                        })
-                        .doOnError(Throwable::printStackTrace)
-                        .subscribe());
+    public void onNavigationClicked() {
+        if (navigationPathWayPoints.size() != 0) {
+            String navUri = MapUtils.composeUriForMapsIntentRequest(navigationPathWayPoints);
+            if (isViewAttached) {
+                view.startGoogleMapsDirections(navUri);
+            }
+        }
     }
 
     @Override
@@ -319,7 +313,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
                             if (navigationPathData != null) {
                                 if (isViewAttached) {
                                     view.highLightNavigationPath(navigationPathData.getNavigationPathRouteLegs());
+                                    view.showSelectTripButton(false);
+                                    view.showNavigationButton(true);
                                 }
+                                navigationPathWayPoints.addAll(navigationPathData.getNavigationPathWayPoints());
                             }
                         })
                         .doOnError(Throwable::printStackTrace)
@@ -329,7 +326,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     @Override
     public void onMarkerInfoWindowClosed() {
         if (isViewAttached) {
+            navigationPathWayPoints.clear();
             view.clearAllHighlightedPaths();
+            view.showNavigationButton(false);
+            view.showSelectTripButton(true);
         }
     }
 

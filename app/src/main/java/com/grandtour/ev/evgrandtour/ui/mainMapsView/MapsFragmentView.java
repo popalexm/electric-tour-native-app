@@ -67,17 +67,15 @@ import java.util.List;
 
 public class MapsFragmentView extends BaseFragment
         implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
-        SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterItemInfoWindowClickListener<MapCheckpoint>,
-        ClusterManager.OnClusterClickListener<MapCheckpoint>, CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>,
-        GoogleMap.OnInfoWindowCloseListener {
-
-    @NonNull
-    public static final String TAG = MapsFragmentView.class.getSimpleName();
+        SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterClickListener<MapCheckpoint>,
+        CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
     @NonNull
     private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
     @NonNull
     private static final String ACTION_LOCATION_BROADCAST = "LocationResultsBroadcast";
+    @NonNull
+    public static final String TAG = MapsFragmentView.class.getSimpleName();
     public static final int ZOOM_LEVEL = 13;
 
     @NonNull
@@ -89,11 +87,10 @@ public class MapsFragmentView extends BaseFragment
     private final RouteRequestsBroadcastReceiver routeDirectionsBroadcastReceiver = new RouteRequestsBroadcastReceiver(presenter);
     @NonNull
     private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(presenter);
-
-    @NonNull
-    private FragmentMainMapViewBinding viewBinding;
     @NonNull
     private final List<MapCheckpoint> filterSelection = new ArrayList<>();
+    @NonNull
+    private FragmentMainMapViewBinding viewBinding;
     @Nullable
     private ClusterManager<MapCheckpoint> clusterManager;
     @NonNull
@@ -224,7 +221,6 @@ public class MapsFragmentView extends BaseFragment
 
     private void setupClusterManager(@NonNull Activity activity) {
         clusterManager = new ClusterManager<>(activity, this.googleMap);
-        clusterManager.setOnClusterItemInfoWindowClickListener(this);
         clusterManager.setOnClusterClickListener(this);
         clusterManager.setOnClusterItemClickListener(this);
         clusterManager.setRenderer(new MapsClusterRenderer(activity, googleMap, clusterManager));
@@ -487,6 +483,16 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
+    public void showSelectTripButton(boolean shouldDisplaySelectTripButton) {
+        mapsViewModel.isSelectTourButtonDisplayed.set(shouldDisplaySelectTripButton);
+    }
+
+    @Override
+    public void showNavigationButton(boolean shouldDisplayNavigationLayout) {
+        mapsViewModel.areNavigationButtonsEnabled.set(shouldDisplayNavigationLayout);
+    }
+
+    @Override
     public void highLightNavigationPath(List<Integer> routeLegsIdsToHighLight) {
         List<Polyline> routePolyLines = mapsViewModel.routePolyLine;
         for (Integer routeLegId : routeLegsIdsToHighLight) {
@@ -536,16 +542,6 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void onClusterItemInfoWindowClick(MapCheckpoint mapCheckpoint) {
-        List<MapCheckpoint> mapCheckpoints = mapsViewModel.routeCheckpoints;
-        int startCheckpointId = mapCheckpoints.get(0)
-                .getMapCheckpointId();
-        int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
-                .getMapCheckpointId();
-        presenter.onNavigationClicked(mapCheckpoint, startCheckpointId, endCheckpointId);
-    }
-
-    @Override
     public boolean onClusterClick(Cluster<MapCheckpoint> cluster) {
         LatLngBounds.Builder builder = LatLngBounds.builder();
         for (ClusterItem item : cluster.getItems()) {
@@ -584,7 +580,6 @@ public class MapsFragmentView extends BaseFragment
                     filterSelection.remove(selectedFilterCheckpoint);
                 }
             }
-
         }
     }
 

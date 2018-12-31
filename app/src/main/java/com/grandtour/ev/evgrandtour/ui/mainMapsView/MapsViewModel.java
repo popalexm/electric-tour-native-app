@@ -61,7 +61,8 @@ public class MapsViewModel {
     public final ObservableBoolean removeFilteringOptions = new ObservableBoolean(false);
     @NonNull
     public final ObservableArrayList<Chip> checkPointFilteringOptions = new ObservableArrayList<>();
-
+    @NonNull
+    public final ObservableBoolean areNavigationButtonsEnabled = new ObservableBoolean();
     @NonNull
     public final ItemBinding<SearchResultModel> resultViewModelItemBinding = ItemBinding.of(BR.viewModel, R.layout.item_search_view);
     @NonNull
@@ -91,9 +92,11 @@ public class MapsViewModel {
     public static void setRevealButtonState(@NonNull View view, boolean shouldButtonBeRevealed) {
         AnimationManager animationManager = AnimationManager.getInstance();
         if (shouldButtonBeRevealed) {
+            view.setVisibility(View.VISIBLE);
             animationManager.revealButtonAnimation(view);
         } else {
             animationManager.hideButtonAnimation(view);
+            view.setVisibility(View.GONE);
         }
     }
 
