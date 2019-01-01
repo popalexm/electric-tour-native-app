@@ -59,9 +59,7 @@ public class LocationsUpdatesService extends Service {
     }
 
     private void startLocationUpdates() {
-        gpsLocationManager.initLocationClient();
-        gpsLocationManager.createLocationRequest();
-        gpsLocationManager.setCallback(new LocationUpdateCallback());
+        gpsLocationManager.setLocationUpdatesCallback(new LocationUpdateCallback());
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             gpsLocationManager.startRequestingLocationUpdates();

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel" />
     </data>
 
     <android.support.v7.widget.CardView

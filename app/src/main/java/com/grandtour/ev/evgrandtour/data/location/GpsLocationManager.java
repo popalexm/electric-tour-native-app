@@ -4,10 +4,12 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.grandtour.ev.evgrandtour.app.Injection;
 
 import android.Manifest;
+import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,25 +38,43 @@ public class GpsLocationManager {
         return GpsLocationManager.instance;
     }
 
-    public void setCallback(@NonNull LocationCallback callback) {
-        locationCallback = callback;
-    }
-
-    public void initLocationClient() {
+    private void initLocationClient() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(Injection.provideGlobalContext());
     }
 
-    public void createLocationRequest() {
+    private void createLocationUpdatesRequest() {
         locationRequest = new LocationRequest();
         locationRequest.setInterval(GpsLocationManager.UPDATE_INTERVAL_IN_MILLISECONDS);
         locationRequest.setFastestInterval(GpsLocationManager.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+    public void setLocationUpdatesCallback(@NonNull LocationCallback callback) {
+        locationCallback = callback;
+    }
+
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    public void getLastKnownLocation(@NonNull OnSuccessListener<Location> locationOnSuccessListener) {
+        try {
+            if (fusedLocationClient == null) {
+                initLocationClient();
+            }
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(locationOnSuccessListener);
+
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     public void startRequestingLocationUpdates() {
         Log.i(GpsLocationManager.TAG, "Starting location updates");
         try {
+            if (fusedLocationClient == null) {
+                initLocationClient();
+            }
+            createLocationUpdatesRequest();
             if (fusedLocationClient != null && locationCallback != null) {
                 fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
             }
@@ -67,6 +87,9 @@ public class GpsLocationManager {
     public void stopRequestingLocationUpdates() {
         Log.i(GpsLocationManager.TAG, "Stopping location updates");
         try {
+            if (fusedLocationClient == null) {
+                initLocationClient();
+            }
             if (fusedLocationClient != null && locationCallback != null) {
                 fusedLocationClient.removeLocationUpdates(locationCallback);
             }

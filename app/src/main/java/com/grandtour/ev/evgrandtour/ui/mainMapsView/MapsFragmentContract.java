@@ -3,12 +3,13 @@ package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchResultViewModel;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.search.SearchViewResultClickListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchViewResultClickListener;
 import com.grandtour.ev.evgrandtour.ui.settings.UpdateSettingsListener;
 
 import android.location.Location;
@@ -22,7 +23,7 @@ public class MapsFragmentContract {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
-        void loadCheckpoints(@NonNull List<MapCheckpoint> checkpoints);
+        void loadCheckpointsOnMapView(@NonNull List<MapCheckpoint> checkpoints);
 
         void centerMapToCurrentSelectedRoute();
 
@@ -34,17 +35,15 @@ public class MapsFragmentContract {
 
         void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId);
 
-        void showTotalRouteInformation(@NonNull String infoMessage, boolean shouldShowInfoCard);
+        void showTotalRouteInformation(@NonNull String routeTitle, @NonNull String routeDrivingDistance, @NonNull String routeDrivingDuration);
 
         void startGoogleMapsDirections(@NonNull String navigationUri);
-
-        void showCalculateDistanceDialog(@NonNull List<Checkpoint> checkpoints);
 
         void showSettingsDialog();
 
         void showTourPickerDialog();
 
-        void displaySearchResults(@NonNull List<SearchResultViewModel> checkpoints);
+        void displaySearchResults(@NonNull List<SearchResultModel> checkpoints);
 
         void clearSearchResults();
 
@@ -52,11 +51,25 @@ public class MapsFragmentContract {
 
         void animateRouteSelectionButton();
 
-        void animateInfoText();
+        void animateRouteInformationText();
 
-        void showElevationChartForRouteLegDialog(@NonNull Integer routeLegId);
+        void showChartView(@NonNull LineData lineData, @NonNull Description description);
 
-        void showEntireRouteElevationChartDialog();
+        void loadAvailableFilterPoints(List<MapCheckpoint> availableFilterPoints);
+
+        void showFilteringOptionsView();
+
+        void clearFilteringChipsSelectionStatus();
+
+        void moveCameraToCurrentLocation(@NonNull LatLng location);
+
+        void showSelectTripButton(boolean shouldDisplaySelectTripButton);
+
+        void showNavigationButton(boolean shouldDisplayNavigationLayout);
+
+        void highLightNavigationPath(List<Integer> routeLegsIdsToHighLight);
+
+        void clearAllHighlightedPaths();
     }
 
     public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
@@ -73,24 +86,32 @@ public class MapsFragmentContract {
 
         void onCurrentLocationChanged(@NonNull Location coordinates);
 
-        void onNavigationClicked(@NonNull MapCheckpoint originMarker);
-
-        void onCalculateDistanceBetweenTwoCheckpointsClicked();
+        void onNavigationClicked();
 
         void onChooseTourClicked();
 
         void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
 
-        void onNewSearchQuery(@NonNull String text);
+        void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedCheckpoints);
 
         void onSearchQueryCleared();
 
         void onSettingsClicked();
 
-        void onRouteElevationChartClicked();
+        void onFilterButtonClicked();
 
         void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
 
-        void onPolylineClicked(Integer routeLegId);
+        void onSelectedCheckpointRouteFilters(@NonNull List<MapCheckpoint> toFilterRouteByCheckpoints);
+
+        void onClearFilteredRouteClicked();
+
+        void onFilterChipSelectionRemoved();
+
+        void onMyLocationButtonClicked();
+
+        void onMarkerClicked(int checkpointId, int startCheckpoint, int endCheckpoint);
+
+        void onMarkerInfoWindowClosed();
     }
 }

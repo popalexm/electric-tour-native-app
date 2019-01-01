@@ -25,19 +25,19 @@ public final class MapUtils {
 
     @NonNull
     private static final String TAG = MapUtils.class.getSimpleName();
-
     public static final int LOCATION_CIRCLE_RADIUS = 1000;
+    private static final int ROUTE_POLYLINE_WIDTH = 10;
 
     private MapUtils() {
     }
 
     @NonNull
-    public static PolylineOptions generateRoute(@NonNull List<LatLng> mapPoints) {
+    public static PolylineOptions generateRoute(@NonNull Iterable<LatLng> mapPoints) {
         PolylineOptions routePolyline = new PolylineOptions();
-        routePolyline.width(15);
+        routePolyline.width(MapUtils.ROUTE_POLYLINE_WIDTH);
         routePolyline.color(Injection.provideGlobalContext()
                 .getResources()
-                .getColor(R.color.colorBlue));
+                .getColor(R.color.colorAccent));
         for (LatLng routePoint : mapPoints) {
             routePolyline.add(routePoint);
         }
@@ -49,16 +49,19 @@ public final class MapUtils {
         return PolyUtil.decode(polyline);
     }
 
-
+    /**
+     * @param distanceDuration Pair that contains the route info
+     */
     @NonNull
-    public static String generateInfoMessage(@NonNull Pair<Pair<Integer, Integer>, String> routeInfoPair) {
-        Pair<Integer, Integer> distanceDuration = routeInfoPair.first;
+    public static Pair<String, String> generateInfoMessage(@NonNull Pair<Integer, Integer> distanceDuration) {
         int lengthInKm = distanceDuration.first / 1000;
         int duration = distanceDuration.second;
-        String routeName = routeInfoPair.second;
         String convertedDuration = TimeUtils.convertFromSecondsToFormattedTime(duration);
         Context ctx = Injection.provideGlobalContext();
-        return ctx.getString(R.string.format_route_inf_message, routeName, lengthInKm, ctx.getString(R.string.suffix_kilometers), convertedDuration);
+        String routeDistance = ctx.getString(R.string.format_route_distance_info, ctx.getString(R.string.prefix_driving_distance), lengthInKm,
+                ctx.getString(R.string.suffix_kilometers));
+        String routeDuration = ctx.getString(R.string.format_route_duration_info, ctx.getString(R.string.prefix_driving_duration), convertedDuration);
+        return new Pair<>(routeDistance, routeDuration);
     }
 
     @NonNull
@@ -93,8 +96,8 @@ public final class MapUtils {
     @NonNull
     public static List<MapCheckpoint> convertToMapCheckpoints(@NonNull Iterable<Checkpoint> checkpoints) {
         Context ctx = Injection.provideGlobalContext();
-        int markerColor = ctx.getResources()
-                .getColor(R.color.colorAccent);
+        int markerColor = Injection.provideResources()
+                .getColor(R.color.colorBlue);
         List<MapCheckpoint> mapCheckpoints = new ArrayList<>();
         for (Checkpoint checkpoint : checkpoints) {
             LatLng position = new LatLng(checkpoint.getLatitude(), checkpoint.getLongitude());

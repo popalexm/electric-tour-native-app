@@ -9,17 +9,17 @@ import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
-import android.widget.TextView;
 
 public final class AnimationManager {
 
     private static final double BOUNCE_ANIM_AMPLITUDE = 0.2;
     private static final double BOUNCE_ANIM_FREQUENCY = 20;
+
     private static AnimationManager sInstance;
 
     private AnimationManager() {
@@ -48,15 +48,36 @@ public final class AnimationManager {
         animator.start();
     }
 
-    public void startBounceAnimation(@NonNull FloatingActionButton button) {
-        Animation bounceAnimation = android.view.animation.AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.bounce_animation);
+    public void startBounceAnimation(@NonNull View view) {
+        Animation bounceAnimation = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.bounce_animation);
         Interpolator interpolator = new BounceAnimationInterpolator(AnimationManager.BOUNCE_ANIM_AMPLITUDE, AnimationManager.BOUNCE_ANIM_FREQUENCY);
         bounceAnimation.setInterpolator(interpolator);
-        button.startAnimation(bounceAnimation);
+        view.startAnimation(bounceAnimation);
     }
 
-    public void shakeTextView(@NonNull TextView textView) {
+    public void shakeTextView(@NonNull View view) {
         Animation animShake = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.shake_animation);
-        textView.startAnimation(animShake);
+        view.startAnimation(animShake);
     }
+
+    public void revealButtonAnimation(@NonNull View view) {
+        Animation revealAnimation = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.reveal_view_animation);
+        view.startAnimation(revealAnimation);
+    }
+
+    public void hideButtonAnimation(@NonNull View view) {
+        Animation hideAnimation = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.hide_view_animation);
+        view.startAnimation(hideAnimation);
+    }
+
+    public void slideAnimationDown(@NonNull View view) {
+        Animation animSlideFromTop = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.slide_in_from_top);
+        view.startAnimation(animSlideFromTop);
+    }
+
+    public void slideAnimationUp(@NonNull View view) {
+        Animation animSlideFromTop = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.slide_out_to_top);
+        view.startAnimation(animSlideFromTop);
+    }
+
 }

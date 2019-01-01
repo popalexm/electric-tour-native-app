@@ -12,6 +12,8 @@ public class RouteLeg {
     @PrimaryKey(autoGenerate = true)
     private int routeLegId;
     private int routeId;
+    private int startCheckpointId;
+    private int endCheckpointId;
     private double routeLegStartLatitude;
     private double routeLegStartLongitude;
     private double routeLegEndLatitude;
@@ -63,5 +65,21 @@ public class RouteLeg {
 
     public void setRouteLegEndLongitude(double routeLegEndLongitude) {
         this.routeLegEndLongitude = routeLegEndLongitude;
+    }
+
+    public int getStartCheckpointId() {
+        return startCheckpointId;
+    }
+
+    public void setStartCheckpointId(int startCheckpointId) {
+        this.startCheckpointId = startCheckpointId;
+    }
+
+    public int getEndCheckpointId() {
+        return endCheckpointId;
+    }
+
+    public void setEndCheckpointId(int endCheckpointId) {
+        this.endCheckpointId = endCheckpointId;
     }
 }

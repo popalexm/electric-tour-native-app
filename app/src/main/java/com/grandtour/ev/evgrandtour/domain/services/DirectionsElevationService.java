@@ -201,13 +201,16 @@ public class DirectionsElevationService extends Service {
 
                             for (int i = 0; i < responseLegs.size(); i++) {
                                 Leg legResponse = responseLegs.get(i);
-                                Pair<Long, List<LatLng>> routeLegIdAndElevationLatLngPoints = insertNewRoutesAndLegsInDatabase(legResponse, (int) routeId);
+
+                                int routeStartCheckpointId = routeRequestCheckpoints.get(i)
+                                        .getCheckpointId();
+                                int routeEndCheckpointId = routeRequestCheckpoints.get(i + 1)
+                                        .getCheckpointId();
+                                Pair<Long, List<LatLng>> routeLegIdAndElevationLatLngPoints = insertNewRoutesAndLegsInDatabase(legResponse, (int) routeId,
+                                        routeStartCheckpointId, routeEndCheckpointId);
 
                                 int checkpointId = routeRequestCheckpoints.get(i)
                                         .getCheckpointId();
-
-                                int checkpointOrderInTourId = routeRequestCheckpoints.get(i)
-                                        .getOrderInTourId();
 
                                 Long routeLegId = routeLegIdAndElevationLatLngPoints.first;
                                 List<LatLng> elevationLatLngList = routeLegIdAndElevationLatLngPoints.second;
@@ -215,6 +218,8 @@ public class DirectionsElevationService extends Service {
                                 insertedRouteLegIds.add(routeLegId);
                                 updateDistanceAndDurationForCheckpointId(legResponse, checkpointId);
 
+                                int checkpointOrderInTourId = routeRequestCheckpoints.get(i)
+                                        .getOrderInTourId();
                                 insertElevationPointsToDatabase(routeLegId, checkpointOrderInTourId, elevationLatLngList);
                             }
                             return insertedRouteLegIds;
@@ -227,8 +232,9 @@ public class DirectionsElevationService extends Service {
     /**Saves the legs response and associated steps
      * @return returns a
      */
-    private Pair<Long, List<LatLng>> insertNewRoutesAndLegsInDatabase(@NonNull Leg legResponse, int routeId) {
-        RouteLeg routeLeg = NetworkResponseConverter.convertResponseToRouteLeg(legResponse, routeId);
+    private Pair<Long, List<LatLng>> insertNewRoutesAndLegsInDatabase(@NonNull Leg legResponse, int routeId, int routeStartCheckpointId,
+            int routeEndCheckpointId) {
+        RouteLeg routeLeg = NetworkResponseConverter.convertResponseToRouteLeg(legResponse, routeId, routeStartCheckpointId, routeEndCheckpointId);
         long routeLegId = storageManager.routeLegDao()
                 .insertRouteLeg(routeLeg);
 

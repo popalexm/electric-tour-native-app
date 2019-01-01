@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 @Dao
 public interface RouteLegDao {
 
@@ -18,7 +20,13 @@ public interface RouteLegDao {
     @Query("DELETE FROM RouteLeg")
     int deleteAll();
 
-    @Query("Select * from ROUTELEG WHERE routeId = :routeId")
+    @Query("SELECT * FROM RouteLeg WHERE routeId = :routeId")
     List<RouteLeg> getRouteLegsForTourId(int routeId);
+
+    @Query("SELECT * FROM RouteLeg WHERE startCheckpointId BETWEEN :startCheckpointId AND :endCheckpointId")
+    Maybe<List<RouteLeg>> getRouteLegsForStartAndEndCheckpoints(int startCheckpointId, int endCheckpointId);
+
+    @Query("SELECT * FROM RouteLeg WHERE startCheckpointId =:startCheckpoint AND endCheckpointId =:endCheckpoint")
+    RouteLeg getRouteLegForStartCheckpointAndEndCheckpoint(int startCheckpoint, int endCheckpoint);
 
 }

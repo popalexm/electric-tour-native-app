@@ -20,4 +20,5 @@ public interface RouteStepDao {
 
     @Query("SELECT * FROM ROUTESTEP WHERE routeLegId = :legId")
     List<RouteStep> getStepsForLegId(int legId);
+
 }

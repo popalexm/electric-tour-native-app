@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:name=".app.MainApplication"
@@ -17,9 +19,17 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="54c0051eb6d5a4d8f8be1b99d693578c69c7b14f" />
 
         <activity
             android:name=".ui.mainActivity.MainActivity"
@@ -41,10 +51,5 @@
 
         <service android:name=".domain.services.LocationsUpdatesService" />
         <service android:name=".domain.services.DirectionsElevationService" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="54c0051eb6d5a4d8f8be1b99d693578c69c7b14f" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

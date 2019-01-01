@@ -30,18 +30,21 @@ public interface CheckpointsDao {
     @Query("SELECT * FROM Checkpoint WHERE (checkpointName LIKE :queryText OR checkpointId LIKE :queryText) AND tourId = :tourId")
     Maybe<List<Checkpoint>> getCheckpointsThatMatchQuery(String queryText, String tourId);
 
-    @Query("SELECT * FROM Checkpoint WHERE checkpointId > :checkpointId LIMIT 10")
-    Single<List<Checkpoint>> getNextTenCheckpoints(int checkpointId);
+    @Query("SELECT * FROM Checkpoint WHERE checkpointId >= :originCheckpointId AND checkpointId BETWEEN :startCheckPointId AND :endCheckpointId LIMIT :maximumCheckpointsToRetrieve")
+    Single<List<Checkpoint>> getNextCheckpointsFromOrigin(int originCheckpointId, int maximumCheckpointsToRetrieve, int startCheckPointId, int endCheckpointId);
 
     @Query("SELECT DISTINCT SUM(distanceToNextCheckpoint) FROM Checkpoint")
-    Maybe<Integer> getTotalDistanceForTour();
+    Maybe<Integer> getDistanceForEntireTour();
 
     @Query("SELECT DISTINCT SUM(durationToNextCheckpoint) FROM Checkpoint")
-    Maybe<Integer> getTotalRouteTimeForTour();
+    Maybe<Integer> getDrivingTimeForEntireTour();
 
     @Query("SELECT SUM(distanceToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
-    Single<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+    Maybe<Integer> getDistanceBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
 
     @Query("SELECT SUM(durationToNextCheckpoint) FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
-    Single<Integer> getDrivingTimeBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+    Maybe<Integer> getDrivingTimeBetweenTwoCheckpoints(int startCheckpointId, int endCheckPointId);
+
+    @Query("SELECT * FROM Checkpoint WHERE checkpointId BETWEEN :startCheckpointId AND :endCheckPointId")
+    Maybe<List<Checkpoint>> getAllCheckpointsBetweenStartAndEndCheckpointIds(int startCheckpointId, int endCheckPointId);
 }

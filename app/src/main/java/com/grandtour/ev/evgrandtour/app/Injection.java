@@ -8,6 +8,7 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
 public class Injection {
@@ -49,5 +50,10 @@ public class Injection {
 
     @NonNull
     public static SharedPreferences provideSharedPreferences () {return Injection.context.getSharedPreferences(Injection.SHARED_PREFERENCES, Context.MODE_PRIVATE);}
+
+    @NonNull
+    public static Resources provideResources() {
+        return Injection.context.getResources();
+    }
 
 }

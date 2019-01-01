@@ -32,4 +32,7 @@ public interface ElevationPointDao {
     @Query("SELECT * FROM elevationpoint WHERE routeLegId =:routeLegId")
     Maybe<List<ElevationPoint>> getElevationPointsForRouteLegId(Integer routeLegId);
 
+    @Query("SELECT * FROM ElevationPoint WHERE routeLegId IN (SELECT routeLegId FROM RouteLeg WHERE startCheckpointId BETWEEN :startCheckpointId AND :endCheckpointId) ")
+    Maybe<List<ElevationPoint>> getElevationPointsBetweenTwoCheckpoints(int startCheckpointId, int endCheckpointId);
+
 }
