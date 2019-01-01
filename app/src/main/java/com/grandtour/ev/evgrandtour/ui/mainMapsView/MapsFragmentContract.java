@@ -102,8 +102,6 @@ public class MapsFragmentContract {
 
         void onLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled);
 
-        void onPolylineClicked(Integer routeLegId);
-
         void onSelectedCheckpointRouteFilters(@NonNull List<MapCheckpoint> toFilterRouteByCheckpoints);
 
         void onClearFilteredRouteClicked();
@@ -115,6 +113,5 @@ public class MapsFragmentContract {
         void onMarkerClicked(int checkpointId, int startCheckpoint, int endCheckpoint);
 
         void onMarkerInfoWindowClosed();
-
     }
 }

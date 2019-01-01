@@ -29,8 +29,8 @@ import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartViewFormaters.XAxisValueFormatter;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartViewFormaters.YAxisValueFormatter;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.XAxisValueFormatter;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.YAxisValueFormatter;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
@@ -65,8 +65,7 @@ import android.widget.CompoundButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends BaseFragment
-        implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener, GoogleMap.OnPolylineClickListener,
+public class MapsFragmentView extends BaseFragment implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterClickListener<MapCheckpoint>,
         CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
@@ -236,7 +235,6 @@ public class MapsFragmentView extends BaseFragment
             googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
             googleMap.setOnInfoWindowCloseListener(this);
         }
-        googleMap.setOnPolylineClickListener(this);
     }
 
     @Override
@@ -552,11 +550,6 @@ public class MapsFragmentView extends BaseFragment
         return true;
     }
 
-    @Override
-    public void onPolylineClick(Polyline polyline) {
-        Integer routeLegId = (Integer) polyline.getTag();
-        presenter.onPolylineClicked(routeLegId);
-    }
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

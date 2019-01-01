@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.mainMapsView.chartViewFormaters;
+package com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView;
 
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;

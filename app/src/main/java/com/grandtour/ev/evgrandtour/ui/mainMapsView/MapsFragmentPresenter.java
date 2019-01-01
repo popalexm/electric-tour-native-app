@@ -6,9 +6,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.android.PolyUtil;
 
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
@@ -32,6 +30,8 @@ import com.grandtour.ev.evgrandtour.domain.useCases.QueryForCheckpointsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.ChartDataCreatedListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.ChartViewDataHandler;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 import com.grandtour.ev.evgrandtour.ui.notifications.NotificationManager;
@@ -45,7 +45,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -61,7 +60,8 @@ import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class MapsFragmentPresenter extends BasePresenter implements MapsFragmentContract.Presenter, ServiceConnection, OnSuccessListener<Location> {
+public class MapsFragmentPresenter extends BasePresenter
+        implements MapsFragmentContract.Presenter, ServiceConnection, OnSuccessListener<Location>, ChartDataCreatedListener {
 
     @NonNull
     private final String TAG = MapsFragmentPresenter.class.getSimpleName();
@@ -263,11 +263,6 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         } else {
             stopLocationTracking();
         }
-    }
-
-    @Override
-    public void onPolylineClicked(Integer routeLegId) {
-        // TODO Implement toast that displays distance for specific route leg
     }
 
     @Override
@@ -521,54 +516,10 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
     }
 
     private void createChartViewEntryData(@NonNull List<ElevationPoint> elevationPoints) {
-        if (isViewAttached) {
-            List<Entry> elevationPointEntries = new ArrayList<>();
-            for (int i = 0; i < elevationPoints.size(); i++) {
-                ElevationPoint elevationPoint = elevationPoints.get(i);
-                int startCheckpointId = elevationPoint.getStartCheckpointOrderId();
-                elevationPointEntries.add(new Entry(startCheckpointId, (float) elevationPoint.getElevation()));
-            }
-            prepareChartViewData(elevationPointEntries);
-        }
+        new ChartViewDataHandler(elevationPoints, this);
     }
 
-    // TODO Delegate this to a handler class that prepared data for chart view
-    private void prepareChartViewData(@NonNull List<Entry> elevationPointsList) {
-        if (elevationPointsList.size() > 0) {
-            int labelColor = Injection.provideGlobalContext()
-                    .getResources()
-                    .getColor(R.color.colorLightGrey);
-            int accentColor = Injection.provideGlobalContext()
-                    .getResources()
-                    .getColor(R.color.colorAccent);
-
-            String lineLabel = Injection.provideGlobalContext()
-                    .getResources()
-                    .getString(R.string.label_line_chart);
-            String lineChartDescription = Injection.provideGlobalContext()
-                    .getResources()
-                    .getString(R.string.label_line_chart_values);
-
-            LineDataSet dataSet = new LineDataSet(elevationPointsList, lineLabel);
-            dataSet.setValueTextColor(Color.WHITE);
-            dataSet.setColor(accentColor);
-            dataSet.setCircleColor(accentColor);
-
-            dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
-            dataSet.setDrawCircles(false);
-
-            LineData lineData = new LineData(dataSet);
-
-            Description description = new Description();
-            description.setText(lineChartDescription);
-            description.setTextColor(labelColor);
-            if (isViewAttached) {
-                view.showChartView(lineData, description);
-            }
-        }
-    }
-
-    private void drawRouteStepFromMapPoints(@NonNull List<LatLng> routeMapPoints, int routeStepId) {
+    private void drawRouteStepFromMapPoints(@NonNull Iterable<LatLng> routeMapPoints, int routeStepId) {
         PolylineOptions routePolyline = MapUtils.generateRoute(routeMapPoints);
         if (isViewAttached) {
             view.drawRouteStepLineOnMap(routePolyline, routeStepId);
@@ -591,6 +542,13 @@ public class MapsFragmentPresenter extends BasePresenter implements MapsFragment
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             view.moveCameraToCurrentLocation(currentLocation);
+        }
+    }
+
+    @Override
+    public void OnChartDataCreated(@NonNull LineData lineData, @NonNull Description description) {
+        if (isViewAttached) {
+            view.showChartView(lineData, description);
         }
     }
 }
