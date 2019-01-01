@@ -62,19 +62,13 @@ public final class AnimationManager {
     }
 
     public void revealButtonAnimation(@NonNull View view) {
-        view.animate()
-                .scaleX(1)
-                .scaleY(1)
-                .setDuration(AnimationManager.REVEAL_HIDE_ANIM_DURATION)
-                .start();
+        Animation revealAnimation = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.reveal_view_animation);
+        view.startAnimation(revealAnimation);
     }
 
     public void hideButtonAnimation(@NonNull View view) {
-        view.animate()
-                .scaleX(0)
-                .scaleY(0)
-                .setDuration(AnimationManager.REVEAL_HIDE_ANIM_DURATION)
-                .start();
+        Animation hideAnimation = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.hide_view_animation);
+        view.startAnimation(hideAnimation);
     }
 
     public void slideAnimationDown(@NonNull View view) {
