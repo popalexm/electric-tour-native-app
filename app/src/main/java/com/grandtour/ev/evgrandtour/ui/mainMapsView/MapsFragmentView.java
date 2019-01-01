@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -52,6 +53,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresPermission;
 import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
@@ -205,16 +207,27 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
         presenter.onAttach();
         Activity activity = getActivity();
         if (activity != null) {
-            if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                this.googleMap.setMyLocationEnabled(true);
-                this.googleMap.getUiSettings()
-                        .setMyLocationButtonEnabled(false);
+            if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                setupGoogleMapsStyling();
                 setupClusterManager(activity);
                 setupGoogleMapCallbacks();
                 presenter.onMapReady();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
             }
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    private void setupGoogleMapsStyling() {
+        try {
+            googleMap.setMyLocationEnabled(true);
+            googleMap.getUiSettings()
+                    .setMyLocationButtonEnabled(false);
+            MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(Injection.provideGlobalContext(), R.raw.google_maps_dark_mode);
+            googleMap.setMapStyle(style);
+        } catch (SecurityException e) {
+            e.printStackTrace();
         }
     }
 
@@ -510,7 +523,7 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     public void clearAllHighlightedPaths() {
         for (Polyline polyline : mapsViewModel.routePolyLine) {
             polyline.setColor(Injection.provideResources()
-                    .getColor(R.color.colorPrimary));
+                    .getColor(R.color.colorAccent));
         }
     }
 

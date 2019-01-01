@@ -19,7 +19,6 @@ public final class AnimationManager {
 
     private static final double BOUNCE_ANIM_AMPLITUDE = 0.2;
     private static final double BOUNCE_ANIM_FREQUENCY = 20;
-    private static final int REVEAL_HIDE_ANIM_DURATION = 300;
 
     private static AnimationManager sInstance;
 
@@ -80,4 +79,5 @@ public final class AnimationManager {
         Animation animSlideFromTop = AnimationUtils.loadAnimation(Injection.provideGlobalContext(), R.anim.slide_out_to_top);
         view.startAnimation(animSlideFromTop);
     }
+
 }

@@ -61,7 +61,6 @@
 
     <style name="markerTextStyle">
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="clusterMarkerTextStyle">

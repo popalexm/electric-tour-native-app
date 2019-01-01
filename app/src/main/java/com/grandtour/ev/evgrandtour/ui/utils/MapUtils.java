@@ -37,7 +37,7 @@ public final class MapUtils {
         routePolyline.width(MapUtils.ROUTE_POLYLINE_WIDTH);
         routePolyline.color(Injection.provideGlobalContext()
                 .getResources()
-                .getColor(R.color.colorPrimary));
+                .getColor(R.color.colorAccent));
         for (LatLng routePoint : mapPoints) {
             routePolyline.add(routePoint);
         }
