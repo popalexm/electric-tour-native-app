@@ -29,8 +29,8 @@
     <string name="message_server_down">Server is currently down, probably due to maintenance reasons!</string>
     <string name="btn_filter">Filter</string>
     <string name="btn_clear">Clear</string>
-    <string name="prefix_driving_distance">Driving Distance</string>
-    <string name="prefix_driving_duration">Driving Duration</string>
+    <string name="prefix_driving_distance">Trip Distance</string>
+    <string name="prefix_driving_duration">Trip Duration</string>
     <string name="message_no_information_available">No information available</string>
     <string name="btn_select_trip_label">Select \n Trip</string>
     <string name="btn_start_navigation">Start \n Navigation</string>
