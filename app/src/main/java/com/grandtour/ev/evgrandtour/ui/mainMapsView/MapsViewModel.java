@@ -1,6 +1,5 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polyline;
 
 import com.android.databinding.library.baseAdapters.BR;
@@ -39,8 +38,6 @@ public class MapsViewModel {
     public final ObservableArrayList<MapCheckpoint> routeCheckpoints = new ObservableArrayList<>();
     @NonNull
     public final ObservableField<CurrentUserLocation> currentUserLocation = new ObservableField<>();
-    @NonNull
-    public final ObservableField<Marker> currentSelectedMarker = new ObservableField<>();
     @NonNull
     public final ObservableBoolean isSearchViewOpen = new ObservableBoolean();
     @NonNull

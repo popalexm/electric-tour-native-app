@@ -67,7 +67,7 @@ import android.widget.CompoundButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends BaseFragment implements MapsFragmentContract.View, OnMapReadyCallback, GoogleMap.OnMarkerClickListener,
+public class MapsFragmentView extends BaseFragment implements MapsFragmentContract.View, OnMapReadyCallback,
         SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterClickListener<MapCheckpoint>,
         CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
@@ -255,12 +255,6 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
         if (requestCode == PermissionUtils.LOCATION_REQUEST_PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             viewBinding.mapView.getMapAsync(this);
         }
-    }
-
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        mapsViewModel.currentSelectedMarker.set(marker);
-        return false;
     }
 
     @Override
