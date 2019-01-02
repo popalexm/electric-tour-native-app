@@ -7,7 +7,6 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 
 import android.content.Context;
@@ -34,8 +33,8 @@ public class MapsViewModel {
     public final ObservableBoolean isLoadingInProgress = new ObservableBoolean();
     @NonNull
     public final ObservableArrayList<Polyline> routePolyLine = new ObservableArrayList<>();
-    @NonNull
-    public final ObservableArrayList<MapCheckpoint> routeCheckpoints = new ObservableArrayList<>();
+
+    // TODO Same Here, Remove implementation since it does not belong in ViewModel and move it to Presenter
     @NonNull
     public final ObservableField<CurrentUserLocation> currentUserLocation = new ObservableField<>();
     @NonNull

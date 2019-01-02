@@ -25,9 +25,7 @@ public class MapsFragmentContract {
 
         void loadCheckpointsOnMapView(@NonNull List<MapCheckpoint> checkpoints);
 
-        void centerMapToCurrentSelectedRoute();
-
-        void moveToMarker(@NonNull Integer markerCheckpointId);
+        void centerMapToCurrentSelectedRoute(@NonNull List<MapCheckpoint> checkpoints);
 
         void clearMapCheckpoints();
 
@@ -92,7 +90,7 @@ public class MapsFragmentContract {
 
         void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
 
-        void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedCheckpoints);
+        void onNewSearchQuery(@NonNull String text);
 
         void onSearchQueryCleared();
 
@@ -110,7 +108,7 @@ public class MapsFragmentContract {
 
         void onMyLocationButtonClicked();
 
-        void onMarkerClicked(int checkpointId, int startCheckpoint, int endCheckpoint);
+        void onMarkerClicked(int checkpointId);
 
         void onMarkerInfoWindowClosed();
     }

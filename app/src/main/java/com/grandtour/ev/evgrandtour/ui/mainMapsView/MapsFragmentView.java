@@ -173,7 +173,6 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     public void onDestroy() {
         super.onDestroy();
         viewBinding.mapView.onDestroy();
-        mapsViewModel.routeCheckpoints.clear();
         mapsViewModel.routePolyLine.clear();
         Activity activity = getActivity();
         if (activity != null) {
@@ -283,17 +282,14 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
         Activity activity = getActivity();
         if (clusterManager != null && activity != null) {
             clusterManager.clearItems();
-            mapsViewModel.routeCheckpoints.clear();
             for (MapCheckpoint mapCheckpoint : checkpoints) {
                 clusterManager.addItem(mapCheckpoint);
-                mapsViewModel.routeCheckpoints.add(mapCheckpoint);
             }
         }
     }
 
     @Override
-    public void centerMapToCurrentSelectedRoute() {
-        List<MapCheckpoint> routeCheckpoints = mapsViewModel.routeCheckpoints;
+    public void centerMapToCurrentSelectedRoute(@NonNull List<MapCheckpoint> routeCheckpoints) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         for (int i = 0; i < routeCheckpoints.size(); i++) {
             LatLng position = routeCheckpoints.get(i)
@@ -305,20 +301,9 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     }
 
     @Override
-    public void moveToMarker(@NonNull Integer markerCheckpointId) {
-        for (MapCheckpoint checkpoint : mapsViewModel.routeCheckpoints) {
-            Integer checkpointId = checkpoint.getMapCheckpointId();
-            if (checkpointId.equals(markerCheckpointId)) {
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(checkpoint.getPosition(), MapsFragmentView.ZOOM_LEVEL));
-            }
-        }
-    }
-
-    @Override
     public void clearMapCheckpoints() {
         if (clusterManager != null) {
             clusterManager.clearItems();
-            mapsViewModel.routeCheckpoints.clear();
             clusterManager.cluster();
         }
     }
@@ -390,7 +375,7 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
         if (searchQuery.equals("")) {
             presenter.onSearchQueryCleared();
         } else {
-            presenter.onNewSearchQuery(searchQuery, mapsViewModel.routeCheckpoints);
+            presenter.onNewSearchQuery(searchQuery);
         }
         return false;
     }
@@ -586,12 +571,7 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     @Override
     public boolean onClusterItemClick(MapCheckpoint mapCheckpoint) {
         if (mapCheckpoint != null) {
-            List<MapCheckpoint> mapCheckpoints = mapsViewModel.routeCheckpoints;
-            int startCheckpointId = mapCheckpoints.get(0)
-                    .getMapCheckpointId();
-            int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
-                    .getMapCheckpointId();
-            presenter.onMarkerClicked(mapCheckpoint.getMapCheckpointId(), startCheckpointId, endCheckpointId);
+            presenter.onMarkerClicked(mapCheckpoint.getMapCheckpointId());
         }
         return false;
     }

@@ -82,6 +82,9 @@ public class MapsFragmentPresenter extends BasePresenter
     private final List<LatLng> currentSelectedRoutePoints = new ArrayList<>();
     @NonNull
     private final List<Checkpoint> navigationPathWayPoints = new ArrayList<>();
+    @NonNull
+    private final ArrayList<MapCheckpoint> displayedTripCheckpoints = new ArrayList<>();
+
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -101,6 +104,7 @@ public class MapsFragmentPresenter extends BasePresenter
     @Override
     public void onDestroy() {
         super.onDestroy();
+        displayedTripCheckpoints.clear();
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             gpsLocationManager.stopRequestingLocationUpdates();
@@ -196,9 +200,8 @@ public class MapsFragmentPresenter extends BasePresenter
     }
 
     @Override
-    public void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedMapCheckpoints) {
-        addSubscription(
-                new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), currentlyDisplayedMapCheckpoints, text.toLowerCase()).perform()
+    public void onNewSearchQuery(@NonNull String text) {
+        addSubscription(new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), displayedTripCheckpoints, text.toLowerCase()).perform()
                         .doOnSuccess(checkpoints -> {
                             view.displaySearchResults(generateSearchResults(checkpoints));
                         })
@@ -252,7 +255,12 @@ public class MapsFragmentPresenter extends BasePresenter
     @Override
     public void OnSearchResultClicked(@NonNull Integer checkpointId) {
         view.hideSoftKeyboard();
-        view.moveToMarker(checkpointId);
+        for (MapCheckpoint checkpoint : displayedTripCheckpoints) {
+            Integer checkpointIdFromDisplayedPoint = checkpoint.getMapCheckpointId();
+            if (checkpointId.equals(checkpointIdFromDisplayedPoint)) {
+                view.moveCameraToCurrentLocation(checkpoint.getPosition());
+            }
+        }
         view.clearSearchResults();
     }
 
@@ -300,10 +308,15 @@ public class MapsFragmentPresenter extends BasePresenter
     }
 
     @Override
-    public void onMarkerClicked(int markerCheckpointId, int startCheckpoint, int endCheckpoint) {
+    public void onMarkerClicked(int markerCheckpointId) {
+        List<MapCheckpoint> mapCheckpoints = displayedTripCheckpoints;
+        int startCheckpointId = mapCheckpoints.get(0)
+                .getMapCheckpointId();
+        int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
+                .getMapCheckpointId();
         addSubscription(
                 new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), markerCheckpointId,
-                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpoint, endCheckpoint).perform()
+                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpointId, endCheckpointId).perform()
                         .doOnSuccess(navigationPathData -> {
                             if (navigationPathData != null) {
                                 if (isViewAttached) {
@@ -475,6 +488,9 @@ public class MapsFragmentPresenter extends BasePresenter
     private void clearMapAndDisplayLoadingProgressBar() {
         if (isViewAttached) {
             view.showLoadingView(true);
+            // Clear stored map checkpoints in the Presenter object
+            displayedTripCheckpoints.clear();
+            // Clear markers and routes from map
             view.clearMapCheckpoints();
             view.clearMapRoutes();
         }
@@ -482,8 +498,12 @@ public class MapsFragmentPresenter extends BasePresenter
 
     private void loadMapCheckpointsOnMapView(@NonNull List<MapCheckpoint> mapCheckpoints) {
         if (isViewAttached && mapCheckpoints.size() > 0) {
+            // Clear previous map points
+            displayedTripCheckpoints.clear();
+            displayedTripCheckpoints.addAll(mapCheckpoints);
+            // Load new trip checkpoints and center to route
             view.loadCheckpointsOnMapView(mapCheckpoints);
-            view.centerMapToCurrentSelectedRoute();
+            view.centerMapToCurrentSelectedRoute(mapCheckpoints);
         }
     }
 
