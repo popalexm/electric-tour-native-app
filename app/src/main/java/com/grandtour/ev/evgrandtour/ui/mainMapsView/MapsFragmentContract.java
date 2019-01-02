@@ -70,7 +70,7 @@ public class MapsFragmentContract {
         void clearAllHighlightedPaths();
     }
 
-    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
+    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener, MapsViewModel.OnQueryTextChange {
 
         void onMapReady();
 
@@ -89,10 +89,6 @@ public class MapsFragmentContract {
         void onChooseTourClicked();
 
         void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
-
-        void onNewSearchQuery(@NonNull String text);
-
-        void onSearchQueryCleared();
 
         void onSettingsClicked();
 

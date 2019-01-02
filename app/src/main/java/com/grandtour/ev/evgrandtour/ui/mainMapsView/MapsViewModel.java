@@ -20,6 +20,7 @@ import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 
 import java.util.List;
@@ -157,5 +158,42 @@ public class MapsViewModel {
         } else {
             recyclerView.setVisibility(View.GONE);
         }
+    }
+
+    @BindingAdapter(value = {"android:onQueryTextSubmit", "android:onQueryTextChange"}, requireAll = false)
+    public static void setOnQueryTextListener(SearchView view, final OnQueryTextSubmit submit, final OnQueryTextChange change) {
+        if (submit == null && change == null) {
+            view.setOnQueryTextListener(null);
+        } else {
+            view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    if (submit != null) {
+                        return submit.onQueryTextSubmit(query);
+                    } else {
+                        return false;
+                    }
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    if (change != null) {
+                        return change.onQueryTextChange(newText);
+                    } else {
+                        return false;
+                    }
+                }
+            });
+        }
+    }
+
+    public interface OnQueryTextSubmit {
+
+        boolean onQueryTextSubmit(String query);
+    }
+
+    public interface OnQueryTextChange {
+
+        boolean onQueryTextChange(String newText);
     }
 }

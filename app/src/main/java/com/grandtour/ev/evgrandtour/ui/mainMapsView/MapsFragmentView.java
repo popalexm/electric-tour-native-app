@@ -67,8 +67,8 @@ import android.widget.CompoundButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends BaseFragment implements MapsFragmentContract.View, OnMapReadyCallback,
-        SearchView.OnQueryTextListener, SearchView.OnCloseListener, View.OnClickListener, ClusterManager.OnClusterClickListener<MapCheckpoint>,
+public class MapsFragmentView extends BaseFragment implements MapsFragmentContract.View, OnMapReadyCallback, SearchView.OnCloseListener, View.OnClickListener,
+        ClusterManager.OnClusterClickListener<MapCheckpoint>,
         CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
     @NonNull
@@ -109,7 +109,7 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
         viewBinding.setViewModel(mapsViewModel);
         viewBinding.setPresenter(presenter);
 
-        viewBinding.searchViewCheckpoints.setOnQueryTextListener(this);
+        // TODO Create Binding adapters for these 2 callbacks also, see the ViewModel
         viewBinding.searchViewCheckpoints.setOnSearchClickListener(this);
         viewBinding.searchViewCheckpoints.setOnCloseListener(this);
         viewBinding.mapView.onCreate(savedInstanceState);
@@ -363,21 +363,6 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     @Override
     public void clearSearchResults() {
         mapsViewModel.searchResultModels.update(new ArrayList<>());
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String searchQuery) {
-        if (searchQuery.equals("")) {
-            presenter.onSearchQueryCleared();
-        } else {
-            presenter.onNewSearchQuery(searchQuery);
-        }
-        return false;
     }
 
     @Override

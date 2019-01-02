@@ -200,21 +200,6 @@ public class MapsFragmentPresenter extends BasePresenter
     }
 
     @Override
-    public void onNewSearchQuery(@NonNull String text) {
-        addSubscription(new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), displayedTripCheckpoints, text.toLowerCase()).perform()
-                        .doOnSuccess(checkpoints -> {
-                            view.displaySearchResults(generateSearchResults(checkpoints));
-                        })
-                        .doOnError(Throwable::printStackTrace)
-                        .subscribe());
-    }
-
-    @Override
-    public void onSearchQueryCleared() {
-        view.clearSearchResults();
-    }
-
-    @Override
     public void onSettingsClicked() {
         if (isViewAttached) {
             view.showSettingsDialog();
@@ -254,14 +239,16 @@ public class MapsFragmentPresenter extends BasePresenter
 
     @Override
     public void OnSearchResultClicked(@NonNull Integer checkpointId) {
-        view.hideSoftKeyboard();
-        for (MapCheckpoint checkpoint : displayedTripCheckpoints) {
-            Integer checkpointIdFromDisplayedPoint = checkpoint.getMapCheckpointId();
-            if (checkpointId.equals(checkpointIdFromDisplayedPoint)) {
-                view.moveCameraToCurrentLocation(checkpoint.getPosition());
+        if (isViewAttached) {
+            view.hideSoftKeyboard();
+            for (MapCheckpoint checkpoint : displayedTripCheckpoints) {
+                Integer checkpointIdFromDisplayedPoint = checkpoint.getMapCheckpointId();
+                if (checkpointId.equals(checkpointIdFromDisplayedPoint)) {
+                    view.moveCameraToCurrentLocation(checkpoint.getPosition());
+                }
             }
+            view.clearSearchResults();
         }
-        view.clearSearchResults();
     }
 
     @Override
@@ -290,8 +277,10 @@ public class MapsFragmentPresenter extends BasePresenter
 
     @Override
     public void onClearFilteredRouteClicked() {
-        view.clearFilteringChipsSelectionStatus();
-        loadEntireTourDataOnMap();
+        if (isViewAttached) {
+            view.clearFilteringChipsSelectionStatus();
+            loadEntireTourDataOnMap();
+        }
     }
 
     @Override
@@ -570,5 +559,23 @@ public class MapsFragmentPresenter extends BasePresenter
         if (isViewAttached) {
             view.showChartView(lineData, description);
         }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String searchedQuery) {
+        if (searchedQuery.equals("")) {
+            if (isViewAttached) {
+                view.clearSearchResults();
+            }
+        } else {
+            addSubscription(new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), displayedTripCheckpoints,
+                    searchedQuery.toLowerCase()).perform()
+                    .doOnSuccess(checkpoints -> {
+                        view.displaySearchResults(generateSearchResults(checkpoints));
+                    })
+                    .doOnError(Throwable::printStackTrace)
+                    .subscribe());
+        }
+        return false;
     }
 }
