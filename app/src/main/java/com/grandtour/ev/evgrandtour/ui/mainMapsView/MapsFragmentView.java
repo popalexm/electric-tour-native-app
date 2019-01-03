@@ -33,7 +33,6 @@ import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequ
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.XAxisValueFormatter;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.YAxisValueFormatter;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 import com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogView;
@@ -71,11 +70,12 @@ public class MapsFragmentView extends BaseFragment
         CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
     @NonNull
+    public static final String TAG = MapsFragmentView.class.getSimpleName();
+
+    @NonNull
     private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
     @NonNull
     private static final String ACTION_LOCATION_BROADCAST = "LocationResultsBroadcast";
-    @NonNull
-    public static final String TAG = MapsFragmentView.class.getSimpleName();
     public static final int ZOOM_LEVEL = 13;
 
     @NonNull
@@ -89,6 +89,11 @@ public class MapsFragmentView extends BaseFragment
     private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(presenter);
     @NonNull
     private final List<MapCheckpoint> filterSelection = new ArrayList<>();
+    @Nullable
+    private Marker userLocationMarker;
+    @Nullable
+    private Circle userLocationCircle;
+
     @NonNull
     private FragmentMainMapViewBinding viewBinding;
     @Nullable
@@ -254,22 +259,16 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void updateCurrentUserLocation(@NonNull LatLng latLng) {
-        CurrentUserLocation currentCurrentUserLocation = mapsViewModel.currentUserLocation.get();
-        if (currentCurrentUserLocation != null) {
-            currentCurrentUserLocation.getCurrentLocationMarker()
-                    .setPosition(latLng);
-            currentCurrentUserLocation.getCurrentLocationCircle()
-                    .setCenter(latLng);
+        if (userLocationMarker != null && userLocationCircle != null) {
+            userLocationMarker.setPosition(latLng);
+            userLocationCircle.setCenter(latLng);
         } else {
-            MarkerOptions markerOptions = MapUtils.getCurrentUserLocationMarker(latLng);
-            CircleOptions circleOptions = MapUtils.getCurrentUserLocationCircle(latLng);
-
-            Marker currentUserMarker = googleMap.addMarker(markerOptions);
-            Circle currentUserCircle = googleMap.addCircle(circleOptions);
-
-            mapsViewModel.currentUserLocation.set(new CurrentUserLocation(currentUserMarker, currentUserCircle));
+            MarkerOptions userLocationMarkerOptions = MapUtils.getCurrentUserLocationMarker(latLng);
+            CircleOptions userLocationCircleOptions = MapUtils.getCurrentUserLocationCircle(latLng);
+            this.userLocationMarker = googleMap.addMarker(userLocationMarkerOptions);
+            this.userLocationCircle = googleMap.addCircle(userLocationCircleOptions);
             AnimationManager.getInstance()
-                    .startUserLocationAnimation(currentUserCircle);
+                    .startUserLocationAnimation(this.userLocationCircle);
         }
     }
 
