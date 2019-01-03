@@ -93,6 +93,8 @@ public class MapsFragmentView extends BaseFragment
     private Marker userLocationMarker;
     @Nullable
     private Circle userLocationCircle;
+    @NonNull
+    public final ArrayList<Polyline> entireTripPolylineList = new ArrayList<>();
 
     @NonNull
     private FragmentMainMapViewBinding viewBinding;
@@ -174,7 +176,7 @@ public class MapsFragmentView extends BaseFragment
     public void onDestroy() {
         super.onDestroy();
         viewBinding.mapView.onDestroy();
-        mapsViewModel.routePolyLine.clear();
+        entireTripPolylineList.clear();
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
@@ -305,10 +307,10 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void clearMapRoutes() {
-        for (Polyline route : mapsViewModel.routePolyLine) {
+        for (Polyline route : entireTripPolylineList) {
             route.remove();
         }
-        mapsViewModel.routePolyLine.clear();
+        entireTripPolylineList.clear();
     }
 
     @Override
@@ -318,7 +320,7 @@ public class MapsFragmentView extends BaseFragment
             Polyline routePolyline = googleMap.addPolyline(routePolyOptions);
             routePolyline.setTag(routeStepId);
             routePolyline.setClickable(true);
-            mapsViewModel.routePolyLine.add(routePolyline);
+            entireTripPolylineList.add(routePolyline);
         }
     }
 
@@ -474,9 +476,8 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void highLightNavigationPath(List<Integer> routeLegsIdsToHighLight) {
-        List<Polyline> routePolyLines = mapsViewModel.routePolyLine;
         for (Integer routeLegId : routeLegsIdsToHighLight) {
-            for (Polyline polyline : routePolyLines) {
+            for (Polyline polyline : entireTripPolylineList) {
                 Integer routeIdInPolyline = (Integer) polyline.getTag();
                 if (routeIdInPolyline != null) {
                     if (routeIdInPolyline.equals(routeLegId)) {
@@ -490,7 +491,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void clearAllHighlightedPaths() {
-        for (Polyline polyline : mapsViewModel.routePolyLine) {
+        for (Polyline polyline : entireTripPolylineList) {
             polyline.setColor(Injection.provideResources()
                     .getColor(R.color.colorAccent));
         }

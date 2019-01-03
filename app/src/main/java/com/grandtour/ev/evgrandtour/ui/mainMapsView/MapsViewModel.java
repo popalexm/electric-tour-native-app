@@ -1,7 +1,5 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
-import com.google.android.gms.maps.model.Polyline;
-
 import com.android.databinding.library.baseAdapters.BR;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
@@ -35,8 +33,6 @@ public class MapsViewModel {
     @NonNull
     public final ObservableBoolean isLoadingInProgress = new ObservableBoolean();
     @NonNull
-    public final ObservableArrayList<Polyline> routePolyLine = new ObservableArrayList<>();
-    @NonNull
     public final ObservableBoolean isSearchViewOpen = new ObservableBoolean();
     @NonNull
     public final ObservableBoolean isWarningState = new ObservableBoolean();
@@ -60,6 +56,7 @@ public class MapsViewModel {
     public final ObservableBoolean areNavigationButtonsEnabled = new ObservableBoolean();
     @NonNull
     public final ItemBinding<SearchResultModel> resultViewModelItemBinding = ItemBinding.of(BR.viewModel, R.layout.item_search_view);
+    @SuppressWarnings("unchecked")
     @NonNull
     public final DiffObservableList<SearchResultModel> searchResultModels = new DiffObservableList(new DiffObservableList.Callback<SearchResultModel>() {
         @Override
