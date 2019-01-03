@@ -8,11 +8,11 @@ import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextChangeListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchResultClickListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchViewCloseListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchViewResultClickListener;
 import com.grandtour.ev.evgrandtour.ui.settings.UpdateSettingsListener;
 
 import android.location.Location;
@@ -77,7 +77,7 @@ public class MapsFragmentContract {
         void clearAllHighlightedPaths();
     }
 
-    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener, OnQueryTextChangeListener, OnSearchViewCloseListener,
+    public interface Presenter extends BaseContract.Presenter, OnSearchResultClickListener, OnQueryTextChangeListener, OnSearchViewCloseListener,
             android.view.View.OnClickListener {
 
         void onMapReady();

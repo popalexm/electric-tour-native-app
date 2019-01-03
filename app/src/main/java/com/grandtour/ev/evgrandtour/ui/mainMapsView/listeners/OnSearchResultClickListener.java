@@ -1,8 +1,8 @@
-package com.grandtour.ev.evgrandtour.ui.mainMapsView.models;
+package com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners;
 
 import android.support.annotation.NonNull;
 
-public interface SearchViewResultClickListener {
+public interface OnSearchResultClickListener {
 
     void OnSearchResultClicked(@NonNull Integer checkpointId);
 }
