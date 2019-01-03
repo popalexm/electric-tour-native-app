@@ -152,7 +152,9 @@
                 android:layout_gravity="start|center_vertical"
                 android:focusable="false"
                 android:maxWidth="@dimen/search_view_max_width"
-                android:onQueryTextChange="@{(searchedQuery)->presenter.onQueryTextChange(searchedQuery)}"
+                android:onQueryTextChange="@{(searchedQuery) -> presenter.onQueryTextChange(searchedQuery)}"
+                android:onSearchViewClosed="@{(isSearchViewClosed) -> presenter.onSearchViewClosed(isSearchViewClosed)}"
+                android:onSearchViewOpen="@{(view) -> presenter.onClick(view)}"
                 app:queryHint="@string/hint_search_checkpoints"
                 app:theme="@style/SearchViewStyle.ActionBar" />
 

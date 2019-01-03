@@ -6,6 +6,9 @@ import com.android.databinding.library.baseAdapters.BR;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextChangeListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextSubmitListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchViewCloseListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 
@@ -161,7 +164,7 @@ public class MapsViewModel {
     }
 
     @BindingAdapter(value = {"android:onQueryTextSubmit", "android:onQueryTextChange"}, requireAll = false)
-    public static void setOnQueryTextListener(SearchView view, final OnQueryTextSubmit submit, final OnQueryTextChange change) {
+    public static void setOnQueryTextListener(SearchView view, final OnQueryTextSubmitListener submit, final OnQueryTextChangeListener change) {
         if (submit == null && change == null) {
             view.setOnQueryTextListener(null);
         } else {
@@ -187,13 +190,21 @@ public class MapsViewModel {
         }
     }
 
-    public interface OnQueryTextSubmit {
-
-        boolean onQueryTextSubmit(String query);
+    @BindingAdapter(value = {"android:onSearchViewClosed"})
+    public static void setOnSearchViewClosed(@NonNull SearchView searchView, final OnSearchViewCloseListener closeListener) {
+        if (closeListener == null) {
+            searchView.setOnCloseListener(null);
+        } else {
+            searchView.setOnCloseListener(() -> closeListener.onSearchViewClosed(true));
+        }
     }
 
-    public interface OnQueryTextChange {
-
-        boolean onQueryTextChange(String newText);
+    @BindingAdapter(value = {"android:onSearchViewOpen"})
+    public static void setOnSearchViewOpen(@NonNull SearchView searchView, final View.OnClickListener onSearchViewOpenListener) {
+        if (onSearchViewOpenListener == null) {
+            searchView.setOnSearchClickListener(null);
+        } else {
+            searchView.setOnSearchClickListener(onSearchViewOpenListener);
+        }
     }
 }

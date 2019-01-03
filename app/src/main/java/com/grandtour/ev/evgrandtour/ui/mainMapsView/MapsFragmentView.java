@@ -57,7 +57,6 @@ import android.support.annotation.RequiresPermission;
 import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,8 +66,8 @@ import android.widget.CompoundButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends BaseFragment implements MapsFragmentContract.View, OnMapReadyCallback, SearchView.OnCloseListener, View.OnClickListener,
-        ClusterManager.OnClusterClickListener<MapCheckpoint>,
+public class MapsFragmentView extends BaseFragment
+        implements MapsFragmentContract.View, OnMapReadyCallback, ClusterManager.OnClusterClickListener<MapCheckpoint>,
         CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
     @NonNull
@@ -109,9 +108,6 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
         viewBinding.setViewModel(mapsViewModel);
         viewBinding.setPresenter(presenter);
 
-        // TODO Create Binding adapters for these 2 callbacks also, see the ViewModel
-        viewBinding.searchViewCheckpoints.setOnSearchClickListener(this);
-        viewBinding.searchViewCheckpoints.setOnCloseListener(this);
         viewBinding.mapView.onCreate(savedInstanceState);
         viewBinding.mapView.getMapAsync(this);
         setupFloatingActionButtonRevealHideAnimation();
@@ -366,6 +362,16 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     }
 
     @Override
+    public void searchViewClosed() {
+        mapsViewModel.isSearchViewOpen.set(false);
+    }
+
+    @Override
+    public void searchViewOpen() {
+        mapsViewModel.isSearchViewOpen.set(true);
+    }
+
+    @Override
     public void hideSoftKeyboard() {
         Activity activity = getActivity();
         if (activity != null) {
@@ -499,21 +505,6 @@ public class MapsFragmentView extends BaseFragment implements MapsFragmentContra
     @Override
     public void OnSelectedTour(@NonNull String tourId, List<TourDataResponse> tourDataResponses) {
         presenter.onTourSelected(tourId, tourDataResponses);
-    }
-
-    @Override
-    public boolean onClose() {
-        mapsViewModel.isSearchViewOpen.set(false);
-        return false;
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.searchViewCheckpoints:
-                mapsViewModel.isSearchViewOpen.set(true);
-                break;
-        }
     }
 
     @Override

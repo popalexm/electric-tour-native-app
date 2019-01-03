@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.mainMapsView;
+package com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners;
 
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 
@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import java.util.List;
 
-public interface SelectedTourListener {
+public interface OnSelectedTourListener {
 
     void OnSelectedTour(@NonNull String tourId, List<TourDataResponse> tourDataResponses);
 }

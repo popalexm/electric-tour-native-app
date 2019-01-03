@@ -52,6 +52,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,6 @@ public class MapsFragmentPresenter extends BasePresenter
     private final List<Checkpoint> navigationPathWayPoints = new ArrayList<>();
     @NonNull
     private final ArrayList<MapCheckpoint> displayedTripCheckpoints = new ArrayList<>();
-
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -577,5 +577,24 @@ public class MapsFragmentPresenter extends BasePresenter
                     .subscribe());
         }
         return false;
+    }
+
+    @Override
+    public boolean onSearchViewClosed(boolean isClosed) {
+        if (isViewAttached && isClosed) {
+            view.searchViewClosed();
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.searchViewCheckpoints:
+                if (isViewAttached) {
+                    view.searchViewOpen();
+                }
+                break;
+        }
     }
 }

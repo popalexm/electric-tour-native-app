@@ -7,6 +7,9 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextChangeListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchViewCloseListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchViewResultClickListener;
@@ -19,7 +22,7 @@ import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View, UpdateSettingsListener, SelectedTourListener {
+    public interface View extends BaseContract.View, UpdateSettingsListener, OnSelectedTourListener {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
@@ -44,6 +47,10 @@ public class MapsFragmentContract {
         void displaySearchResults(@NonNull List<SearchResultModel> checkpoints);
 
         void clearSearchResults();
+
+        void searchViewClosed();
+
+        void searchViewOpen();
 
         void hideSoftKeyboard();
 
@@ -70,7 +77,8 @@ public class MapsFragmentContract {
         void clearAllHighlightedPaths();
     }
 
-    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener, MapsViewModel.OnQueryTextChange {
+    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener, OnQueryTextChangeListener, OnSearchViewCloseListener,
+            android.view.View.OnClickListener {
 
         void onMapReady();
 
@@ -107,5 +115,6 @@ public class MapsFragmentContract {
         void onMarkerClicked(int checkpointId);
 
         void onMarkerInfoWindowClosed();
+
     }
 }
