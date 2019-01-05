@@ -1,14 +1,12 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.Polyline;
-
 import com.android.databinding.library.baseAdapters.BR;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.CurrentUserLocation;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextChangeListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextSubmitListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchViewCloseListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
 
 import android.content.Context;
@@ -22,6 +20,7 @@ import android.support.design.button.MaterialButton;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 
 import java.util.List;
@@ -33,14 +32,6 @@ public class MapsViewModel {
 
     @NonNull
     public final ObservableBoolean isLoadingInProgress = new ObservableBoolean();
-    @NonNull
-    public final ObservableArrayList<Polyline> routePolyLine = new ObservableArrayList<>();
-    @NonNull
-    public final ObservableArrayList<MapCheckpoint> routeCheckpoints = new ObservableArrayList<>();
-    @NonNull
-    public final ObservableField<CurrentUserLocation> currentUserLocation = new ObservableField<>();
-    @NonNull
-    public final ObservableField<Marker> currentSelectedMarker = new ObservableField<>();
     @NonNull
     public final ObservableBoolean isSearchViewOpen = new ObservableBoolean();
     @NonNull
@@ -65,6 +56,7 @@ public class MapsViewModel {
     public final ObservableBoolean areNavigationButtonsEnabled = new ObservableBoolean();
     @NonNull
     public final ItemBinding<SearchResultModel> resultViewModelItemBinding = ItemBinding.of(BR.viewModel, R.layout.item_search_view);
+    @SuppressWarnings("unchecked")
     @NonNull
     public final DiffObservableList<SearchResultModel> searchResultModels = new DiffObservableList(new DiffObservableList.Callback<SearchResultModel>() {
         @Override
@@ -160,6 +152,51 @@ public class MapsViewModel {
             recyclerView.setVisibility(View.VISIBLE);
         } else {
             recyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter(value = {"android:onQueryTextSubmit", "android:onQueryTextChange"}, requireAll = false)
+    public static void setOnQueryTextListener(SearchView view, final OnQueryTextSubmitListener submit, final OnQueryTextChangeListener change) {
+        if (submit == null && change == null) {
+            view.setOnQueryTextListener(null);
+        } else {
+            view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    if (submit != null) {
+                        return submit.onQueryTextSubmit(query);
+                    } else {
+                        return false;
+                    }
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    if (change != null) {
+                        return change.onQueryTextChange(newText);
+                    } else {
+                        return false;
+                    }
+                }
+            });
+        }
+    }
+
+    @BindingAdapter(value = {"android:onSearchViewClosed"})
+    public static void setOnSearchViewClosed(@NonNull SearchView searchView, final OnSearchViewCloseListener closeListener) {
+        if (closeListener == null) {
+            searchView.setOnCloseListener(null);
+        } else {
+            searchView.setOnCloseListener(() -> closeListener.onSearchViewClosed(true));
+        }
+    }
+
+    @BindingAdapter(value = {"android:onSearchViewOpen"})
+    public static void setOnSearchViewOpen(@NonNull SearchView searchView, final View.OnClickListener onSearchViewOpenListener) {
+        if (onSearchViewOpenListener == null) {
+            searchView.setOnSearchClickListener(null);
+        } else {
+            searchView.setOnSearchClickListener(onSearchViewOpenListener);
         }
     }
 }

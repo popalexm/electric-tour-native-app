@@ -7,9 +7,12 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextChangeListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchResultClickListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchViewCloseListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchViewResultClickListener;
 import com.grandtour.ev.evgrandtour.ui.settings.UpdateSettingsListener;
 
 import android.location.Location;
@@ -19,15 +22,13 @@ import java.util.List;
 
 public class MapsFragmentContract {
 
-    public interface View extends BaseContract.View, UpdateSettingsListener, SelectedTourListener {
+    public interface View extends BaseContract.View, UpdateSettingsListener, OnSelectedTourListener {
 
         void updateCurrentUserLocation(@NonNull LatLng latLng);
 
         void loadCheckpointsOnMapView(@NonNull List<MapCheckpoint> checkpoints);
 
-        void centerMapToCurrentSelectedRoute();
-
-        void moveToMarker(@NonNull Integer markerCheckpointId);
+        void centerMapToCurrentSelectedRoute(@NonNull List<MapCheckpoint> checkpoints);
 
         void clearMapCheckpoints();
 
@@ -46,6 +47,10 @@ public class MapsFragmentContract {
         void displaySearchResults(@NonNull List<SearchResultModel> checkpoints);
 
         void clearSearchResults();
+
+        void searchViewClosed();
+
+        void searchViewOpen();
 
         void hideSoftKeyboard();
 
@@ -72,7 +77,8 @@ public class MapsFragmentContract {
         void clearAllHighlightedPaths();
     }
 
-    public interface Presenter extends BaseContract.Presenter, SearchViewResultClickListener {
+    public interface Presenter extends BaseContract.Presenter, OnSearchResultClickListener, OnQueryTextChangeListener, OnSearchViewCloseListener,
+            android.view.View.OnClickListener {
 
         void onMapReady();
 
@@ -92,10 +98,6 @@ public class MapsFragmentContract {
 
         void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
 
-        void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedCheckpoints);
-
-        void onSearchQueryCleared();
-
         void onSettingsClicked();
 
         void onFilterButtonClicked();
@@ -110,8 +112,9 @@ public class MapsFragmentContract {
 
         void onMyLocationButtonClicked();
 
-        void onMarkerClicked(int checkpointId, int startCheckpoint, int endCheckpoint);
+        void onMarkerClicked(int checkpointId);
 
         void onMarkerInfoWindowClosed();
+
     }
 }

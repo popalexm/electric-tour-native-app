@@ -52,6 +52,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Pair;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +83,8 @@ public class MapsFragmentPresenter extends BasePresenter
     private final List<LatLng> currentSelectedRoutePoints = new ArrayList<>();
     @NonNull
     private final List<Checkpoint> navigationPathWayPoints = new ArrayList<>();
+    @NonNull
+    private final ArrayList<MapCheckpoint> displayedTripCheckpoints = new ArrayList<>();
 
     MapsFragmentPresenter(@NonNull MapsFragmentContract.View view) {
         this.view = view;
@@ -101,6 +104,7 @@ public class MapsFragmentPresenter extends BasePresenter
     @Override
     public void onDestroy() {
         super.onDestroy();
+        displayedTripCheckpoints.clear();
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             gpsLocationManager.stopRequestingLocationUpdates();
@@ -196,22 +200,6 @@ public class MapsFragmentPresenter extends BasePresenter
     }
 
     @Override
-    public void onNewSearchQuery(@NonNull String text, @NonNull List<MapCheckpoint> currentlyDisplayedMapCheckpoints) {
-        addSubscription(
-                new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), currentlyDisplayedMapCheckpoints, text.toLowerCase()).perform()
-                        .doOnSuccess(checkpoints -> {
-                            view.displaySearchResults(generateSearchResults(checkpoints));
-                        })
-                        .doOnError(Throwable::printStackTrace)
-                        .subscribe());
-    }
-
-    @Override
-    public void onSearchQueryCleared() {
-        view.clearSearchResults();
-    }
-
-    @Override
     public void onSettingsClicked() {
         if (isViewAttached) {
             view.showSettingsDialog();
@@ -251,9 +239,16 @@ public class MapsFragmentPresenter extends BasePresenter
 
     @Override
     public void OnSearchResultClicked(@NonNull Integer checkpointId) {
-        view.hideSoftKeyboard();
-        view.moveToMarker(checkpointId);
-        view.clearSearchResults();
+        if (isViewAttached) {
+            view.hideSoftKeyboard();
+            for (MapCheckpoint checkpoint : displayedTripCheckpoints) {
+                Integer checkpointIdFromDisplayedPoint = checkpoint.getMapCheckpointId();
+                if (checkpointId.equals(checkpointIdFromDisplayedPoint)) {
+                    view.moveCameraToCurrentLocation(checkpoint.getPosition());
+                }
+            }
+            view.clearSearchResults();
+        }
     }
 
     @Override
@@ -282,8 +277,10 @@ public class MapsFragmentPresenter extends BasePresenter
 
     @Override
     public void onClearFilteredRouteClicked() {
-        view.clearFilteringChipsSelectionStatus();
-        loadEntireTourDataOnMap();
+        if (isViewAttached) {
+            view.clearFilteringChipsSelectionStatus();
+            loadEntireTourDataOnMap();
+        }
     }
 
     @Override
@@ -300,10 +297,15 @@ public class MapsFragmentPresenter extends BasePresenter
     }
 
     @Override
-    public void onMarkerClicked(int markerCheckpointId, int startCheckpoint, int endCheckpoint) {
+    public void onMarkerClicked(int markerCheckpointId) {
+        List<MapCheckpoint> mapCheckpoints = displayedTripCheckpoints;
+        int startCheckpointId = mapCheckpoints.get(0)
+                .getMapCheckpointId();
+        int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
+                .getMapCheckpointId();
         addSubscription(
                 new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), markerCheckpointId,
-                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpoint, endCheckpoint).perform()
+                        NAVIGATION_CHECKPOINTS_SIZE, startCheckpointId, endCheckpointId).perform()
                         .doOnSuccess(navigationPathData -> {
                             if (navigationPathData != null) {
                                 if (isViewAttached) {
@@ -475,6 +477,9 @@ public class MapsFragmentPresenter extends BasePresenter
     private void clearMapAndDisplayLoadingProgressBar() {
         if (isViewAttached) {
             view.showLoadingView(true);
+            // Clear stored map checkpoints in the Presenter object
+            displayedTripCheckpoints.clear();
+            // Clear markers and routes from map
             view.clearMapCheckpoints();
             view.clearMapRoutes();
         }
@@ -482,8 +487,12 @@ public class MapsFragmentPresenter extends BasePresenter
 
     private void loadMapCheckpointsOnMapView(@NonNull List<MapCheckpoint> mapCheckpoints) {
         if (isViewAttached && mapCheckpoints.size() > 0) {
+            // Clear previous map points
+            displayedTripCheckpoints.clear();
+            displayedTripCheckpoints.addAll(mapCheckpoints);
+            // Load new trip checkpoints and center to route
             view.loadCheckpointsOnMapView(mapCheckpoints);
-            view.centerMapToCurrentSelectedRoute();
+            view.centerMapToCurrentSelectedRoute(mapCheckpoints);
         }
     }
 
@@ -549,6 +558,43 @@ public class MapsFragmentPresenter extends BasePresenter
     public void OnChartDataCreated(@NonNull LineData lineData, @NonNull Description description) {
         if (isViewAttached) {
             view.showChartView(lineData, description);
+        }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String searchedQuery) {
+        if (searchedQuery.equals("")) {
+            if (isViewAttached) {
+                view.clearSearchResults();
+            }
+        } else {
+            addSubscription(new QueryForCheckpointsUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), displayedTripCheckpoints,
+                    searchedQuery.toLowerCase()).perform()
+                    .doOnSuccess(checkpoints -> {
+                        view.displaySearchResults(generateSearchResults(checkpoints));
+                    })
+                    .doOnError(Throwable::printStackTrace)
+                    .subscribe());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onSearchViewClosed(boolean isClosed) {
+        if (isViewAttached && isClosed) {
+            view.searchViewClosed();
+        }
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.searchViewCheckpoints:
+                if (isViewAttached) {
+                    view.searchViewOpen();
+                }
+                break;
         }
     }
 }

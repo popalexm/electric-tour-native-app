@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.chooseTour;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogRoutesBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.SelectedTourListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -75,7 +75,7 @@ public class ChooseTourDialogFragment extends BaseDialogFragment implements Choo
 
     @Override
     public void saveSelectionAndDismiss(@NonNull String tourId) {
-        SelectedTourListener callback = (SelectedTourListener) getParentFragment();
+        OnSelectedTourListener callback = (OnSelectedTourListener) getParentFragment();
         if (callback != null) {
             presenter.OnSelectionSaved(callback, tourId);
         }

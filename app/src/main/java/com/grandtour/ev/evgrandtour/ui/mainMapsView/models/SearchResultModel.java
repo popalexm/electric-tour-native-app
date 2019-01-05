@@ -1,5 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.mainMapsView.models;
 
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchResultClickListener;
+
 import android.support.annotation.NonNull;
 
 public class SearchResultModel {
@@ -11,10 +13,10 @@ public class SearchResultModel {
     @NonNull
     public final String searchResultName;
     @NonNull
-    public final SearchViewResultClickListener clickListener;
+    public final OnSearchResultClickListener clickListener;
 
     public SearchResultModel(@NonNull Integer searchResultId, @NonNull String searchResultTourId, @NonNull String searchResultName,
-            @NonNull SearchViewResultClickListener clickListener) {
+            @NonNull OnSearchResultClickListener clickListener) {
         this.searchResultId = searchResultId;
         this.searchResultTourId = searchResultTourId;
         this.searchResultName = searchResultName;

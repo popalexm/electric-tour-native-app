@@ -5,7 +5,7 @@ import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.SelectedTourListener;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -48,7 +48,7 @@ public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTo
     }
 
     @Override
-    public void OnSelectionSaved(@NonNull SelectedTourListener callback, @NonNull String tourId) {
+    public void OnSelectionSaved(@NonNull OnSelectedTourListener callback, @NonNull String tourId) {
         callback.OnSelectedTour(tourId, tourDataResponses);
     }
 
