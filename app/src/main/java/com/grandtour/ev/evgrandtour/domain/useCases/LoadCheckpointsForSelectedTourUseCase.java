@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
 import android.support.annotation.NonNull;
 
@@ -14,7 +14,7 @@ import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class LoadCheckpointsForSelectedTourUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadCheckpointsForSelectedTourUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final LocalStorageManager storageManager;

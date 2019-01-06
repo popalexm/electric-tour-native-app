@@ -7,7 +7,7 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkResponseConverter;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourCheckpoint;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseCompletable;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
 import android.support.annotation.NonNull;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Scheduler;
 
-public class SaveToursDataLocallyUseCase extends BaseUseCase implements BaseUseCaseCompletable {
+public class SaveToursDataLocallyUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final LocalStorageManager localStorageManager;

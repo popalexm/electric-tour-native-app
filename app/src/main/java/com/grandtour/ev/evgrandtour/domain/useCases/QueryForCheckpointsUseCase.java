@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 
 import android.support.annotation.NonNull;
@@ -13,7 +13,7 @@ import java.util.List;
 import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
 
-public class QueryForCheckpointsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class QueryForCheckpointsUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final List<MapCheckpoint> displayedMapCheckpoints;
