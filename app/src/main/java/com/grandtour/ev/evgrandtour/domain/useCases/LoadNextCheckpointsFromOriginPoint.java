@@ -4,7 +4,7 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseSingle;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 import com.grandtour.ev.evgrandtour.domain.models.NavigationPathData;
 
 import android.support.annotation.NonNull;
@@ -17,7 +17,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
 
-public class LoadNextCheckpointsFromOriginPoint extends BaseUseCase implements BaseUseCaseSingle {
+public class LoadNextCheckpointsFromOriginPoint extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final LocalStorageManager storageManager;

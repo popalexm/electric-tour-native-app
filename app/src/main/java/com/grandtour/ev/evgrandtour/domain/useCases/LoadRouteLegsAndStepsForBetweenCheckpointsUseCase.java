@@ -4,7 +4,7 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
 import android.support.annotation.NonNull;
 import android.util.Pair;
@@ -18,7 +18,7 @@ import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class LoadRouteLegsAndStepsForBetweenCheckpointsUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadRouteLegsAndStepsForBetweenCheckpointsUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final LocalStorageManager storageManager;

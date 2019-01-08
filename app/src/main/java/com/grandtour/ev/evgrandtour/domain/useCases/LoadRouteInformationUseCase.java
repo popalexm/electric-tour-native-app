@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseMaybe;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,7 +12,7 @@ import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function3;
 
-public class LoadRouteInformationUseCase extends BaseUseCase implements BaseUseCaseMaybe {
+public class LoadRouteInformationUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final LocalStorageManager storageManager;

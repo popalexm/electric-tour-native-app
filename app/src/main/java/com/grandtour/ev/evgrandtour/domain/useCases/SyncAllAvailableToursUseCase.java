@@ -5,7 +5,7 @@ import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.AvailableToursResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseFlowable;
+import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
 import android.support.annotation.NonNull;
 
@@ -18,7 +18,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 import retrofit2.Response;
 
-public class SyncAllAvailableToursUseCase extends BaseUseCase implements BaseUseCaseFlowable {
+public class SyncAllAvailableToursUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private static String USER_TOKEN = "user_token";
