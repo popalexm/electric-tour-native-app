@@ -412,8 +412,8 @@ public class MapsFragmentView extends BaseFragment
         Activity activity = getActivity();
         if (activity != null) {
             mapsViewModel.checkPointFilteringOptions.clear();
-            mapsViewModel.removeFilteringOptions.set(true);
-            mapsViewModel.removeFilteringOptions.set(false);
+            // TODO QuickFix, need to implement proper clearing logic in ViewModel
+            viewBinding.chipGroupFilteringOptions.removeAllViews();
             for (MapCheckpoint mapCheckpoint : availableFilterPoints) {
                 String filterOptionTitle = getString(R.string.format_filter_option, mapCheckpoint.getOrderInRouteId(), mapCheckpoint.getMapCheckpointTitle());
                 Chip filterChip = new Chip(activity);
@@ -452,7 +452,7 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void clearFilteringChipsSelectionStatus() {
-        mapsViewModel.removeFilteringOptions.set(true);
+        // TODO Use Databinding here in the ViewModel
         for (Chip filterChipOption : mapsViewModel.checkPointFilteringOptions) {
             filterChipOption.setChecked(false);
         }
