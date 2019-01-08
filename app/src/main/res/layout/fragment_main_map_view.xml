@@ -238,6 +238,7 @@
             android:paddingEnd="@dimen/margin_medium_large"
             android:paddingStart="@dimen/margin_medium_large"
             android:scrollbars="none"
+            android:fillViewport="true"
             app:areFilteringOptionsDisplayed="@{viewModel.isFilteringLayoutVisible}">
 
             <android.support.design.chip.ChipGroup
