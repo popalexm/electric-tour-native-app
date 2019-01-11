@@ -15,10 +15,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DataBindingUtil.setContentView(this, R.layout.activity_main);
-        setupGeoFenceMapFragment();
+        setupViewTripsMapFragment();
     }
 
-    private void setupGeoFenceMapFragment() {
+    private void setupViewTripsMapFragment() {
             MapsFragmentView fragmentView = MapsFragmentView.createInstance();
             replaceInFragmentManager(fragmentView , MapsFragmentView.TAG);
     }
