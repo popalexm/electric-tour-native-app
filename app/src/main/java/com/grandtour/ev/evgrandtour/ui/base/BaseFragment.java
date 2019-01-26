@@ -2,7 +2,9 @@ package com.grandtour.ev.evgrandtour.ui.base;
 
 import com.grandtour.ev.evgrandtour.R;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,7 +15,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class BaseFragment extends Fragment implements BaseContract.View {
+public abstract class BaseFragment<T extends BaseContract.Presenter> extends Fragment implements BaseContract.View {
+
+    private T presenter;
 
     public void showDialog(@NonNull DialogFragment dialogFrag, @NonNull Fragment targetFrag, @NonNull String tag, int reqCode) {
         FragmentManager childFragmentManager = getChildFragmentManager();
@@ -28,7 +32,27 @@ public class BaseFragment extends Fragment implements BaseContract.View {
     }
 
     @Override
-    public void showLoadingView(boolean isLoading) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (getPresenter() != null) {
+            presenter.onAttachView();
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (getPresenter() != null) {
+            presenter.onDetachView();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (getPresenter() != null) {
+            presenter.onDestroyView();
+        }
     }
 
     @Override
@@ -42,4 +66,15 @@ public class BaseFragment extends Fragment implements BaseContract.View {
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
+
+    public T getPresenter() {
+        if (presenter == null) {
+            presenter = createPresenter();
+        }
+        return presenter;
+    }
+
+    @Nullable
+    protected abstract T createPresenter();
+
 }

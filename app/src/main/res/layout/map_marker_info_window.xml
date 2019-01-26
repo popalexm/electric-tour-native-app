@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     app:cardBackgroundColor="@color/colorPrimary"
     app:cardCornerRadius="@dimen/margin_medium"
     app:cardElevation="8dp"
-    app:contentPadding="@dimen/margin_medium"
-    android:orientation="vertical">
+    app:contentPadding="@dimen/margin_medium">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -17,8 +17,8 @@
             android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_sx_small"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/margin_sx_small"
             android:orientation="vertical">
 
             <TextView

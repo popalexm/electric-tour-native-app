@@ -24,6 +24,7 @@
     <string name="label_line_chart_values">Values are expressed in meters</string>
     <string name="message_sign_in_successful">Signed in successfully !</string>
     <string name="message_sign_in_failed">Sign in failed !</string>
+    <string name="message_sign_in_with_google_failed">Signing in with your Google Account Failed !</string>
     <string name="message_account_not_authorized">This Google Account is not authorized to use this application, please contact the administrator to gain access rights!</string>
     <string name="btn_sign_out">Sign Out</string>
     <string name="message_server_down">Server is currently down, probably due to maintenance reasons!</string>

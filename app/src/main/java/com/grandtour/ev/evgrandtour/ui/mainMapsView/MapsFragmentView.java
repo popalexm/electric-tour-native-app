@@ -65,7 +65,7 @@ import android.widget.CompoundButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends BaseFragment
+public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presenter>
         implements MapsFragmentContract.View, OnMapReadyCallback, ClusterManager.OnClusterClickListener<MapCheckpoint>,
         CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
 
@@ -80,13 +80,11 @@ public class MapsFragmentView extends BaseFragment
 
     @NonNull
     private final MapsViewModel mapsViewModel = new MapsViewModel();
-    @NonNull
-    private final MapsFragmentPresenter presenter = new MapsFragmentPresenter(this);
 
     @NonNull
-    private final RouteRequestsBroadcastReceiver routeDirectionsBroadcastReceiver = new RouteRequestsBroadcastReceiver(presenter);
+    private final RouteRequestsBroadcastReceiver routeDirectionsBroadcastReceiver = new RouteRequestsBroadcastReceiver(getPresenter());
     @NonNull
-    private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(presenter);
+    private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(getPresenter());
     @NonNull
     private final List<MapCheckpoint> filterSelection = new ArrayList<>();
     @Nullable
@@ -113,7 +111,7 @@ public class MapsFragmentView extends BaseFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_map_view, container, false);
         viewBinding.setViewModel(mapsViewModel);
-        viewBinding.setPresenter(presenter);
+        viewBinding.setPresenter(getPresenter());
 
         viewBinding.mapView.onCreate(savedInstanceState);
         viewBinding.mapView.getMapAsync(this);
@@ -128,28 +126,11 @@ public class MapsFragmentView extends BaseFragment
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        presenter.onAttach();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        presenter.onDetach();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         Activity activity = getActivity();
         if (activity != null) {
-            presenter.onUnBindDirectionsRequestService();
+            getPresenter().onUnBindDirectionsRequestService();
         }
     }
 
@@ -184,7 +165,6 @@ public class MapsFragmentView extends BaseFragment
             LocalBroadcastManager.getInstance(activity)
                     .unregisterReceiver(locationUpdatesBroadcastReceiver);
         }
-        presenter.onDestroy();
     }
 
     @Override
@@ -202,18 +182,23 @@ public class MapsFragmentView extends BaseFragment
         }
     }
 
+    @Nullable
+    @Override
+    protected MapsFragmentPresenter createPresenter() {
+        return new MapsFragmentPresenter(this);
+    }
+
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        presenter.onAttach();
         Activity activity = getActivity();
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 setupGoogleMapsStyling();
                 setupClusterManager(activity);
                 setupGoogleMapCallbacks();
-                presenter.onMapReady();
+                getPresenter().onMapReady();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
             }
@@ -444,7 +429,7 @@ public class MapsFragmentView extends BaseFragment
         boolean areFilteringOptionsVisible = mapsViewModel.isFilteringLayoutVisible.get();
         if (areFilteringOptionsVisible) {
             mapsViewModel.isFilteringLayoutVisible.set(false);
-            presenter.onClearFilteredRouteClicked();
+            getPresenter().onClearFilteredRouteClicked();
         } else {
             mapsViewModel.isFilteringLayoutVisible.set(true);
         }
@@ -499,12 +484,12 @@ public class MapsFragmentView extends BaseFragment
 
     @Override
     public void OnLocationTrackingSettingsUpdate(boolean isLocationTrackingEnabled) {
-        presenter.onLocationTrackingSettingsUpdate(isLocationTrackingEnabled);
+        getPresenter().onLocationTrackingSettingsUpdate(isLocationTrackingEnabled);
     }
 
     @Override
     public void OnSelectedTour(@NonNull String tourId, List<TourDataResponse> tourDataResponses) {
-        presenter.onTourSelected(tourId, tourDataResponses);
+        getPresenter().onTourSelected(tourId, tourDataResponses);
     }
 
     @Override
@@ -518,7 +503,7 @@ public class MapsFragmentView extends BaseFragment
         return true;
     }
 
-
+    // TODO Implement this in a callback via a DataBinding adapter
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView instanceof Chip) {
@@ -528,7 +513,7 @@ public class MapsFragmentView extends BaseFragment
                     if (filterSelection.size() < 2) {
                         filterSelection.add(selectedFilterCheckpoint);
                         if (filterSelection.size() == 2) {
-                            presenter.onSelectedCheckpointRouteFilters(filterSelection);
+                            getPresenter().onSelectedCheckpointRouteFilters(filterSelection);
                         }
                     } else {
                         buttonView.setChecked(false);
@@ -536,7 +521,7 @@ public class MapsFragmentView extends BaseFragment
                 }
                 if (!isChecked) {
                     if (filterSelection.size() == 2) {
-                        presenter.onFilterChipSelectionRemoved();
+                        getPresenter().onFilterChipSelectionRemoved();
                     }
                     filterSelection.remove(selectedFilterCheckpoint);
                 }
@@ -547,7 +532,7 @@ public class MapsFragmentView extends BaseFragment
     @Override
     public boolean onClusterItemClick(MapCheckpoint mapCheckpoint) {
         if (mapCheckpoint != null) {
-            presenter.onMarkerClicked(mapCheckpoint.getMapCheckpointId());
+            getPresenter().onMarkerClicked(mapCheckpoint.getMapCheckpointId());
         }
         return false;
     }
@@ -558,7 +543,7 @@ public class MapsFragmentView extends BaseFragment
      */
     @Override
     public void onInfoWindowClose(Marker marker) {
-        presenter.onMarkerInfoWindowClosed();
+        getPresenter().onMarkerInfoWindowClosed();
     }
 
     private class RouteInfoBottomSheetCallback extends BottomSheetBehavior.BottomSheetCallback {

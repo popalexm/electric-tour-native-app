@@ -19,14 +19,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-public class SettingsDialogView extends BaseDialogFragment implements SettingsDialogContract.View, CompoundButton.OnCheckedChangeListener {
+public class SettingsDialogView extends BaseDialogFragment<SettingsDialogPresenter>
+        implements SettingsDialogContract.View, CompoundButton.OnCheckedChangeListener {
 
     @NonNull
     public static final String TAG = SettingsDialogView.class.getSimpleName();
     @NonNull
     private final SharedPreferences preferences = Injection.provideSharedPreferences();
-    @NonNull
-    private final SettingsDialogPresenter presenter = new SettingsDialogPresenter(this);
     @NonNull
     private final SettingsDialogViewModel viewModel = new SettingsDialogViewModel();
     @NonNull
@@ -35,7 +34,7 @@ public class SettingsDialogView extends BaseDialogFragment implements SettingsDi
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         viewBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_settings, null, false);
-        viewBinding.setPresenter(presenter);
+        viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
         viewBinding.switchLocation.setOnCheckedChangeListener(this);
         viewBinding.switchDeviationNotifications.setOnCheckedChangeListener(this);
@@ -108,5 +107,10 @@ public class SettingsDialogView extends BaseDialogFragment implements SettingsDi
 
     @Override
     public void showMessage(@NonNull String msg) {
+    }
+
+    @Override
+    public SettingsDialogPresenter createPresenter() {
+        return new SettingsDialogPresenter(this);
     }
 }

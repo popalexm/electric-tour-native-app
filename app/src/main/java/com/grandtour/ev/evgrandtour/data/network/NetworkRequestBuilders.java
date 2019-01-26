@@ -20,20 +20,6 @@ public final class NetworkRequestBuilders {
     }
 
     @NonNull
-    public static RouteDirectionsRequest createDirectionRequestParams(@NonNull List<LatLng> checkpoints, @NonNull String apiKey) {
-        LatLng startCheckpoint = checkpoints.get(0);
-        LatLng endCheckpoint = checkpoints.get(checkpoints.size() - 1);
-        checkpoints.remove(startCheckpoint);
-        checkpoints.remove(endCheckpoint);
-        return new RouteDirectionsRequest.RouteParametersBuilder().setStartWaypoint(startCheckpoint)
-                .setEndWaypoint(endCheckpoint)
-                .setTransitWaypoints(checkpoints)
-                .setMode(NetworkRequestBuilders.DIRECTIONS_REQUEST_MODE)
-                .setAPIKey(apiKey)
-                .createRouteParameters();
-    }
-
-    @NonNull
     public static RouteDirectionsRequest generateDirectionRequestParameters(@NonNull List<Checkpoint> checkpoints, @NonNull String apiKey) {
         List<LatLng> checkpointLatLng = new ArrayList<>();
         for (int index = 0; index < checkpoints.size(); index++) {

@@ -31,13 +31,9 @@ public class ChooseTourDialogPresenter extends BasePresenter implements ChooseTo
     }
 
     @Override
-    public void onAttach() {
-        isViewAttached = true;
+    public void onAttachView() {
+        super.onAttachView();
         retrieveAvailableToursFromRemoteSource();
-    }
-
-    @Override
-    public void onDestroy() {
     }
 
     @Override
