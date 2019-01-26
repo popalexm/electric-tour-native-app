@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsViewModel" />
@@ -31,8 +33,8 @@
                 android:id="@+id/routeInfoMainHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_normal"
                 android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginTop="@dimen/margin_normal"
                 android:orientation="vertical">
 
                 <TextView

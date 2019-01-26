@@ -5,7 +5,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <import type="android.view.View" />
+
         <import type="me.tatarka.bindingcollectionadapter2.LayoutManagers" />
 
         <variable
@@ -68,21 +70,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
-                android:onClick="@{()-> presenter.onChooseTourClicked()}"
                 android:elevation="@dimen/fab_elevation"
+                android:onClick="@{()-> presenter.onChooseTourClicked()}"
                 android:stateListAnimator="@null"
                 android:text="@string/btn_select_trip_label"
                 android:textColor="@android:color/black"
                 android:textSize="10sp"
+                app:backgroundTint="@android:color/white"
                 app:cornerRadius="@dimen/margin_large"
                 app:icon="@drawable/ic_route_selection_24dp"
-                app:rippleColor="@color/colorAccent"
-                app:backgroundTint="@android:color/white"
                 app:iconTintMode="multiply"
                 app:isButtonBounced="@{viewModel.isButtonBouncing}"
                 app:isButtonRevealed="@{viewModel.isSelectTourButtonDisplayed}"
                 app:layout_anchor="@+id/bottomSheetRouteInfo"
-                app:layout_anchorGravity="top|end" />
+                app:layout_anchorGravity="top|end"
+                app:rippleColor="@color/colorAccent" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -136,13 +138,13 @@
             android:layout_height="@dimen/top_bar_height"
             android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
-            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
-            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            app:layout_constraintTop_toTopOf="parent"
             android:background="@drawable/top_rounded_bars"
             android:orientation="horizontal"
             android:paddingEnd="@dimen/margin_small"
-            android:paddingStart="@dimen/margin_small">
+            android:paddingStart="@dimen/margin_small"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toTopOf="parent">
 
             <android.support.v7.widget.SearchView
                 android:id="@+id/searchViewCheckpoints"
@@ -204,9 +206,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/margin_small"
+                    android:onClick="@{()-> presenter.onFilterButtonClicked()}"
                     android:text="@string/btn_filter"
                     app:icon="@drawable/ic_filter_list_white_24dp"
-                    android:onClick="@{()-> presenter.onFilterButtonClicked()}"
                     app:toggleButtonState="@{viewModel.isFilteringLayoutVisible}" />
 
                 <ImageView
@@ -215,13 +217,13 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="@dimen/margin_medium"
+                    android:adjustViewBounds="true"
                     android:background="@drawable/title_background"
                     android:clickable="true"
-                    android:adjustViewBounds="true"
                     android:focusable="true"
                     android:onClick="@{()-> presenter.onSettingsClicked()}"
-                    android:scaleType="center"
                     android:padding="@dimen/margin_small"
+                    android:scaleType="center"
                     android:src="@drawable/ic_settings_white_24dp" />
 
             </LinearLayout>
@@ -231,15 +233,15 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/top_bar_height"
             android:layout_marginTop="@dimen/margin_small"
-            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
-            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            app:layout_constraintTop_toBottomOf="@id/topBar"
             android:background="@drawable/top_rounded_bars"
+            android:fillViewport="true"
             android:paddingEnd="@dimen/margin_medium_large"
             android:paddingStart="@dimen/margin_medium_large"
             android:scrollbars="none"
-            android:fillViewport="true"
-            app:areFilteringOptionsDisplayed="@{viewModel.isFilteringLayoutVisible}">
+            app:areFilteringOptionsDisplayed="@{viewModel.isFilteringLayoutVisible}"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/topBar">
 
             <android.support.design.chip.ChipGroup
                 android:id="@+id/chipGroupFilteringOptions"
@@ -247,8 +249,8 @@
                 android:layout_height="match_parent"
                 android:padding="@dimen/margin_medium"
                 app:chipGroupItems="@{viewModel.checkPointFilteringOptions}"
-                app:removeChipGroupItems="@{viewModel.removeFilteringOptions}"
                 app:chipSpacing="@dimen/margin_medium"
+                app:removeChipGroupItems="@{viewModel.removeFilteringOptions}"
                 app:singleLine="true">
 
             </android.support.design.chip.ChipGroup>
@@ -260,21 +262,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
             android:layout_marginEnd="@dimen/margin_medium_large"
             android:layout_marginStart="@dimen/margin_medium_large"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@drawable/dialog_background"
             android:clipToPadding="false"
             android:padding="8dp"
-            android:background="@drawable/dialog_background"
             app:areSearchResultsVisible="@{viewModel.searchResultModels}"
-            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
-            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            app:layout_constraintTop_toBottomOf="@id/topBar"
             app:itemBinding="@{viewModel.resultViewModelItemBinding}"
             app:items="@{viewModel.searchResultModels}"
             app:layoutManager="@{LayoutManagers.linear()}"
             app:layout_constrainedHeight="true"
-            app:layout_constraintHeight_max="300dp" />
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintHeight_max="300dp"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/topBar" />
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
