@@ -37,15 +37,23 @@ public class SignInPresenter extends BasePresenter implements SignInContract.Pre
     @NonNull
     private final GoogleSignInClient mGoogleSignInClient;
 
-    SignInPresenter(@NonNull SignInContract.View view, @NonNull GoogleSignInOptions googleSignInOptions) {
+    SignInPresenter(@NonNull SignInContract.View view) {
         this.view = view;
-        mGoogleSignInClient = GoogleSignIn.getClient(Injection.provideGlobalContext(), googleSignInOptions);
+        mGoogleSignInClient = GoogleSignIn.getClient(Injection.provideGlobalContext(), buildSignInOptions());
         mFireBaseAuth = FirebaseAuth.getInstance();
     }
 
+    @NonNull
+    private GoogleSignInOptions buildSignInOptions() {
+        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(Injection.provideGlobalContext()
+                .getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+    }
+
     @Override
-    public void onAttach() {
-        super.onAttach();
+    public void onAttachView() {
+        super.onAttachView();
         checkPreviousLoginStatus();
     }
 
@@ -69,7 +77,8 @@ public class SignInPresenter extends BasePresenter implements SignInContract.Pre
     public void onGoogleSignInFailed(@NonNull ApiException exception) {
         String error = exception.getMessage();
         if (error != null && isViewAttached) {
-            view.showMessage("Sign in with Google account failed!");
+            view.showMessage(Injection.provideGlobalContext()
+                    .getString(R.string.message_sign_in_with_google_failed));
         }
     }
 

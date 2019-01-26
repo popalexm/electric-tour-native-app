@@ -42,13 +42,13 @@ public class ChooseTourDialogFragment extends BaseDialogFragment implements Choo
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        presenter.onAttach();
+        presenter.onAttachView();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        presenter.onDetach();
+        presenter.onDetachView();
     }
 
     @Override

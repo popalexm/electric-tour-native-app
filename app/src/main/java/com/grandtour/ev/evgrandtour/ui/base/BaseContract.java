@@ -13,10 +13,10 @@ public class BaseContract {
 
     public interface Presenter {
 
-        void onAttach();
+        void onAttachView();
 
-        void onDetach();
+        void onDetachView();
 
-        void onDestroy();
+        void onDestroyView();
     }
 }

@@ -2,7 +2,6 @@ package com.grandtour.ev.evgrandtour.ui.signIn;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
@@ -30,29 +29,22 @@ public class SignInActivityView extends Activity implements SignInContract.View 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivitySignInBinding activitySignInBinding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in);
-        GoogleSignInOptions googleSignInOptions = buildSignInOptions();
-        presenter = new SignInPresenter(this, googleSignInOptions);
+        presenter = new SignInPresenter(this);
         viewModel = new SignInViewModel();
         activitySignInBinding.setPresenter(presenter);
         activitySignInBinding.setViewModel(viewModel);
     }
 
-    private GoogleSignInOptions buildSignInOptions() {
-        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.onAttach();
+        presenter.onAttachView();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        presenter.onDetach();
+        presenter.onDetachView();
     }
 
     @Override

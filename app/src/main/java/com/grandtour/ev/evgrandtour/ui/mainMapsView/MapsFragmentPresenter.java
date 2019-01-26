@@ -102,8 +102,8 @@ public class MapsFragmentPresenter extends BasePresenter
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         displayedTripCheckpoints.clear();
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -176,7 +176,7 @@ public class MapsFragmentPresenter extends BasePresenter
     @Override
     public void onChooseTourClicked() {
         boolean isNetworkAvailable = NetworkUtils.isInternetConnectionAvailable(Injection.provideGlobalContext());
-        if (isNetworkAvailable) {
+        if (isNetworkAvailable && isViewAttached) {
             view.showTourPickerDialog();
         } else {
             String errorMsg = Injection.provideGlobalContext()

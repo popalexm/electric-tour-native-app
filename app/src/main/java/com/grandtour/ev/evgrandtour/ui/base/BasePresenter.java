@@ -20,17 +20,17 @@ public abstract class BasePresenter implements BaseContract.Presenter {
     }
 
     @Override
-    public void onAttach() {
+    public void onAttachView() {
         isViewAttached = true;
     }
 
     @Override
-    public void onDetach() {
+    public void onDetachView() {
         isViewAttached = false;
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroyView() {
         removeSubscriptions();
     }
 }
