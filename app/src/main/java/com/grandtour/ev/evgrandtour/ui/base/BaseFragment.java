@@ -56,10 +56,6 @@ public abstract class BaseFragment<T extends BaseContract.Presenter> extends Fra
     }
 
     @Override
-    public void showLoadingView(boolean isLoading) {
-    }
-
-    @Override
     public void showMessage(@NonNull String message) {
         Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
         View view = LayoutInflater.from(getContext())

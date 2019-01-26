@@ -503,7 +503,6 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
         return true;
     }
 
-
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView instanceof Chip) {

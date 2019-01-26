@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 public class SettingsDialogPresenter extends BasePresenter implements SettingsDialogContract.Presenter {
 
     @NonNull
-    private static String USER_TOKEN = "user_token";
+    private static final String USER_TOKEN = "user_token";
 
     @NonNull
     private final SettingsDialogContract.View view;
@@ -19,7 +19,9 @@ public class SettingsDialogPresenter extends BasePresenter implements SettingsDi
 
     @Override
     public void onDismissButtonClicked() {
-        view.dismissDialog();
+        if (isViewAttached) {
+            view.dismissDialog();
+        }
     }
 
     @Override
@@ -28,7 +30,7 @@ public class SettingsDialogPresenter extends BasePresenter implements SettingsDi
                 .edit()
                 .remove(SettingsDialogPresenter.USER_TOKEN)
                 .commit();
-        if (isTokenRemoved) {
+        if (isTokenRemoved && isViewAttached) {
             view.switchToLoginScreen();
         }
     }

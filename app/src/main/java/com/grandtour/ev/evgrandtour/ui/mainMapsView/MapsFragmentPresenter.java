@@ -72,10 +72,6 @@ public class MapsFragmentPresenter extends BasePresenter
     private final ServiceConnection serviceConnection = this;
     @NonNull
     private final MapsFragmentContract.View view;
-    @NonNull
-    private final GpsLocationManager gpsLocationManager = GpsLocationManager.getInstance();
-    @Nullable
-    private Service routeDirectionsRequestService;
     @Nullable
     private Service locationUpdatesService;
     private boolean isServiceBound;
@@ -107,7 +103,8 @@ public class MapsFragmentPresenter extends BasePresenter
         displayedTripCheckpoints.clear();
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            gpsLocationManager.stopRequestingLocationUpdates();
+            GpsLocationManager.getInstance()
+                    .stopRequestingLocationUpdates();
         }
     }
 
@@ -135,13 +132,15 @@ public class MapsFragmentPresenter extends BasePresenter
 
     @Override
     public void onRoutesRequestsError(@NonNull String errorType) {
-        if (TextUtils.equals(errorType, NetworkExceptions.UNKNOWN_HOST.name())) {
-            view.showMessage(Injection.provideGlobalContext()
-                    .getString(R.string.error_message_no_internet_connection));
-        }
-        if (TextUtils.equals(errorType, NetworkExceptions.STREAM_RESET_EXCEPTION.name())) {
-            view.showMessage(Injection.provideGlobalContext()
-                    .getString(R.string.error_message_internet_connection_intrerupted));
+        if (isViewAttached) {
+            if (TextUtils.equals(errorType, NetworkExceptions.UNKNOWN_HOST.name())) {
+                view.showMessage(Injection.provideGlobalContext()
+                        .getString(R.string.error_message_no_internet_connection));
+            }
+            if (TextUtils.equals(errorType, NetworkExceptions.STREAM_RESET_EXCEPTION.name())) {
+                view.showMessage(Injection.provideGlobalContext()
+                        .getString(R.string.error_message_internet_connection_intrerupted));
+            }
         }
         dismissLoadingView();
     }
@@ -219,10 +218,6 @@ public class MapsFragmentPresenter extends BasePresenter
                 .equals(LocationsUpdatesService.class.getName())) {
             LocationsUpdatesService.LocationServiceBinder binder = (LocationsUpdatesService.LocationServiceBinder) service;
             locationUpdatesService = binder.getService();
-        } else if (name.getClassName()
-                .equals(DirectionsElevationService.class.getName())) {
-            DirectionsElevationService.RouteDirectionsLocalBinder binder = (DirectionsElevationService.RouteDirectionsLocalBinder) service;
-            routeDirectionsRequestService = binder.getService();
         }
     }
 
@@ -231,9 +226,6 @@ public class MapsFragmentPresenter extends BasePresenter
         if (name.getClassName()
                 .equals(LocationsUpdatesService.class.getName())) {
             locationUpdatesService = null;
-        } else if (name.getClassName()
-                .equals(DirectionsElevationService.class.getName())) {
-            routeDirectionsRequestService = null;
         }
     }
 
@@ -292,7 +284,8 @@ public class MapsFragmentPresenter extends BasePresenter
     public void onMyLocationButtonClicked() {
         if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-            gpsLocationManager.getLastKnownLocation(this);
+            GpsLocationManager.getInstance()
+                    .getLastKnownLocation(this);
         }
     }
 
