@@ -1,23 +1,22 @@
 package com.grandtour.ev.evgrandtour.ui.base;
 
+import com.grandtour.ev.evgrandtour.R;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public abstract class BaseDialogFragment<T extends BaseContract.Presenter> extends DialogFragment implements BaseContract.View {
 
     private T presenter;
-
-    public void setupTransparentDialogBackground() {
-        if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow()
-                    .setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            getDialog().getWindow()
-                    .requestFeature(Window.FEATURE_NO_TITLE);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -52,4 +51,24 @@ public abstract class BaseDialogFragment<T extends BaseContract.Presenter> exten
 
     public abstract T createPresenter();
 
+    @Override
+    public void showMessage(@NonNull String message) {
+        Toast toast = Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT);
+        View view = LayoutInflater.from(getContext())
+                .inflate(R.layout.toast_message_layout, null);
+        TextView textView = view.findViewById(R.id.txtToastMessage);
+        textView.setText(message);
+        toast.setView(view);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    public void setupTransparentDialogBackground() {
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow()
+                    .setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            getDialog().getWindow()
+                    .requestFeature(Window.FEATURE_NO_TITLE);
+        }
+    }
 }

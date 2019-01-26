@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -44,12 +43,6 @@ public class ChooseTourDialogFragment extends BaseDialogFragment<ChooseTourDialo
     @Override
     public void showLoadingView(boolean isLoading) {
         viewModel.isLoadingInProgress.set(isLoading);
-    }
-
-    @Override
-    public void showMessage(@NonNull String msg) {
-        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT)
-                .show();
     }
 
     @Override

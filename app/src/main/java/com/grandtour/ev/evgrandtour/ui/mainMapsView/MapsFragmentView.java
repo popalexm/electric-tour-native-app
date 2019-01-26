@@ -503,6 +503,7 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
         return true;
     }
 
+    // TODO Implement this in a callback via a DataBinding adapter
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (buttonView instanceof Chip) {
