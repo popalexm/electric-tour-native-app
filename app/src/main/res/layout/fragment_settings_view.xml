@@ -14,8 +14,8 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/dialog_background"
+        android:layout_height="match_parent"
+        android:background="@drawable/tab_page_background"
         android:orientation="vertical"
         android:padding="@dimen/margin_normal">
 
@@ -56,6 +56,11 @@
             android:textSize="12sp"
             android:textStyle="italic" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent" />
+
         <android.support.design.button.MaterialButton
             android:id="@+id/btnSignOut"
             android:layout_width="wrap_content"
@@ -68,25 +73,6 @@
             android:text="@string/btn_sign_out"
             android:textColor="@android:color/black"
             app:backgroundTint="@color/colorAccent"
-            app:cornerRadius="@dimen/margin_normal" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent" />
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/buttonDismiss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/margin_medium"
-            android:onClick="@{()-> presenter.onDismissButtonClicked()}"
-            android:paddingEnd="@dimen/margin_large"
-            android:paddingStart="@dimen/margin_large"
-            android:text="@string/btn_dimiss"
-            android:textColor="@android:color/white"
-            app:backgroundTint="@android:color/holo_red_light"
             app:cornerRadius="@dimen/margin_normal" />
 
     </LinearLayout>

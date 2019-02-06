@@ -4,6 +4,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.ActivityMainBinding;
 import com.grandtour.ev.evgrandtour.ui.addNewTrip.AddNewTripFragmentView;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.settings.SettingsFragmentView;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -33,6 +34,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         replaceInFragmentManager(newTripFragmentView, AddNewTripFragmentView.TAG);
     }
 
+    private void loadSettingsFragment() {
+        SettingsFragmentView settingsFragmentView = SettingsFragmentView.createInstance();
+        replaceInFragmentManager(settingsFragmentView, SettingsFragmentView.TAG);
+    }
+
     private void replaceInFragmentManager(@NonNull Fragment fragment, @NonNull String tag) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_content_frame, fragment , tag)
@@ -49,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 loadAddEditTripsFragment();
                 return true;
             case R.id.action_settings:
-
+                loadSettingsFragment();
                 return true;
         }
         return false;

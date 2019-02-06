@@ -35,7 +35,6 @@ import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.YAxisValueFormatte
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
-import com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogView;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
@@ -327,8 +326,8 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
 
     @Override
     public void showSettingsDialog() {
-        SettingsDialogView dialog = new SettingsDialogView();
-        showDialog(dialog, this, SettingsDialogView.TAG, 300);
+        //  SettingsFragmentView dialog = new SettingsFragmentView();
+        // showDialog(dialog, this, SettingsFragmentView.TAG, 300);
     }
 
     @Override

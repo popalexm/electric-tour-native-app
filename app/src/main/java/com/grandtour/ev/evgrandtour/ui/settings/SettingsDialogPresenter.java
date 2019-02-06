@@ -18,13 +18,6 @@ public class SettingsDialogPresenter extends BasePresenter implements SettingsDi
     }
 
     @Override
-    public void onDismissButtonClicked() {
-        if (isViewAttached) {
-            view.dismissDialog();
-        }
-    }
-
-    @Override
     public void onSignOutButtonClicked() {
         boolean isTokenRemoved = Injection.provideSharedPreferences()
                 .edit()

@@ -4,8 +4,8 @@ import com.grandtour.ev.evgrandtour.BuildConfig;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
-import com.grandtour.ev.evgrandtour.databinding.FragmentDialogSettingsBinding;
-import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
+import com.grandtour.ev.evgrandtour.databinding.FragmentSettingsViewBinding;
+import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.signIn.SignInActivityView;
 
 import android.app.Activity;
@@ -19,28 +19,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-public class SettingsDialogView extends BaseDialogFragment<SettingsDialogPresenter>
+public class SettingsFragmentView extends BaseFragment<SettingsDialogPresenter>
         implements SettingsDialogContract.View, CompoundButton.OnCheckedChangeListener {
 
     @NonNull
-    public static final String TAG = SettingsDialogView.class.getSimpleName();
+    public static final String TAG = SettingsFragmentView.class.getSimpleName();
     @NonNull
     private final SharedPreferences preferences = Injection.provideSharedPreferences();
     @NonNull
     private final SettingsDialogViewModel viewModel = new SettingsDialogViewModel();
     @NonNull
-    private FragmentDialogSettingsBinding viewBinding;
+    private FragmentSettingsViewBinding viewBinding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_settings, null, false);
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_view, container, false);
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
         viewBinding.switchLocation.setOnCheckedChangeListener(this);
         viewBinding.switchDeviationNotifications.setOnCheckedChangeListener(this);
         setupCurrentSettings();
-        setupTransparentDialogBackground();
         return viewBinding.getRoot();
+    }
+
+    @NonNull
+    public static SettingsFragmentView createInstance() {
+        return new SettingsFragmentView();
     }
 
     private void setupCurrentSettings() {
@@ -84,11 +88,6 @@ public class SettingsDialogView extends BaseDialogFragment<SettingsDialogPresent
         return preferences.edit()
                 .putBoolean(SharedPreferencesKeys.KEY_ROUTE_DEVIATION_NOTIFICATIONS_ENABLED, areRouteDeviationNotificationEnabled)
                 .commit();
-    }
-
-    @Override
-    public void dismissDialog() {
-        dismiss();
     }
 
     @Override
