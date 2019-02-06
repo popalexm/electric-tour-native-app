@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Electric Tour</string>
 
+    // Main Trip View
     <string name="message_distance_to_next_checkpoint">Distance to next : </string>
     <string name="message_eta_to_next_checkpoint">ETA to next : </string>
     <string name="title_marker_current_location">Current location</string>
@@ -37,6 +38,16 @@
     <string name="btn_start_navigation">Start \n Navigation</string>
     <string name="btn_clear_navigation_selection">Clear \n Selection</string>
     <string name="application_version">App Version</string>
+
+    //
+    <string name="btn_settings">Settings</string>
+    <string name="btn_current_trip">Current Trip</string>
+    <string name="btn_plan_new_trip">Plan New Trip</string>
+
+    // Add/Edit Trip View
+    <string name="btn_add_checkpoint">Add Checkpoint</string>
+    <string name="btn_finish_trip_planning">Finish Planning</string>
+    <string name="hint_enter_trip_name">Please enter trip name</string>
 
     // Dummy testing strings
     <string name="lorem_ipsum">Lorem Ipsum</string>
