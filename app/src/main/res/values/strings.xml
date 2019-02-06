@@ -37,6 +37,9 @@
     <string name="btn_select_trip_label">Select \n Trip</string>
     <string name="btn_start_navigation">Start \n Navigation</string>
     <string name="btn_clear_navigation_selection">Clear \n Selection</string>
+    <string name="title_altitude_chart">Trip Altitude Chart</string>
+
+    // Settings
     <string name="application_version">App Version</string>
 
     //
