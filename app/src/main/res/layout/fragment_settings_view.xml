@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -12,37 +13,63 @@
             type="com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogContract.Presenter" />
     </data>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/tab_page_background"
-        android:orientation="vertical"
         android:padding="@dimen/margin_normal">
-
+        
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_centerVertical="true"
             android:orientation="vertical">
 
-            <Switch
-                android:id="@+id/switchLocation"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_medium"
-                android:switchPadding="@dimen/margin_small"
-                android:text="@string/hint_enable_current_location_monitoring"
-                android:theme="@style/SwitchStyle" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:orientation="vertical">
 
-            <Switch
-                android:id="@+id/switchDeviationNotifications"
+                <Switch
+                    android:id="@+id/switchLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_medium"
+                    android:switchPadding="@dimen/margin_small"
+                    android:text="@string/hint_enable_current_location_monitoring"
+                    android:theme="@style/SwitchStyle" />
+
+                <Switch
+                    android:id="@+id/switchDeviationNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_medium"
+                    android:switchPadding="@dimen/margin_small"
+                    android:text="@string/hint_enable_route_deviation"
+                    android:theme="@style/SwitchStyle" />
+
+            </LinearLayout>
+
+            <View
                 android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btnSignOut"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_medium"
-                android:switchPadding="@dimen/margin_small"
-                android:text="@string/hint_enable_route_deviation"
-                android:theme="@style/SwitchStyle" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/margin_large"
+                android:onClick="@{()-> presenter.onSignOutButtonClicked()}"
+                android:paddingEnd="@dimen/margin_large"
+                android:paddingStart="@dimen/margin_large"
+                android:text="@string/btn_sign_out"
+                android:textColor="@android:color/black"
+                app:backgroundTint="@color/colorAccent"
+                app:cornerRadius="@dimen/margin_normal" />
 
         </LinearLayout>
 
@@ -50,30 +77,12 @@
             android:id="@+id/txtAppVersion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_margin="@dimen/margin_normal"
             android:text="@={viewModel.appVersion}"
             android:textSize="12sp"
             android:textStyle="italic" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent" />
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/btnSignOut"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/margin_medium"
-            android:onClick="@{()-> presenter.onSignOutButtonClicked()}"
-            android:paddingEnd="@dimen/margin_large"
-            android:paddingStart="@dimen/margin_large"
-            android:text="@string/btn_sign_out"
-            android:textColor="@android:color/black"
-            app:backgroundTint="@color/colorAccent"
-            app:cornerRadius="@dimen/margin_normal" />
-
-    </LinearLayout>
+    </RelativeLayout>
 </layout>
