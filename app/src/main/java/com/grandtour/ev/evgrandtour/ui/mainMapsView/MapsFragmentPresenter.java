@@ -197,14 +197,7 @@ public class MapsFragmentPresenter extends BasePresenter
                                         .doOnError(Throwable::printStackTrace)
                                         .subscribe())));
     }
-
-    @Override
-    public void onSettingsClicked() {
-        if (isViewAttached) {
-            view.showSettingsDialog();
-        }
-    }
-
+    
     @Override
     public void onFilterButtonClicked() {
         if (isViewAttached) {

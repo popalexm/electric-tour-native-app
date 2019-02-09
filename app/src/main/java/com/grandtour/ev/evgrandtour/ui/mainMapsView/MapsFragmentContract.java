@@ -40,8 +40,6 @@ public class MapsFragmentContract {
 
         void startGoogleMapsDirections(@NonNull String navigationUri);
 
-        void showSettingsDialog();
-
         void showTourPickerDialog();
 
         void displaySearchResults(@NonNull List<SearchResultModel> checkpoints);
@@ -97,8 +95,6 @@ public class MapsFragmentContract {
         void onChooseTourClicked();
 
         void onTourSelected(@NonNull String tourId, @NonNull List<TourDataResponse> responses);
-
-        void onSettingsClicked();
 
         void onFilterButtonClicked();
 

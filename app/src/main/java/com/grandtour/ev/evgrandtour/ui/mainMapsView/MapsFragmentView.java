@@ -325,12 +325,6 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     }
 
     @Override
-    public void showSettingsDialog() {
-        //  SettingsFragmentView dialog = new SettingsFragmentView();
-        // showDialog(dialog, this, SettingsFragmentView.TAG, 300);
-    }
-
-    @Override
     public void showTourPickerDialog() {
         ChooseTourDialogFragment dialog = ChooseTourDialogFragment.createInstance();
         showDialog(dialog, this, ChooseTourDialogFragment.TAG, 200);
