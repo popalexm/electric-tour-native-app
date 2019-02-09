@@ -6,11 +6,11 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsFragmentViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsDialogContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsFragmentContract.Presenter" />
     </data>
 
     <RelativeLayout
@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/tab_page_background"
         android:padding="@dimen/margin_normal">
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

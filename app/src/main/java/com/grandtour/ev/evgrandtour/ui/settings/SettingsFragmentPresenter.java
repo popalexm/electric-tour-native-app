@@ -5,15 +5,15 @@ import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 
 import android.support.annotation.NonNull;
 
-public class SettingsDialogPresenter extends BasePresenter implements SettingsDialogContract.Presenter {
+public class SettingsFragmentPresenter extends BasePresenter implements SettingsFragmentContract.Presenter {
 
     @NonNull
     private static final String USER_TOKEN = "user_token";
 
     @NonNull
-    private final SettingsDialogContract.View view;
+    private final SettingsFragmentContract.View view;
 
-    SettingsDialogPresenter(@NonNull SettingsDialogContract.View view) {
+    SettingsFragmentPresenter(@NonNull SettingsFragmentContract.View view) {
         this.view = view;
     }
 
@@ -21,10 +21,11 @@ public class SettingsDialogPresenter extends BasePresenter implements SettingsDi
     public void onSignOutButtonClicked() {
         boolean isTokenRemoved = Injection.provideSharedPreferences()
                 .edit()
-                .remove(SettingsDialogPresenter.USER_TOKEN)
+                .remove(SettingsFragmentPresenter.USER_TOKEN)
                 .commit();
         if (isTokenRemoved && isViewAttached) {
             view.switchToLoginScreen();
         }
     }
+
 }

@@ -19,15 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-public class SettingsFragmentView extends BaseFragment<SettingsDialogPresenter>
-        implements SettingsDialogContract.View, CompoundButton.OnCheckedChangeListener {
+public class SettingsFragmentView extends BaseFragment<SettingsFragmentPresenter>
+        implements SettingsFragmentContract.View, CompoundButton.OnCheckedChangeListener {
 
     @NonNull
     public static final String TAG = SettingsFragmentView.class.getSimpleName();
     @NonNull
     private final SharedPreferences preferences = Injection.provideSharedPreferences();
     @NonNull
-    private final SettingsDialogViewModel viewModel = new SettingsDialogViewModel();
+    private final SettingsFragmentViewModel viewModel = new SettingsFragmentViewModel();
     @NonNull
     private FragmentSettingsViewBinding viewBinding;
 
@@ -109,7 +109,7 @@ public class SettingsFragmentView extends BaseFragment<SettingsDialogPresenter>
     }
 
     @Override
-    public SettingsDialogPresenter createPresenter() {
-        return new SettingsDialogPresenter(this);
+    public SettingsFragmentPresenter createPresenter() {
+        return new SettingsFragmentPresenter(this);
     }
 }
