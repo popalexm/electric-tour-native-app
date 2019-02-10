@@ -25,7 +25,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public abstract class BaseMapFragment<P extends BaseContract.Presenter> extends Fragment implements BaseContract.View, OnMapReadyCallback {
+public abstract class BaseMapFragment<P extends BaseContract.Presenter> extends Fragment
+        implements BaseContract.View, OnMapReadyCallback, GoogleMap.OnInfoWindowCloseListener {
 
     private P presenter;
 

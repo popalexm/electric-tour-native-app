@@ -2,12 +2,11 @@ package com.grandtour.ev.evgrandtour.ui.mainMapsView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -18,20 +17,17 @@ import com.google.maps.android.clustering.ClusterManager;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.databinding.FragmentMainMapViewBinding;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
-import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
+import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.LocationUpdatesBroadcastReceiver;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.broadcastReceivers.RouteRequestsBroadcastReceiver;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.XAxisValueFormatter;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.YAxisValueFormatter;
+import com.grandtour.ev.evgrandtour.ui.mainMapsView.chartView.ChartViewVisualisationUtils;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.markerInfoWindow.GoogleMapInfoWindow;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
@@ -46,12 +42,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresPermission;
 import android.support.design.chip.Chip;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.content.LocalBroadcastManager;
@@ -64,17 +58,16 @@ import android.widget.CompoundButton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presenter>
-        implements MapsFragmentContract.View, OnMapReadyCallback, ClusterManager.OnClusterClickListener<MapCheckpoint>,
-        CompoundButton.OnCheckedChangeListener, ClusterManager.OnClusterItemClickListener<MapCheckpoint>, GoogleMap.OnInfoWindowCloseListener {
-
-    @NonNull
-    public static final String TAG = MapsFragmentView.class.getSimpleName();
+public class MapsFragmentView extends BaseMapFragment<MapsFragmentContract.Presenter>
+        implements MapsFragmentContract.View, ClusterManager.OnClusterClickListener<MapCheckpoint>, ClusterManager.OnClusterItemClickListener<MapCheckpoint>,
+        CompoundButton.OnCheckedChangeListener {
 
     @NonNull
     private static final String ACTION_ROUTE_BROADCAST = "RouteResultsBroadcast";
     @NonNull
     private static final String ACTION_LOCATION_BROADCAST = "LocationResultsBroadcast";
+    @NonNull
+    public static final String TAG = MapsFragmentView.class.getSimpleName();
     public static final int ZOOM_LEVEL = 13;
 
     @NonNull
@@ -86,19 +79,16 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     private final LocationUpdatesBroadcastReceiver locationUpdatesBroadcastReceiver = new LocationUpdatesBroadcastReceiver(getPresenter());
     @NonNull
     private final List<MapCheckpoint> filterSelection = new ArrayList<>();
+    @NonNull
+    public final ArrayList<Polyline> entireTripPolylineList = new ArrayList<>();
     @Nullable
     private Marker userLocationMarker;
     @Nullable
     private Circle userLocationCircle;
     @NonNull
-    public final ArrayList<Polyline> entireTripPolylineList = new ArrayList<>();
-
-    @NonNull
     private FragmentMainMapViewBinding viewBinding;
     @Nullable
     private ClusterManager<MapCheckpoint> clusterManager;
-    @NonNull
-    private GoogleMap googleMap;
 
     @NonNull
     public static MapsFragmentView createInstance() {
@@ -112,8 +102,8 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
         viewBinding.setViewModel(mapsViewModel);
         viewBinding.setPresenter(getPresenter());
 
-        viewBinding.mapView.onCreate(savedInstanceState);
-        viewBinding.mapView.getMapAsync(this);
+        setMapView(viewBinding.mapView);
+        initGoogleMapsView(savedInstanceState);
         setupFloatingActionButtonRevealHideAnimation();
         return viewBinding.getRoot();
     }
@@ -136,7 +126,6 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     @Override
     public void onResume() {
         super.onResume();
-        viewBinding.mapView.onResume();
         Activity activity = getActivity();
         if (activity != null) {
             LocalBroadcastManager.getInstance(activity)
@@ -147,15 +136,8 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     }
 
     @Override
-    public void onPause() {
-        viewBinding.mapView.onPause();
-        super.onPause();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        viewBinding.mapView.onDestroy();
         entireTripPolylineList.clear();
         Activity activity = getActivity();
         if (activity != null) {
@@ -164,12 +146,6 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
             LocalBroadcastManager.getInstance(activity)
                     .unregisterReceiver(locationUpdatesBroadcastReceiver);
         }
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        viewBinding.mapView.onLowMemory();
     }
 
     @Override
@@ -190,11 +166,12 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
+        setGoogleMap(googleMap);
+
         Activity activity = getActivity();
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                setupGoogleMapsStyling();
+                setupGoogleMapsDarkStyle();
                 setupClusterManager(activity);
                 setupGoogleMapCallbacks();
                 getPresenter().onMapReady();
@@ -204,30 +181,22 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
         }
     }
 
-    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    private void setupGoogleMapsStyling() {
-        try {
-            googleMap.setMyLocationEnabled(true);
-            googleMap.getUiSettings()
-                    .setMyLocationButtonEnabled(false);
-            MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(Injection.provideGlobalContext(), R.raw.google_maps_dark_mode);
-            googleMap.setMapStyle(style);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void setupClusterManager(@NonNull Activity activity) {
-        clusterManager = new ClusterManager<>(activity, this.googleMap);
-        clusterManager.setOnClusterClickListener(this);
-        clusterManager.setOnClusterItemClickListener(this);
-        clusterManager.setRenderer(new MapsClusterRenderer(activity, googleMap, clusterManager));
-        clusterManager.getMarkerCollection()
-                .setOnInfoWindowAdapter(new GoogleMapInfoWindow(activity));
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null) {
+            clusterManager = new ClusterManager<>(activity, googleMap);
+            clusterManager.setOnClusterClickListener(this);
+            clusterManager.setOnClusterItemClickListener(this);
+            clusterManager.setRenderer(new MapsClusterRenderer(activity, googleMap, clusterManager));
+            clusterManager.getMarkerCollection()
+                    .setOnInfoWindowAdapter(new GoogleMapInfoWindow(activity));
+        }
+
     }
 
     private void setupGoogleMapCallbacks() {
-        if (clusterManager != null) {
+        GoogleMap googleMap = getGoogleMap();
+        if (clusterManager != null && googleMap != null) {
             googleMap.setOnCameraChangeListener(clusterManager);
             googleMap.setOnMarkerClickListener(clusterManager);
             googleMap.setOnInfoWindowClickListener(clusterManager);
@@ -239,7 +208,10 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == PermissionUtils.LOCATION_REQUEST_PERMISSION_ID && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            viewBinding.mapView.getMapAsync(this);
+            MapView mapView = getMapView();
+            if (mapView != null) {
+                mapView.getMapAsync(this);
+            }
         }
     }
 
@@ -251,10 +223,13 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
         } else {
             MarkerOptions userLocationMarkerOptions = MapUtils.getCurrentUserLocationMarker(latLng);
             CircleOptions userLocationCircleOptions = MapUtils.getCurrentUserLocationCircle(latLng);
-            this.userLocationMarker = googleMap.addMarker(userLocationMarkerOptions);
-            this.userLocationCircle = googleMap.addCircle(userLocationCircleOptions);
-            AnimationManager.getInstance()
-                    .startUserLocationAnimation(this.userLocationCircle);
+            GoogleMap googleMap = getGoogleMap();
+            if (googleMap != null) {
+                userLocationMarker = googleMap.addMarker(userLocationMarkerOptions);
+                userLocationCircle = googleMap.addCircle(userLocationCircleOptions);
+                AnimationManager.getInstance()
+                        .startUserLocationAnimation(userLocationCircle);
+            }
         }
     }
 
@@ -278,7 +253,9 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
             builder.include(new LatLng(position.latitude, position.longitude));
         }
         LatLngBounds bounds = builder.build();
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null)
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 15));
     }
 
     @Override
@@ -300,7 +277,8 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     @Override
     public void drawRouteStepLineOnMap(@NonNull PolylineOptions routePolyOptions, int routeStepId) {
         Activity activity = getActivity();
-        if (activity != null) {
+        GoogleMap googleMap = getGoogleMap();
+        if (activity != null && googleMap != null) {
             Polyline routePolyline = googleMap.addPolyline(routePolyOptions);
             routePolyline.setTag(routeStepId);
             routePolyline.setClickable(true);
@@ -376,13 +354,8 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
     public void showChartView(@NonNull LineData lineData, @NonNull Description description) {
         LineChart chartView = viewBinding.getRoot()
                 .findViewById(R.id.routeElevationChart);
-        chartView.setDescription(description);
-        chartView.setData(lineData);
-        chartView.getLegend()
-                .setTextColor(Color.WHITE);
-        chartView.invalidate();
-        chartView.animateY(1000);
-        setupChartViewAxisStyling(chartView);
+        ChartViewVisualisationUtils.showChartView(chartView, lineData, description);
+        ChartViewVisualisationUtils.setupChartViewAxisStyling(chartView);
     }
 
     @Override
@@ -402,19 +375,6 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
                 mapsViewModel.checkPointFilteringOptions.add(filterChip);
             }
         }
-    }
-
-    private void setupChartViewAxisStyling(@NonNull LineChart chartView) {
-        XAxis xAxis = chartView.getXAxis();
-        YAxis yAxisLeft = chartView.getAxisLeft();
-        YAxis yAxisRight = chartView.getAxisRight();
-
-        yAxisLeft.setTextColor(Color.WHITE);
-        yAxisLeft.setValueFormatter(new YAxisValueFormatter());
-        yAxisRight.setEnabled(false);
-
-        xAxis.setTextColor(Color.WHITE);
-        xAxis.setValueFormatter(new XAxisValueFormatter());
     }
 
     @Override
@@ -439,7 +399,9 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
 
     @Override
     public void moveCameraToCurrentLocation(@NonNull LatLng location) {
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, MapsFragmentView.ZOOM_LEVEL));
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null)
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, MapsFragmentView.ZOOM_LEVEL));
     }
 
     @Override
@@ -492,7 +454,9 @@ public class MapsFragmentView extends BaseFragment<MapsFragmentContract.Presente
             builder.include(item.getPosition());
         }
         final LatLngBounds bounds = builder.build();
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null)
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
         return true;
     }
 
