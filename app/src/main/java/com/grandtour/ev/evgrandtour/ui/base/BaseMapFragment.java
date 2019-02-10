@@ -96,6 +96,11 @@ public abstract class BaseMapFragment<P extends BaseContract.Presenter> extends 
         }
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+    }
+
     /**
      * Setups google Maps into dark mode styling
      */
@@ -163,9 +168,5 @@ public abstract class BaseMapFragment<P extends BaseContract.Presenter> extends 
     @Nullable
     public GoogleMap getGoogleMap() {
         return googleMap;
-    }
-
-    public void setGoogleMap(@Nullable GoogleMap googleMap) {
-        this.googleMap = googleMap;
     }
 }

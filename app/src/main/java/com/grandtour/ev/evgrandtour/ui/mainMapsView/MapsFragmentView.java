@@ -166,8 +166,7 @@ public class MapsFragmentView extends BaseMapFragment<MapsFragmentContract.Prese
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        setGoogleMap(googleMap);
-
+        super.onMapReady(googleMap);
         Activity activity = getActivity();
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
