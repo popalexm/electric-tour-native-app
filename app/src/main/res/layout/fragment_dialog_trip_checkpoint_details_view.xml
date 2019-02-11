@@ -12,7 +12,7 @@
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentContract.NewTripCheckpointDetailsFragmentPresenter" />
+            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentContract.Presenter" />
     </data>
 
     <android.support.constraint.ConstraintLayout

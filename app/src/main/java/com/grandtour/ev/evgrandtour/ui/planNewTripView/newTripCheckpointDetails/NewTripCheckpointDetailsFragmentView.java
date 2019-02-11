@@ -13,10 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<NewTripCheckpointDetailsFragmentPresenter>
-        implements NewTripCheckpointDetailsFragmentContract.NewTripCheckpointDetailsFragmentView {
+        implements NewTripCheckpointDetailsFragmentContract.View {
 
     @NonNull
     public final static String TAG = NewTripCheckpointDetailsFragmentView.class.getSimpleName();
+    @NonNull
+    private final NewTripCheckpointDetailsViewModel viewModel = new NewTripCheckpointDetailsViewModel();
 
     @NonNull
     public static NewTripCheckpointDetailsFragmentView createInstance() {
@@ -27,6 +29,8 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentDialogTripCheckpointDetailsViewBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_trip_checkpoint_details_view,
                 container, false);
+        viewBinding.setPresenter(getPresenter());
+        viewBinding.setViewModel(viewModel);
         setupTransparentDialogBackground();
         return viewBinding.getRoot();
     }
@@ -40,5 +44,10 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
     @Override
     public void showLoadingView(boolean isLoading) {
 
+    }
+
+    @Override
+    public void dismissDetailsDialog() {
+        dismiss();
     }
 }

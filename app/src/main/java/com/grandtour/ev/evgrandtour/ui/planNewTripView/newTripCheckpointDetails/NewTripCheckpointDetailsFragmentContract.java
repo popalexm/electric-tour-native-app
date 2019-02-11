@@ -4,11 +4,12 @@ import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 
 public class NewTripCheckpointDetailsFragmentContract {
 
-    public interface NewTripCheckpointDetailsFragmentView extends BaseContract.View {
+    public interface View extends BaseContract.View {
 
+        void dismissDetailsDialog();
     }
 
-    public interface NewTripCheckpointDetailsFragmentPresenter extends BaseContract.Presenter {
+    public interface Presenter extends BaseContract.Presenter {
 
         void onSaveCheckpointDetailsClicked();
 
