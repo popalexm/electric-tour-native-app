@@ -13,7 +13,7 @@
     <string name="suffix_kilometers"> Km</string>
     <string name="hint_click_to_start_navigation">Click to start navigation\nfrom your current location</string>
     <string name="hint_swipe_up_to_see_details">Swipe up to see more trip details</string>
-    <string name="btn_dimiss">Dismiss</string>
+    <string name="btn_cancel">Cancel</string>
     <string name="btn_sign_in">Sign In With Google Account</string>
     <string name="hint_enable_route_deviation">Enable trip deviation notifications</string>
     <string name="hint_enable_current_location_monitoring">Enable current location tracking</string>
@@ -51,6 +51,14 @@
     <string name="btn_add_checkpoint">Add Checkpoint</string>
     <string name="btn_finish_trip_planning">Finish Planning</string>
     <string name="hint_enter_trip_name">Please enter trip name</string>
+
+    // Add/Edit Trip Checkpoint Details
+    <string name="hint_enter_checkpoint_name">Please enter a name</string>
+    <string name="hint_enter_checkpoint_description">Please enter a description (optional)</string>
+    <string name="hint_checkpoint_tracking_description">By enabling arrival or departure notifications, the application will notify you when you have approached or departed from the vicinity of this checkpoint</string>
+    <string name="hint_enable_checkpoint_arrival_tracking">Enable arrival notifications</string>
+    <string name="hint_enable_checkpoint_departure_tracking">Enable departure notifications</string>
+    <string name="btn_save_checkpoint_details">Save Details</string>
 
     // Dummy testing strings
     <string name="lorem_ipsum">Lorem Ipsum</string>

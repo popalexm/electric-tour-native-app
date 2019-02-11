@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsViewModel" />
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentContract.NewTripCheckpointDetailsFragmentPresenter" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/leftVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/rightVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtLayoutNewCheckpointName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_medium"
+            android:textColorHint="@color/colorWhite"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:hint="@string/hint_enter_checkpoint_name"
+                android:text="@={viewModel.checkpointName}"
+                android:textColor="@color/colorWhite"
+                android:textColorHighlight="@color/colorWhite" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtLayoutNewCheckpointDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_medium"
+            android:textColorHint="@color/colorWhite"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/txtLayoutNewCheckpointName">
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:hint="@string/hint_enter_checkpoint_description"
+                android:text="@={viewModel.checkpointDescription}"
+                android:textColor="@color/colorWhite"
+                android:textColorHighlight="@color/colorWhite" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutArrivalDepartureNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/margin_large"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/txtLayoutNewCheckpointDescription">
+
+            <Switch
+                android:id="@+id/switchLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_medium"
+                android:switchPadding="@dimen/margin_small"
+                android:text="@string/hint_enable_checkpoint_arrival_tracking"
+                android:theme="@style/SwitchStyle" />
+
+            <Switch
+                android:id="@+id/switchDeviationNotifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_medium"
+                android:switchPadding="@dimen/margin_small"
+                android:text="@string/hint_enable_checkpoint_departure_tracking"
+                android:theme="@style/SwitchStyle" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtNotificationDesc"
+            style="@style/TextViewStyleHint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_large"
+            android:gravity="center"
+            android:text="@string/hint_checkpoint_tracking_description"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/layoutArrivalDepartureNotifications" />
+
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/btnSaveCheckpointDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_medium"
+            android:onClick="@{()-> presenter.onSaveCheckpointDetailsClicked()}"
+            android:text="@string/btn_save_checkpoint_details"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            app:backgroundTint="@color/colorBlue"
+            app:cornerRadius="@dimen/margin_large"
+            app:icon="@drawable/ic_check_white_24dp"
+            app:iconTintMode="multiply"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/txtNotificationDesc"
+            app:rippleColor="@color/colorAccent" />
+
+
+        <android.support.design.button.MaterialButton
+            android:id="@+id/buttonDismiss"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:onClick="@{()->presenter.onDismissButtonClicked()}"
+            android:paddingEnd="@dimen/margin_large"
+            android:paddingStart="@dimen/margin_large"
+            android:text="@string/btn_cancel"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            app:backgroundTint="@color/colorRed"
+            app:cornerRadius="@dimen/margin_large"
+            app:icon="@drawable/ic_clear_white_24dp"
+            app:iconTintMode="multiply"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/btnSaveCheckpointDetails"
+            app:rippleColor="@color/colorAccent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</layout>
+
+

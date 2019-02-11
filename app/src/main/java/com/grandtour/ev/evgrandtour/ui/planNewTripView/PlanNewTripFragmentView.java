@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentView;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
 import android.Manifest;
@@ -92,7 +93,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void openNewCheckpointDetailsDialog() {
-        // TODO Implement new checkpoint details dialog from here
+        NewTripCheckpointDetailsFragmentView detailsFragmentView = NewTripCheckpointDetailsFragmentView.createInstance();
+        showDialog(detailsFragmentView, this, NewTripCheckpointDetailsFragmentView.TAG, 112);
     }
 
     @Override
