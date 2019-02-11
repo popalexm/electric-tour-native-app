@@ -50,4 +50,9 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
     public void dismissDetailsDialog() {
         dismiss();
     }
+
+    @Override
+    public void shakeCheckpointNameTextView() {
+        viewModel.isCheckpointNameIncomplete.set(true);
+    }
 }

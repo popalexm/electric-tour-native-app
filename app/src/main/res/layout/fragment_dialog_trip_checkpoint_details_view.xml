@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_medium"
             android:textColorHint="@color/colorWhite"
+            app:isWarningState="@{viewModel.isCheckpointNameIncomplete}"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toTopOf="parent">
@@ -48,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
+
                 android:hint="@string/hint_enter_checkpoint_name"
                 android:text="@={viewModel.checkpointName}"
                 android:textColor="@color/colorWhite"
@@ -88,21 +90,23 @@
             app:layout_constraintTop_toBottomOf="@id/txtLayoutNewCheckpointDescription">
 
             <Switch
-                android:id="@+id/switchLocation"
+                android:id="@+id/switchArrivalNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
                 android:switchPadding="@dimen/margin_small"
                 android:text="@string/hint_enable_checkpoint_arrival_tracking"
+                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:theme="@style/SwitchStyle" />
 
             <Switch
-                android:id="@+id/switchDeviationNotifications"
+                android:id="@+id/switchDepartureNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
                 android:switchPadding="@dimen/margin_small"
                 android:text="@string/hint_enable_checkpoint_departure_tracking"
+                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:theme="@style/SwitchStyle" />
 
         </LinearLayout>
@@ -129,7 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_medium"
-            android:onClick="@{()-> presenter.onSaveCheckpointDetailsClicked()}"
+            android:onClick="@{()-> presenter.onSaveCheckpointDetailsClicked(viewModel.checkpointName,viewModel.checkpointDescription)}"
             android:text="@string/btn_save_checkpoint_details"
             android:textColor="@android:color/white"
             android:textSize="10sp"
