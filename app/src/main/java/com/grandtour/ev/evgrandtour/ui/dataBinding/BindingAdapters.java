@@ -3,10 +3,10 @@ package com.grandtour.ev.evgrandtour.ui.dataBinding;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextChangeListener;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnQueryTextSubmitListener;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSearchViewCloseListener;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.SearchResultModel;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnQueryTextChangeListener;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnQueryTextSubmitListener;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSearchViewCloseListener;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.models.SearchResultModel;
 
 import android.content.Context;
 import android.content.res.ColorStateList;

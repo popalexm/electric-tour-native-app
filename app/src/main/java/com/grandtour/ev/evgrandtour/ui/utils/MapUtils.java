@@ -10,7 +10,7 @@ import com.google.maps.android.PolyUtil;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

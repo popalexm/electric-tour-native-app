@@ -4,7 +4,7 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.support.annotation.NonNull;

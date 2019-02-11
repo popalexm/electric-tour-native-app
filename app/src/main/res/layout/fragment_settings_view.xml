@@ -6,11 +6,11 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsFragmentViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.settingsView.SettingsFragmentViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.settings.SettingsFragmentContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.settingsView.SettingsFragmentContract.Presenter" />
     </data>
 
     <RelativeLayout

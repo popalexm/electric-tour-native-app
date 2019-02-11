@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripViewModel" />
     </data>
 
     <android.support.design.card.MaterialCardView

@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.chooseTour;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogRoutesBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourListener;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;

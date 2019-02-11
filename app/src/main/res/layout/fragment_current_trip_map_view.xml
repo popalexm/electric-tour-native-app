@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="me.tatarka.bindingcollectionadapter2.LayoutManagers" />
+
+        <variable
+            name="viewModel"
+            type="com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripViewModel" />
+
+        <variable
+            name="presenter"
+            type="com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentContract.Presenter" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/leftVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/rightVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+
+        <android.support.constraint.Guideline
+            android:id="@+id/fabStartPointRightVerticalGuideLine"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="64dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/horizontalBottomGuide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="120dp" />
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <include
+                layout="@layout/route_info_bottom_sheet"
+                bind:viewModel="@{viewModel}" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btnOpenTourSelectionScreen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_medium"
+                android:elevation="@dimen/fab_elevation"
+                android:onClick="@{()-> presenter.onChooseTourClicked()}"
+                android:stateListAnimator="@null"
+                android:text="@string/btn_select_trip_label"
+                android:textColor="@android:color/black"
+                android:textSize="10sp"
+                app:backgroundTint="@android:color/white"
+                app:cornerRadius="@dimen/margin_large"
+                app:icon="@drawable/ic_route_selection_24dp"
+                app:iconTintMode="multiply"
+                app:isButtonBounced="@{viewModel.isButtonBouncing}"
+                app:isButtonRevealed="@{viewModel.isSelectTourButtonDisplayed}"
+                app:layout_anchor="@+id/bottomSheetRouteInfo"
+                app:layout_anchorGravity="top|end"
+                app:rippleColor="@color/colorAccent" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="@dimen/fab_elevation"
+                app:isButtonRevealed="@{viewModel.areNavigationButtonsEnabled}"
+                app:layout_anchor="@+id/bottomSheetRouteInfo"
+                app:layout_anchorGravity="top|end"
+                tools:isButtonRevealed="false">
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/clearSelection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_medium"
+                    android:onClick="@{()-> presenter.onMarkerInfoWindowClosed()}"
+                    android:stateListAnimator="@null"
+                    android:text="@string/btn_clear_navigation_selection"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"
+                    app:backgroundTint="@color/colorRed"
+                    app:cornerRadius="@dimen/margin_large"
+                    app:icon="@drawable/ic_clear_white_24dp"
+                    app:iconTintMode="multiply"
+                    app:isButtonBounced="@{viewModel.isButtonBouncing}"
+                    app:rippleColor="@color/colorWhite" />
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/btnStartNavigation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_medium"
+                    android:onClick="@{()-> presenter.onNavigationClicked()}"
+                    android:text="@string/btn_start_navigation"
+                    android:textColor="@android:color/white"
+                    android:textSize="10sp"
+                    app:backgroundTint="@color/colorBlue"
+                    app:cornerRadius="@dimen/margin_large"
+                    app:icon="@drawable/ic_navigation_white_24dp"
+                    app:iconTintMode="multiply"
+                    app:isButtonBounced="@{viewModel.isButtonBouncing}"
+                    app:rippleColor="@color/colorAccent" />
+
+            </LinearLayout>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/top_bar_height"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@drawable/top_rounded_bars"
+            android:orientation="horizontal"
+            android:paddingEnd="@dimen/margin_small"
+            android:paddingStart="@dimen/margin_small"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.v7.widget.SearchView
+                android:id="@+id/searchViewCheckpoints"
+                style="@style/SearchViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start|center_vertical"
+                android:focusable="false"
+                android:maxWidth="@dimen/search_view_max_width"
+                android:onQueryTextChange="@{(searchedQuery) -> presenter.onQueryTextChange(searchedQuery)}"
+                android:onSearchViewClosed="@{(isSearchViewClosed) -> presenter.onSearchViewClosed(isSearchViewClosed)}"
+                android:onSearchViewOpen="@{(view) -> presenter.onClick(view)}"
+                app:queryHint="@string/hint_search_checkpoints"
+                app:theme="@style/SearchViewStyle.ActionBar" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="@{viewModel.isSearchViewOpen == false ? View.VISIBLE: View.GONE}">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/margin_title"
+                    android:layout_marginTop="@dimen/margin_title"
+                    android:paddingEnd="@dimen/margin_medium"
+                    android:paddingStart="@dimen/margin_medium">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="@{viewModel.routeTitle}"
+                        android:textAllCaps="true"
+                        android:visibility="@{viewModel.isLoadingInProgress == true ? View.INVISIBLE: View.VISIBLE}"
+                        app:isWarningState="@{viewModel.isWarningState}" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarLoading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="@dimen/margin_small"
+                        android:visibility="@{viewModel.isLoadingInProgress == true ? View.VISIBLE: View.INVISIBLE}" />
+
+                </FrameLayout>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/btnFilter"
+                    style="@style/buttonFilterStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:onClick="@{()-> presenter.onFilterButtonClicked()}"
+                    android:text="@string/btn_filter"
+                    app:icon="@drawable/ic_filter_list_white_24dp"
+                    app:toggleButtonState="@{viewModel.isFilteringLayoutVisible}" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="@dimen/top_bar_height"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@drawable/top_rounded_bars"
+            android:fillViewport="true"
+            android:paddingEnd="@dimen/margin_medium_large"
+            android:paddingStart="@dimen/margin_medium_large"
+            android:scrollbars="none"
+            app:areFilteringOptionsDisplayed="@{viewModel.isFilteringLayoutVisible}"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/topBar">
+
+            <android.support.design.chip.ChipGroup
+                android:id="@+id/chipGroupFilteringOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="@dimen/margin_medium"
+                app:chipGroupItems="@{viewModel.checkPointFilteringOptions}"
+                app:chipSpacing="@dimen/margin_medium"
+                app:removeChipGroupItems="@{viewModel.removeFilteringOptions}"
+                app:singleLine="true">
+
+            </android.support.design.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_marginEnd="@dimen/margin_medium_large"
+            android:layout_marginStart="@dimen/margin_medium_large"
+            android:layout_marginTop="@dimen/margin_small"
+            android:background="@drawable/dialog_background"
+            android:clipToPadding="false"
+            android:padding="8dp"
+            app:areSearchResultsVisible="@{viewModel.searchResultModels}"
+            app:itemBinding="@{viewModel.resultViewModelItemBinding}"
+            app:items="@{viewModel.searchResultModels}"
+            app:layoutManager="@{LayoutManagers.linear()}"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintHeight_max="300dp"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/topBar" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_marginEnd="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/margin_medium"
+            android:onClick="@{() -> presenter.onMyLocationButtonClicked()}"
+            android:src="@drawable/ic_location_searching_black_24dp"
+            app:backgroundTint="@android:color/white"
+            app:fabSize="mini"
+            app:isButtonRevealed="@{viewModel.isSelectTourButtonDisplayed}"
+            app:layout_constraintEnd_toEndOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/fabStartPointRightVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/horizontalBottomGuide"
+            app:rippleColor="@color/colorAccent" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

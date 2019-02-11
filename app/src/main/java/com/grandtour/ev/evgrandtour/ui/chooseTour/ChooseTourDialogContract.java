@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.chooseTour;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourListener;
 
 import android.support.annotation.NonNull;
 

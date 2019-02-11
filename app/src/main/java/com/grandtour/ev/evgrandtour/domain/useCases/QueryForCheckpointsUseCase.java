@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.domain.useCases;
 
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;

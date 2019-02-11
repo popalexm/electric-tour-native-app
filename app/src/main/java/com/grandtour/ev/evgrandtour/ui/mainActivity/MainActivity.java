@@ -2,9 +2,9 @@ package com.grandtour.ev.evgrandtour.ui.mainActivity;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.ActivityMainBinding;
-import com.grandtour.ev.evgrandtour.ui.addNewTrip.AddNewTripFragmentView;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.MapsFragmentView;
-import com.grandtour.ev.evgrandtour.ui.settings.SettingsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentView;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.PlanNewTripFragmentView;
+import com.grandtour.ev.evgrandtour.ui.settingsView.SettingsFragmentView;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -25,13 +25,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void loadCurrentTripView() {
-        MapsFragmentView fragmentView = MapsFragmentView.createInstance();
-        replaceInFragmentManager(fragmentView, MapsFragmentView.TAG);
+        CurrentTripFragmentView fragmentView = CurrentTripFragmentView.createInstance();
+        replaceInFragmentManager(fragmentView, CurrentTripFragmentView.TAG);
     }
 
     private void loadAddEditTripsFragment() {
-        AddNewTripFragmentView newTripFragmentView = AddNewTripFragmentView.createInstance();
-        replaceInFragmentManager(newTripFragmentView, AddNewTripFragmentView.TAG);
+        PlanNewTripFragmentView newTripFragmentView = PlanNewTripFragmentView.createInstance();
+        replaceInFragmentManager(newTripFragmentView, PlanNewTripFragmentView.TAG);
     }
 
     private void loadSettingsFragment() {

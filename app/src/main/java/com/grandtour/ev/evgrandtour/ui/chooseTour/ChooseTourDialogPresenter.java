@@ -5,7 +5,7 @@ import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
-import com.grandtour.ev.evgrandtour.ui.mainMapsView.listeners.OnSelectedTourListener;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourListener;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
