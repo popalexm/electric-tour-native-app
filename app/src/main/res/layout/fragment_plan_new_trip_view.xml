@@ -112,7 +112,7 @@
                 app:cornerRadius="@dimen/margin_large"
                 app:icon="@drawable/ic_pin_drop_white_24dp"
                 app:iconTintMode="multiply"
-                android:onClick="@={presenter.onAddNewCheckpointClicked()}"
+                android:onClick="@{()->presenter.onAddNewCheckpointClicked()}"
                 app:rippleColor="@color/colorAccent" />
 
         </RelativeLayout>

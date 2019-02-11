@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 import com.grandtour.ev.evgrandtour.R;
@@ -21,7 +22,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter> implements PlanNewTripContract.View {
+public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter> implements PlanNewTripContract.View, GoogleMap.OnMapClickListener {
 
     @NonNull
     public static String TAG = PlanNewTripFragmentView.class.getSimpleName();
@@ -46,6 +47,28 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         return viewBinding.getRoot();
     }
 
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        super.onMapReady(googleMap);
+        Activity activity = getActivity();
+        if (activity != null) {
+            if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                setupGoogleMapsDarkStyle();
+                setupGoogleMapCallbacks();
+            } else {
+                PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+        }
+    }
+
+    private void setupGoogleMapCallbacks() {
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null) {
+            googleMap.setOnMapClickListener(this);
+        }
+    }
+
     @Nullable
     @Override
     protected PlanNewTripPresenter createPresenter() {
@@ -68,21 +91,17 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
+    public void openNewCheckpointDetailsDialog() {
+        // TODO Implement new checkpoint details dialog from here
+    }
+
+    @Override
     public void onInfoWindowClose(Marker marker) {
 
     }
 
-    @SuppressLint("MissingPermission")
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        super.onMapReady(googleMap);
-        Activity activity = getActivity();
-        if (activity != null) {
-            if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                setupGoogleMapsDarkStyle();
-            } else {
-                PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-        }
+    public void onMapClick(LatLng latLng) {
+        getPresenter().onMapLocationClicked(latLng);
     }
 }
