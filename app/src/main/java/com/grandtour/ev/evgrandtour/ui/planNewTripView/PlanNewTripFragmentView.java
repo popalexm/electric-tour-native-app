@@ -8,7 +8,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsFragmentView;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
@@ -88,12 +88,12 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation) {
-        NewTripCheckpointDetailsFragmentView detailsFragmentView = NewTripCheckpointDetailsFragmentView.createInstance();
+        TripCheckpointDetailsFragmentView detailsFragmentView = TripCheckpointDetailsFragmentView.createInstance();
         TripCheckpoint tripCheckpoint = MapUtils.generateTripCheckpointAtLocation(clickedLocation);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(NewTripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
+        bundle.putParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
         detailsFragmentView.setArguments(bundle);
-        showDialog(detailsFragmentView, this, NewTripCheckpointDetailsFragmentView.TAG, 112);
+        showDialog(detailsFragmentView, this, TripCheckpointDetailsFragmentView.TAG, 112);
     }
 
     @Override

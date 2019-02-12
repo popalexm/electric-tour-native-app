@@ -4,7 +4,7 @@ import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.support.annotation.NonNull;
 
-public class NewTripCheckpointDetailsViewModel {
+public class TripCheckpointDetailsViewModel {
 
     @NonNull
     public final ObservableBoolean isCheckpointNameIncomplete = new ObservableBoolean();

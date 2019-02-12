@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.AddNewCheckpointDetailsCallback;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
 
 import android.support.annotation.NonNull;
 

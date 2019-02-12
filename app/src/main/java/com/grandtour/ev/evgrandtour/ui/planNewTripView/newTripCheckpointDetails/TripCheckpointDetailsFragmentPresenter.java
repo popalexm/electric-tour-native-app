@@ -3,16 +3,17 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.CompoundButton;
 
-public class NewTripCheckpointDetailsFragmentPresenter extends BasePresenter implements NewTripCheckpointDetailsFragmentContract.Presenter {
+public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implements TripCheckpointDetailsFragmentContract.Presenter {
 
     @NonNull
-    private final NewTripCheckpointDetailsFragmentContract.View view;
+    private final TripCheckpointDetailsFragmentContract.View view;
     private boolean areArrivalNotificationsEnabled;
     private boolean areDepartureNotificationsEnabled;
     @Nullable
@@ -20,7 +21,7 @@ public class NewTripCheckpointDetailsFragmentPresenter extends BasePresenter imp
     @Nullable
     private TripCheckpoint tripCheckpoint;
 
-    NewTripCheckpointDetailsFragmentPresenter(@NonNull NewTripCheckpointDetailsFragmentContract.View view) {
+    TripCheckpointDetailsFragmentPresenter(@NonNull TripCheckpointDetailsFragmentContract.View view) {
         this.view = view;
     }
 

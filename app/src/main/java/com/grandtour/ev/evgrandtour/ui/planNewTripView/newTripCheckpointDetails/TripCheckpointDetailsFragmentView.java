@@ -4,6 +4,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogTripCheckpointDetailsViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -13,20 +14,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<NewTripCheckpointDetailsFragmentPresenter>
-        implements NewTripCheckpointDetailsFragmentContract.View {
+public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCheckpointDetailsFragmentPresenter>
+        implements TripCheckpointDetailsFragmentContract.View {
 
     @NonNull
-    public final static String TAG = NewTripCheckpointDetailsFragmentView.class.getSimpleName();
+    public final static String TAG = TripCheckpointDetailsFragmentView.class.getSimpleName();
     @NonNull
     public final static String TRIP_CHECKPOINT_DETAILS = "trip_checkpoint_details";
 
     @NonNull
-    private final NewTripCheckpointDetailsViewModel viewModel = new NewTripCheckpointDetailsViewModel();
+    private final TripCheckpointDetailsViewModel viewModel = new TripCheckpointDetailsViewModel();
 
     @NonNull
-    public static NewTripCheckpointDetailsFragmentView createInstance() {
-        return new NewTripCheckpointDetailsFragmentView();
+    public static TripCheckpointDetailsFragmentView createInstance() {
+        return new TripCheckpointDetailsFragmentView();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
      */
     private void retrieveCheckpointDetails(@Nullable Bundle bundle) {
         if (bundle != null) {
-            TripCheckpoint tripCheckpoint = bundle.getParcelable(NewTripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS);
+            TripCheckpoint tripCheckpoint = bundle.getParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS);
             if (tripCheckpoint != null) {
                 getPresenter().onRetrievedTripCheckpointDetailsFromBundle(tripCheckpoint);
             }
@@ -65,8 +66,8 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
 
     @Nullable
     @Override
-    public NewTripCheckpointDetailsFragmentPresenter createPresenter() {
-        return new NewTripCheckpointDetailsFragmentPresenter(this);
+    public TripCheckpointDetailsFragmentPresenter createPresenter() {
+        return new TripCheckpointDetailsFragmentPresenter(this);
     }
 
     @Override

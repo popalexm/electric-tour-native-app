@@ -8,11 +8,11 @@
 
         <variable
             name="viewModel"
-            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsViewModel" />
+            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsViewModel" />
 
         <variable
             name="presenter"
-            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentContract.Presenter" />
+            type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsFragmentContract.Presenter" />
     </data>
 
     <android.support.constraint.ConstraintLayout

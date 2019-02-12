@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails;
+package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks;
 
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 

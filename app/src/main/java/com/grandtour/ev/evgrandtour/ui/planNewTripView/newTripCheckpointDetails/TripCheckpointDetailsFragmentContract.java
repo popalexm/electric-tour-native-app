@@ -2,10 +2,12 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.SwitchCheckedStatusCallback;
 
 import android.support.annotation.NonNull;
 
-public class NewTripCheckpointDetailsFragmentContract {
+public class TripCheckpointDetailsFragmentContract {
 
     public interface View extends BaseContract.View {
 
