@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentView;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
@@ -92,8 +93,12 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void openNewCheckpointDetailsDialog() {
+    public void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation) {
         NewTripCheckpointDetailsFragmentView detailsFragmentView = NewTripCheckpointDetailsFragmentView.createInstance();
+        TripCheckpoint tripCheckpoint = generateTripCheckpointAtLocation(clickedLocation);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(NewTripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
+        detailsFragmentView.setArguments(bundle);
         showDialog(detailsFragmentView, this, NewTripCheckpointDetailsFragmentView.TAG, 112);
     }
 
@@ -105,5 +110,16 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     @Override
     public void onMapClick(LatLng latLng) {
         getPresenter().onMapLocationClicked(latLng);
+    }
+
+    @NonNull
+    private TripCheckpoint generateTripCheckpointAtLocation(@NonNull LatLng clickedLocation) {
+        return new TripCheckpoint.TripCheckpointBuilder().setGeographicalPosition(clickedLocation)
+                .createTripCheckpoint();
+    }
+
+    @Override
+    public void onCheckpointDetailsAdded(@NonNull TripCheckpoint tripCheckpoint) {
+       
     }
 }

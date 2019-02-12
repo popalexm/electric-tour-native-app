@@ -26,7 +26,7 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     @Override
     public void onMapLocationClicked(@NonNull LatLng clickedLocation) {
         if (isAddNewCheckpointFunctionEnabled && isViewAttached) {
-            view.openNewCheckpointDetailsDialog();
+            view.openNewCheckpointDetailsDialog(clickedLocation);
         }
     }
 }

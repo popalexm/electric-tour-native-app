@@ -3,6 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogTripCheckpointDetailsViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
     @NonNull
     public final static String TAG = NewTripCheckpointDetailsFragmentView.class.getSimpleName();
     @NonNull
+    public final static String TRIP_CHECKPOINT_DETAILS = "trip_checkpoint_details";
+
+    @NonNull
     private final NewTripCheckpointDetailsViewModel viewModel = new NewTripCheckpointDetailsViewModel();
 
     @NonNull
@@ -32,7 +36,31 @@ public class NewTripCheckpointDetailsFragmentView extends BaseDialogFragment<New
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
         setupTransparentDialogBackground();
+        initParentFragmentCallback();
+        retrieveCheckpointDetails(getArguments());
         return viewBinding.getRoot();
+    }
+
+    /**
+     * Send a reference to the callback that will be used to save the checkpoint details in te parent fragment
+     */
+    private void initParentFragmentCallback() {
+        AddNewCheckpointDetailsCallback callback = (AddNewCheckpointDetailsCallback) getParentFragment();
+        if (callback != null) {
+            getPresenter().onInitCallbackToParentFragment(callback);
+        }
+    }
+
+    /**
+     * Retrieves trip checkpoint details from the parcel
+     */
+    private void retrieveCheckpointDetails(@Nullable Bundle bundle) {
+        if (bundle != null) {
+            TripCheckpoint tripCheckpoint = bundle.getParcelable(NewTripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS);
+            if (tripCheckpoint != null) {
+                getPresenter().onRetrievedTripCheckpointDetailsFromBundle(tripCheckpoint);
+            }
+        }
     }
 
     @Nullable

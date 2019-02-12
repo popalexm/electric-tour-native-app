@@ -2,8 +2,10 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.CompoundButton;
 
@@ -13,17 +15,38 @@ public class NewTripCheckpointDetailsFragmentPresenter extends BasePresenter imp
     private final NewTripCheckpointDetailsFragmentContract.View view;
     private boolean areArrivalNotificationsEnabled;
     private boolean areDepartureNotificationsEnabled;
+    @Nullable
+    private AddNewCheckpointDetailsCallback checkpointDetailsCallback;
+    @Nullable
+    private TripCheckpoint tripCheckpoint;
 
     NewTripCheckpointDetailsFragmentPresenter(@NonNull NewTripCheckpointDetailsFragmentContract.View view) {
         this.view = view;
     }
 
     @Override
+    public void onInitCallbackToParentFragment(@NonNull AddNewCheckpointDetailsCallback checkpointDetailsCallback) {
+        this.checkpointDetailsCallback = checkpointDetailsCallback;
+    }
+
+    @Override
+    public void onRetrievedTripCheckpointDetailsFromBundle(@NonNull TripCheckpoint tripCheckpoint) {
+        this.tripCheckpoint = tripCheckpoint;
+    }
+
+    @Override
     public void onSaveCheckpointDetailsClicked(@NonNull String checkpointName, @NonNull String checkpointDescription) {
         if (isViewAttached && TextUtils.isEmpty(checkpointName)) {
             view.shakeCheckpointNameTextView();
-        } else {
-            // TODO Add a callback to the main Add Trip Fragment
+        } else if (tripCheckpoint != null && isViewAttached) {
+            tripCheckpoint.setCheckpointTitle(checkpointName);
+            tripCheckpoint.setCheckpointDescription(checkpointDescription);
+            tripCheckpoint.setAreArrivalNotificationsEnabled(areArrivalNotificationsEnabled);
+            tripCheckpoint.setAreDepartureNotificationsEnabled(areDepartureNotificationsEnabled);
+            if (checkpointDetailsCallback != null) {
+                checkpointDetailsCallback.onCheckpointDetailsAdded(tripCheckpoint);
+            }
+            view.dismissDetailsDialog();
         }
     }
 
