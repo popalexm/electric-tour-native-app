@@ -9,6 +9,7 @@ import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.NewTripCheckpointDetailsFragmentView;
+import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
 import android.Manifest;
@@ -21,8 +22,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.List;
 
 public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter> implements PlanNewTripContract.View, GoogleMap.OnMapClickListener {
 
@@ -83,19 +82,14 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void loadAllSavedTripCheckpoints(@NonNull List<Marker> checkpoints) {
-
-    }
-
-    @Override
-    public void addNewCheckpointOnMap(@NonNull Marker newCheckpoint) {
-
+    public void displayTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint) {
+        //TODO Create checkpoint view logic in fragment and load new checkpoint from here
     }
 
     @Override
     public void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation) {
         NewTripCheckpointDetailsFragmentView detailsFragmentView = NewTripCheckpointDetailsFragmentView.createInstance();
-        TripCheckpoint tripCheckpoint = generateTripCheckpointAtLocation(clickedLocation);
+        TripCheckpoint tripCheckpoint = MapUtils.generateTripCheckpointAtLocation(clickedLocation);
         Bundle bundle = new Bundle();
         bundle.putParcelable(NewTripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
         detailsFragmentView.setArguments(bundle);
@@ -112,14 +106,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         getPresenter().onMapLocationClicked(latLng);
     }
 
-    @NonNull
-    private TripCheckpoint generateTripCheckpointAtLocation(@NonNull LatLng clickedLocation) {
-        return new TripCheckpoint.TripCheckpointBuilder().setGeographicalPosition(clickedLocation)
-                .createTripCheckpoint();
-    }
-
     @Override
     public void onCheckpointDetailsAdded(@NonNull TripCheckpoint tripCheckpoint) {
-       
+        getPresenter().onNewTripCheckpointAdded(tripCheckpoint);
     }
 }

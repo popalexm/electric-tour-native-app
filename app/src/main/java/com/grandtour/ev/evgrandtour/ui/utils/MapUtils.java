@@ -11,6 +11,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -144,5 +145,11 @@ public final class MapUtils {
                         .getResources()
                         .getColor(R.color.colorAccent))
                 .radius(MapUtils.LOCATION_CIRCLE_RADIUS);
+    }
+
+    @NonNull
+    public static TripCheckpoint generateTripCheckpointAtLocation(@NonNull LatLng clickedLocation) {
+        return new TripCheckpoint.TripCheckpointBuilder().setGeographicalPosition(clickedLocation)
+                .createTripCheckpoint();
     }
 }
