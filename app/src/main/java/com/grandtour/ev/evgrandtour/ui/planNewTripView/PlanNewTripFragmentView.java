@@ -3,6 +3,9 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
@@ -31,6 +34,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
     @Nullable
     private FragmentPlanNewTripViewBinding viewBinding;
+    @Nullable
+    private ClusterManager<TripCheckpoint> clusterManager;
 
     @NonNull
     public static PlanNewTripFragmentView createInstance() {
@@ -56,6 +61,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         if (activity != null) {
             if (PermissionUtils.checkPermissions(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 setupGoogleMapsDarkStyle();
+                setupClusterManager(activity);
                 setupGoogleMapCallbacks();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
@@ -65,8 +71,23 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     private void setupGoogleMapCallbacks() {
         GoogleMap googleMap = getGoogleMap();
-        if (googleMap != null) {
+        if (googleMap != null && clusterManager != null) {
             googleMap.setOnMapClickListener(this);
+            googleMap.setOnCameraChangeListener(clusterManager);
+            googleMap.setOnMarkerClickListener(clusterManager);
+            googleMap.setOnInfoWindowClickListener(clusterManager);
+            googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
+            googleMap.setOnInfoWindowCloseListener(this);
+        }
+    }
+
+    private void setupClusterManager(@NonNull Activity activity) {
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null) {
+            clusterManager = new ClusterManager<>(activity, googleMap);
+            clusterManager.setOnClusterClickListener(this);
+            clusterManager.setOnClusterItemClickListener(this);
+            clusterManager.setRenderer(new DefaultClusterRenderer<>(activity, googleMap, clusterManager));
         }
     }
 
@@ -83,7 +104,9 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void displayTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint) {
-        //TODO Create checkpoint view logic in fragment and load new checkpoint from here
+        if (clusterManager != null) {
+            clusterManager.addItem(newCheckpoint);
+        }
     }
 
     @Override
@@ -109,5 +132,15 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     @Override
     public void onCheckpointDetailsAdded(@NonNull TripCheckpoint tripCheckpoint) {
         getPresenter().onNewTripCheckpointAdded(tripCheckpoint);
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<TripCheckpoint> cluster) {
+        return false;
+    }
+
+    @Override
+    public boolean onClusterItemClick(TripCheckpoint tripCheckpoint) {
+        return false;
     }
 }

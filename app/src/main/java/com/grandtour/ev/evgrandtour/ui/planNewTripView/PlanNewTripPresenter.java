@@ -14,7 +14,6 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
 
     @NonNull
     private final PlanNewTripContract.View view;
-    private boolean isAddNewCheckpointFunctionEnabled;
 
     @NonNull
     private final List<TripCheckpoint> plannedTripCheckpoints = new ArrayList<>();
@@ -24,15 +23,8 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     }
 
     @Override
-    public void onAddNewCheckpointClicked() {
-        if (isViewAttached) {
-            isAddNewCheckpointFunctionEnabled = true;
-        }
-    }
-
-    @Override
     public void onMapLocationClicked(@NonNull LatLng clickedLocation) {
-        if (isAddNewCheckpointFunctionEnabled && isViewAttached) {
+        if (isViewAttached) {
             view.openNewCheckpointDetailsDialog(clickedLocation);
         }
     }
