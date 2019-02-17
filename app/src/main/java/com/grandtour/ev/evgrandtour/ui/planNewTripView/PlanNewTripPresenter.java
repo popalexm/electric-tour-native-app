@@ -36,4 +36,9 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
             view.displayTripCheckpointOnMap(tripCheckpoint);
         }
     }
+
+    @Override
+    public void onMyLocationButtonClicked() {
+
+    }
 }

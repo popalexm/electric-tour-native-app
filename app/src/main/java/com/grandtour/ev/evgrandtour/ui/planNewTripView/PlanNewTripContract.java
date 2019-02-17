@@ -24,5 +24,7 @@ public class PlanNewTripContract {
         void onMapLocationClicked(@NonNull LatLng clickedLocation);
 
         void onNewTripCheckpointAdded(@NonNull TripCheckpoint tripCheckpoint);
+
+        void onMyLocationButtonClicked();
     }
 }
