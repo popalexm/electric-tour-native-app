@@ -67,7 +67,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textColorHint="@color/colorWhite">
+                android:textColorHint="@color/colorWhite"
+                app:isWarningState="@{viewModel.isCheckpointNameIncomplete}">
 
                 <android.support.design.widget.TextInputEditText
                     android:layout_width="match_parent"
@@ -103,6 +104,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            android:onClick="@{() -> presenter.onFinalizeTripPlanningClicked(viewModel.tripTitle)}"
             app:rippleColor="@color/colorAccent" />
 
         <android.support.design.widget.FloatingActionButton

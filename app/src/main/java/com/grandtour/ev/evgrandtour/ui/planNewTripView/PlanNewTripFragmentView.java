@@ -33,8 +33,6 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     @NonNull
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
     @Nullable
-    private FragmentPlanNewTripViewBinding viewBinding;
-    @Nullable
     private ClusterManager<TripCheckpoint> clusterManager;
 
     @NonNull
@@ -44,7 +42,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip_view, container, false);
+        FragmentPlanNewTripViewBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip_view, container, false);
         viewBinding.setViewModel(viewModel);
         viewBinding.setPresenter(getPresenter());
 
@@ -112,12 +110,15 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation) {
-        TripCheckpointDetailsFragmentView detailsFragmentView = TripCheckpointDetailsFragmentView.createInstance();
         TripCheckpoint tripCheckpoint = MapUtils.generateTripCheckpointAtLocation(clickedLocation);
         Bundle bundle = new Bundle();
         bundle.putParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
-        detailsFragmentView.setArguments(bundle);
-        showDialog(detailsFragmentView, this, TripCheckpointDetailsFragmentView.TAG, 112);
+        openEditTripCheckpointDetailsDialog(bundle);
+    }
+
+    @Override
+    public void displayInvalidTripNameWarning() {
+        viewModel.isCheckpointNameIncomplete.set(true);
     }
 
     @Override
@@ -142,6 +143,15 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public boolean onClusterItemClick(TripCheckpoint tripCheckpoint) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
+        openEditTripCheckpointDetailsDialog(bundle);
         return false;
+    }
+
+    private void openEditTripCheckpointDetailsDialog(@NonNull Bundle bundle) {
+        TripCheckpointDetailsFragmentView detailsFragmentView = TripCheckpointDetailsFragmentView.createInstance();
+        detailsFragmentView.setArguments(bundle);
+        showDialog(detailsFragmentView, this, TripCheckpointDetailsFragmentView.TAG, 112);
     }
 }

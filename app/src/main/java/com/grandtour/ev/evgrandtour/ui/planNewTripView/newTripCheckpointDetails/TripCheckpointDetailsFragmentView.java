@@ -24,6 +24,7 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
 
     @NonNull
     private final TripCheckpointDetailsViewModel viewModel = new TripCheckpointDetailsViewModel();
+    private FragmentDialogTripCheckpointDetailsViewBinding viewBinding;
 
     @NonNull
     public static TripCheckpointDetailsFragmentView createInstance() {
@@ -32,7 +33,7 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentDialogTripCheckpointDetailsViewBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_trip_checkpoint_details_view,
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_trip_checkpoint_details_view,
                 container, false);
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
@@ -83,5 +84,11 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
     @Override
     public void shakeCheckpointNameTextView() {
         viewModel.isCheckpointNameIncomplete.set(true);
+    }
+
+    @Override
+    public void displaySavedCheckpointDetails(@NonNull TripCheckpoint tripCheckpoint) {
+        viewModel.checkpointName.set(tripCheckpoint.getCheckpointTitle());
+        viewModel.checkpointDescription.set(tripCheckpoint.getCheckpointDescription());
     }
 }

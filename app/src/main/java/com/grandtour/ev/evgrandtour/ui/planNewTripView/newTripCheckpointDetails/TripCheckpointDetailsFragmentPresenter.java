@@ -33,6 +33,7 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
     @Override
     public void onRetrievedTripCheckpointDetailsFromBundle(@NonNull TripCheckpoint tripCheckpoint) {
         this.tripCheckpoint = tripCheckpoint;
+        loadCheckpointDetails(tripCheckpoint);
     }
 
     @Override
@@ -67,6 +68,12 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
             case R.id.switchDepartureNotifications:
                 areDepartureNotificationsEnabled = isChecked;
                 break;
+        }
+    }
+
+    private void loadCheckpointDetails(@NonNull TripCheckpoint tripCheckpoint) {
+        if (isViewAttached) {
+            view.displaySavedCheckpointDetails(tripCheckpoint);
         }
     }
 }

@@ -15,6 +15,8 @@ public class TripCheckpointDetailsFragmentContract {
 
         void shakeCheckpointNameTextView();
 
+        void displaySavedCheckpointDetails(@NonNull TripCheckpoint tripCheckpoint);
+
     }
 
     public interface Presenter extends BaseContract.Presenter, SwitchCheckedStatusCallback {

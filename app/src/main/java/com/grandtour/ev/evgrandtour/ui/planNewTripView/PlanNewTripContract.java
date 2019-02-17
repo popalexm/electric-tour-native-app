@@ -17,6 +17,8 @@ public class PlanNewTripContract {
         void displayTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint);
 
         void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation);
+
+        void displayInvalidTripNameWarning();
     }
 
     public interface Presenter extends BaseContract.Presenter {
@@ -26,5 +28,7 @@ public class PlanNewTripContract {
         void onNewTripCheckpointAdded(@NonNull TripCheckpoint tripCheckpoint);
 
         void onMyLocationButtonClicked();
+
+        void onFinalizeTripPlanningClicked(@NonNull String tripTitle);
     }
 }
