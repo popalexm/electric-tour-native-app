@@ -106,6 +106,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     public void displayTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint) {
         if (clusterManager != null) {
             clusterManager.addItem(newCheckpoint);
+            clusterManager.cluster();
         }
     }
 

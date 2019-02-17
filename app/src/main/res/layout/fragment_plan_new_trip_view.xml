@@ -42,6 +42,7 @@
             android:layout_marginBottom="@dimen/margin_small"
             android:layout_marginTop="@dimen/margin_small"
             android:background="@drawable/top_rounded_bars"
+            android:elevation="@dimen/margin_medium"
             android:orientation="horizontal"
             android:paddingEnd="@dimen/margin_large"
             android:paddingStart="@dimen/margin_large"
@@ -64,14 +65,12 @@
                     android:textColorHighlight="@color/colorWhite" />
 
             </android.support.design.widget.TextInputLayout>
-
         </LinearLayout>
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapViewAddTrip"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
         </com.google.android.gms.maps.MapView>
 
         <android.support.design.button.MaterialButton
@@ -92,8 +91,6 @@
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:rippleColor="@color/colorAccent" />
 
-
     </android.support.constraint.ConstraintLayout>
-
 </layout>
 
