@@ -12,7 +12,6 @@ import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsFragmentView;
-import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 
 import android.Manifest;
@@ -110,9 +109,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation) {
-        TripCheckpoint tripCheckpoint = MapUtils.generateTripCheckpointAtLocation(clickedLocation);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
+        bundle.putParcelable(TripCheckpointDetailsFragmentView.NEW_CHECKPOINT_LOCATION, clickedLocation);
         openEditTripCheckpointDetailsDialog(bundle);
     }
 
@@ -123,7 +121,6 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void onInfoWindowClose(Marker marker) {
-
     }
 
     @Override
@@ -144,7 +141,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     @Override
     public boolean onClusterItemClick(TripCheckpoint tripCheckpoint) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
+        bundle.putParcelable(TripCheckpointDetailsFragmentView.PREVIOUS_TRIP_CHECKPOINT_DETAILS, tripCheckpoint);
         openEditTripCheckpointDetailsDialog(bundle);
         return false;
     }

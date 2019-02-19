@@ -58,7 +58,7 @@
     <string name="hint_checkpoint_tracking_description">By enabling arrival or departure notifications, the application will notify you when you have approached or departed from the vicinity of this checkpoint</string>
     <string name="hint_enable_checkpoint_arrival_tracking">Enable arrival notifications</string>
     <string name="hint_enable_checkpoint_departure_tracking">Enable departure notifications</string>
-    <string name="btn_save_checkpoint_details">Save Details</string>
+    <string name="btn_save_checkpoint_details">Save</string>
     <string name="message_please_add_at_least_tqo_checkpoints_to_trip">Please add at least 2 checkpoints to a planned trip before saving it !</string>
 
     // Dummy testing strings

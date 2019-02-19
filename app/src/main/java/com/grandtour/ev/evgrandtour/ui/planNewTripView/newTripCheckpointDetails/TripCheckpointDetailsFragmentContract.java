@@ -1,5 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
@@ -17,6 +19,7 @@ public class TripCheckpointDetailsFragmentContract {
 
         void displaySavedCheckpointDetails(@NonNull TripCheckpoint tripCheckpoint);
 
+        void displaySearchedAddressForCheckpoint(@NonNull String address);
     }
 
     public interface Presenter extends BaseContract.Presenter, SwitchCheckedStatusCallback {
@@ -27,7 +30,8 @@ public class TripCheckpointDetailsFragmentContract {
 
         void onSaveCheckpointDetailsClicked(@NonNull String checkpointName, @NonNull String checkpointDescription);
 
+        void onNewCheckpointDetailsInitialised(@NonNull LatLng newCheckpointLocation);
+
         void onDismissButtonClicked();
     }
-
 }

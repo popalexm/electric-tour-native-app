@@ -12,5 +12,7 @@ public class TripCheckpointDetailsViewModel {
     public ObservableField<String> checkpointName = new ObservableField<>("");
     @NonNull
     public ObservableField<String> checkpointDescription = new ObservableField<>("");
+    @NonNull
+    public ObservableField<String> checkpointAddress = new ObservableField<>();
 
 }

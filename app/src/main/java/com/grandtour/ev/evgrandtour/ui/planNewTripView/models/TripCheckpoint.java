@@ -5,36 +5,30 @@ import com.google.maps.android.clustering.ClusterItem;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
-public final class TripCheckpoint implements Parcelable, ClusterItem {
+public final class TripCheckpoint implements ClusterItem, Parcelable {
 
     private Integer checkpointId;
     private LatLng geographicalPosition;
     private String checkpointTitle;
     private String checkpointDescription;
+    private String checkpointAddress;
     private boolean areArrivalNotificationsEnabled;
     private boolean areDepartureNotificationsEnabled;
     private int checkpointColor;
 
-    private TripCheckpoint(@NonNull Integer checkpointId, @NonNull LatLng geographicalPosition, @NonNull String checkpointTitle,
-            @NonNull String checkpointDescription, boolean areArrivalNotificationsEnabled, boolean areDepartureNotificationsEnabled, int checkpointColor) {
-        this.checkpointId = checkpointId;
-        this.geographicalPosition = geographicalPosition;
-        this.checkpointTitle = checkpointTitle;
-        this.checkpointDescription = checkpointDescription;
-        this.areArrivalNotificationsEnabled = areArrivalNotificationsEnabled;
-        this.areDepartureNotificationsEnabled = areDepartureNotificationsEnabled;
-        this.checkpointColor = checkpointColor;
+    public TripCheckpoint() {
     }
 
-    private TripCheckpoint(Parcel in) {
+    protected TripCheckpoint(Parcel in) {
         this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
         this.geographicalPosition = in.readParcelable(LatLng.class.getClassLoader());
         this.checkpointTitle = in.readString();
         this.checkpointDescription = in.readString();
+        this.checkpointAddress = in.readString();
         this.areArrivalNotificationsEnabled = in.readByte() != 0;
         this.areDepartureNotificationsEnabled = in.readByte() != 0;
+        this.checkpointColor = in.readInt();
     }
 
     public Integer getCheckpointId() {
@@ -93,6 +87,19 @@ public final class TripCheckpoint implements Parcelable, ClusterItem {
         this.checkpointColor = checkpointColor;
     }
 
+    public String getCheckpointAddress() {
+        return checkpointAddress;
+    }
+
+    public void setCheckpointAddress(String checkpointAddress) {
+        this.checkpointAddress = checkpointAddress;
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return geographicalPosition;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -104,66 +111,11 @@ public final class TripCheckpoint implements Parcelable, ClusterItem {
         dest.writeParcelable(this.geographicalPosition, flags);
         dest.writeString(this.checkpointTitle);
         dest.writeString(this.checkpointDescription);
+        dest.writeString(this.checkpointAddress);
         dest.writeByte(this.areArrivalNotificationsEnabled ? (byte) 1 : (byte) 0);
         dest.writeByte(this.areDepartureNotificationsEnabled ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.checkpointColor);
     }
-
-    @Override
-    public LatLng getPosition() {
-        return geographicalPosition;
-    }
-
-    public static class TripCheckpointBuilder {
-
-        private Integer checkpointId;
-        private LatLng geographicalPosition;
-        private String checkpointTitle;
-        private String checkpointDescription;
-        private boolean areArrivalNotificationsEnabled;
-        private boolean areDepartureNotificationsEnabled;
-        private int checkpointColor;
-
-        public TripCheckpointBuilder setCheckpointId(Integer checkpointId) {
-            this.checkpointId = checkpointId;
-            return this;
-        }
-
-        public TripCheckpointBuilder setGeographicalPosition(LatLng geographicalPosition) {
-            this.geographicalPosition = geographicalPosition;
-            return this;
-        }
-
-        public TripCheckpointBuilder setCheckpointTitle(String checkpointTitle) {
-            this.checkpointTitle = checkpointTitle;
-            return this;
-        }
-
-        public TripCheckpointBuilder setCheckpointDescription(String checkpointDescription) {
-            this.checkpointDescription = checkpointDescription;
-            return this;
-        }
-
-        public TripCheckpointBuilder setAreArrivalNotificationsEnabled(boolean areArrivalNotificationsEnabled) {
-            this.areArrivalNotificationsEnabled = areArrivalNotificationsEnabled;
-            return this;
-        }
-
-        public TripCheckpointBuilder setAreDepartureNotificationsEnabled(boolean areDepartureNotificationsEnabled) {
-            this.areDepartureNotificationsEnabled = areDepartureNotificationsEnabled;
-            return this;
-        }
-
-        public TripCheckpointBuilder setCheckpointColor(int checkpointColor) {
-            this.checkpointColor = checkpointColor;
-            return this;
-        }
-
-        public TripCheckpoint createTripCheckpoint() {
-            return new TripCheckpoint(checkpointId, geographicalPosition, checkpointTitle, checkpointDescription, areArrivalNotificationsEnabled,
-                    areDepartureNotificationsEnabled, checkpointColor);
-        }
-    }
-
     public static final Parcelable.Creator<TripCheckpoint> CREATOR = new Parcelable.Creator<TripCheckpoint>() {
         @Override
         public TripCheckpoint createFromParcel(Parcel source) {

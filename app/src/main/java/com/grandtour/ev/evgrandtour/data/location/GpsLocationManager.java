@@ -4,17 +4,28 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.grandtour.ev.evgrandtour.app.Injection;
 
 import android.Manifest;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class GpsLocationManager {
 
@@ -29,6 +40,8 @@ public class GpsLocationManager {
     @Nullable
     private FusedLocationProviderClient fusedLocationClient;
     @Nullable
+    private Geocoder geocoder;
+    @Nullable
     private LocationRequest locationRequest;
 
     public static GpsLocationManager getInstance() {
@@ -40,6 +53,10 @@ public class GpsLocationManager {
 
     private void initLocationClient() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(Injection.provideGlobalContext());
+    }
+
+    private void initGeocodeClient() {
+        geocoder = new Geocoder(Injection.provideGlobalContext(), Locale.getDefault());
     }
 
     private void createLocationUpdatesRequest() {
@@ -96,5 +113,29 @@ public class GpsLocationManager {
         } catch (SecurityException e) {
             e.printStackTrace();
         }
+    }
+
+    @NonNull
+    public Observable<String> getAddressForLocation(@NonNull LatLng location) {
+        if (geocoder == null) {
+            initGeocodeClient();
+        }
+        return Observable.fromCallable(() -> {
+            String locationAddress = "";
+            try {
+                List<Address> addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1);
+                if (addresses != null && addresses.size() > 0) {
+                    Address address = addresses.get(0);
+                    if (address.getAddressLine(0) != null) {
+                        locationAddress = address.getAddressLine(0);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return locationAddress;
+        })
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io());
     }
 }

@@ -1,6 +1,9 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
@@ -41,15 +44,28 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
         if (isViewAttached && TextUtils.isEmpty(checkpointName)) {
             view.shakeCheckpointNameTextView();
         } else if (tripCheckpoint != null && isViewAttached) {
-            tripCheckpoint.setCheckpointTitle(checkpointName);
-            tripCheckpoint.setCheckpointDescription(checkpointDescription);
-            tripCheckpoint.setAreArrivalNotificationsEnabled(areArrivalNotificationsEnabled);
-            tripCheckpoint.setAreDepartureNotificationsEnabled(areDepartureNotificationsEnabled);
+            updateCheckpointDetails(checkpointName, checkpointDescription);
             if (checkpointDetailsCallback != null) {
                 checkpointDetailsCallback.onCheckpointDetailsAdded(tripCheckpoint);
             }
             view.dismissDetailsDialog();
         }
+    }
+
+    private void updateCheckpointDetails(@NonNull String checkpointName, @NonNull String checkpointDescription) {
+        if (tripCheckpoint != null) {
+            tripCheckpoint.setCheckpointTitle(checkpointName);
+            tripCheckpoint.setCheckpointDescription(checkpointDescription);
+            tripCheckpoint.setAreArrivalNotificationsEnabled(areArrivalNotificationsEnabled);
+            tripCheckpoint.setAreDepartureNotificationsEnabled(areDepartureNotificationsEnabled);
+        }
+    }
+
+    @Override
+    public void onNewCheckpointDetailsInitialised(@NonNull LatLng newCheckpointLocation) {
+        tripCheckpoint = new TripCheckpoint();
+        tripCheckpoint.setGeographicalPosition(newCheckpointLocation);
+        searchForCheckpointAddress(newCheckpointLocation);
     }
 
     @Override
@@ -75,5 +91,20 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
         if (isViewAttached) {
             view.displaySavedCheckpointDetails(tripCheckpoint);
         }
+    }
+
+    private void searchForCheckpointAddress(@NonNull LatLng newCheckpointLocation) {
+        GpsLocationManager locationManager = GpsLocationManager.getInstance();
+        locationManager.getAddressForLocation(newCheckpointLocation)
+                .doOnNext(address -> {
+                    if (isViewAttached) {
+                        view.displaySearchedAddressForCheckpoint(address);
+                    }
+                    if (tripCheckpoint != null) {
+                        tripCheckpoint.setCheckpointAddress(address);
+                    }
+                })
+                .doOnError(Throwable::printStackTrace)
+                .subscribe();
     }
 }

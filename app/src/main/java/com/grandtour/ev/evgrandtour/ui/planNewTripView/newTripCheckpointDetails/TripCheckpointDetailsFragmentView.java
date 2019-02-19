@@ -1,5 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogTripCheckpointDetailsViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
@@ -20,11 +22,12 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
     @NonNull
     public final static String TAG = TripCheckpointDetailsFragmentView.class.getSimpleName();
     @NonNull
-    public final static String TRIP_CHECKPOINT_DETAILS = "trip_checkpoint_details";
+    public final static String PREVIOUS_TRIP_CHECKPOINT_DETAILS = "previous_trip_checkpoint_details";
+    @NonNull
+    public final static String NEW_CHECKPOINT_LOCATION = "new_trip_checkpoint_details";
 
     @NonNull
     private final TripCheckpointDetailsViewModel viewModel = new TripCheckpointDetailsViewModel();
-    private FragmentDialogTripCheckpointDetailsViewBinding viewBinding;
 
     @NonNull
     public static TripCheckpointDetailsFragmentView createInstance() {
@@ -33,7 +36,7 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_trip_checkpoint_details_view,
+        FragmentDialogTripCheckpointDetailsViewBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_trip_checkpoint_details_view,
                 container, false);
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
@@ -58,9 +61,14 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
      */
     private void retrieveCheckpointDetails(@Nullable Bundle bundle) {
         if (bundle != null) {
-            TripCheckpoint tripCheckpoint = bundle.getParcelable(TripCheckpointDetailsFragmentView.TRIP_CHECKPOINT_DETAILS);
+            TripCheckpoint tripCheckpoint = bundle.getParcelable(TripCheckpointDetailsFragmentView.PREVIOUS_TRIP_CHECKPOINT_DETAILS);
             if (tripCheckpoint != null) {
                 getPresenter().onRetrievedTripCheckpointDetailsFromBundle(tripCheckpoint);
+            } else {
+                LatLng newCheckpointLocation = bundle.getParcelable(TripCheckpointDetailsFragmentView.NEW_CHECKPOINT_LOCATION);
+                if (newCheckpointLocation != null) {
+                    getPresenter().onNewCheckpointDetailsInitialised(newCheckpointLocation);
+                }
             }
         }
     }
@@ -90,5 +98,11 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
     public void displaySavedCheckpointDetails(@NonNull TripCheckpoint tripCheckpoint) {
         viewModel.checkpointName.set(tripCheckpoint.getCheckpointTitle());
         viewModel.checkpointDescription.set(tripCheckpoint.getCheckpointDescription());
+        viewModel.checkpointAddress.set(tripCheckpoint.getCheckpointAddress());
+    }
+
+    @Override
+    public void displaySearchedAddressForCheckpoint(@NonNull String address) {
+        viewModel.checkpointAddress.set(address);
     }
 }

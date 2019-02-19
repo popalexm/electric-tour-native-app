@@ -39,6 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_medium"
+            android:paddingTop="@dimen/margin_medium"
             android:textColorHint="@color/colorWhite"
             app:isWarningState="@{viewModel.isCheckpointNameIncomplete}"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
@@ -49,7 +50,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-
                 android:hint="@string/hint_enter_checkpoint_name"
                 android:text="@={viewModel.checkpointName}"
                 android:textColor="@color/colorWhite"
@@ -78,6 +78,17 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:id="@+id/checkpointAddress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_large"
+            android:gravity="center_horizontal"
+            android:text="@{viewModel.checkpointAddress}"
+            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
+            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
+            app:layout_constraintTop_toBottomOf="@id/txtLayoutNewCheckpointDescription" />
+
         <LinearLayout
             android:id="@+id/layoutArrivalDepartureNotifications"
             android:layout_width="wrap_content"
@@ -87,16 +98,16 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            app:layout_constraintTop_toBottomOf="@id/txtLayoutNewCheckpointDescription">
+            app:layout_constraintTop_toBottomOf="@id/checkpointAddress">
 
             <Switch
                 android:id="@+id/switchArrivalNotifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
+                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:switchPadding="@dimen/margin_small"
                 android:text="@string/hint_enable_checkpoint_arrival_tracking"
-                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:theme="@style/SwitchStyle" />
 
             <Switch
@@ -104,9 +115,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
+                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:switchPadding="@dimen/margin_small"
                 android:text="@string/hint_enable_checkpoint_departure_tracking"
-                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:theme="@style/SwitchStyle" />
 
         </LinearLayout>
@@ -117,7 +128,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="@dimen/margin_medium"
             android:layout_marginEnd="@dimen/margin_medium"
             android:layout_marginStart="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_large"
@@ -127,45 +137,50 @@
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toBottomOf="@id/layoutArrivalDepartureNotifications" />
 
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/btnSaveCheckpointDetails"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
-            android:onClick="@{()-> presenter.onSaveCheckpointDetailsClicked(viewModel.checkpointName,viewModel.checkpointDescription)}"
-            android:text="@string/btn_save_checkpoint_details"
-            android:textColor="@android:color/white"
-            android:textSize="10sp"
-            app:backgroundTint="@color/colorBlue"
-            app:cornerRadius="@dimen/margin_large"
-            app:icon="@drawable/ic_check_white_24dp"
-            app:iconTintMode="multiply"
+            android:layout_marginTop="@dimen/margin_large"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/margin_medium"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            app:layout_constraintTop_toBottomOf="@id/txtNotificationDesc"
-            app:rippleColor="@color/colorAccent" />
+            app:layout_constraintTop_toBottomOf="@id/txtNotificationDesc">
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btnSaveCheckpointDetails"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:onClick="@{()-> presenter.onSaveCheckpointDetailsClicked(viewModel.checkpointName,viewModel.checkpointDescription)}"
+                android:text="@string/btn_save_checkpoint_details"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                app:backgroundTint="@color/colorBlue"
+                app:cornerRadius="@dimen/margin_large"
+                app:icon="@drawable/ic_check_white_24dp"
+                app:iconTintMode="multiply"
+                app:rippleColor="@color/colorAccent" />
 
 
-        <android.support.design.button.MaterialButton
-            android:id="@+id/buttonDismiss"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_normal"
-            android:onClick="@{()->presenter.onDismissButtonClicked()}"
-            android:paddingEnd="@dimen/margin_large"
-            android:paddingStart="@dimen/margin_large"
-            android:text="@string/btn_cancel"
-            android:textColor="@android:color/white"
-            android:textSize="10sp"
-            app:backgroundTint="@color/colorRed"
-            app:cornerRadius="@dimen/margin_large"
-            app:icon="@drawable/ic_clear_white_24dp"
-            app:iconTintMode="multiply"
-            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
-            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            app:layout_constraintTop_toBottomOf="@id/btnSaveCheckpointDetails"
-            app:rippleColor="@color/colorAccent" />
+            <android.support.design.button.MaterialButton
+                android:id="@+id/buttonDismiss"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:onClick="@{()->presenter.onDismissButtonClicked()}"
+                android:text="@string/btn_cancel"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                app:backgroundTint="@color/colorRed"
+                app:cornerRadius="@dimen/margin_large"
+                app:icon="@drawable/ic_clear_white_24dp"
+                app:iconTintMode="multiply"
+                app:rippleColor="@color/colorAccent" />
+
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 
