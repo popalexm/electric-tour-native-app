@@ -6,7 +6,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.CheckpointDetailsCallback;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,7 +20,7 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
     private boolean areArrivalNotificationsEnabled;
     private boolean areDepartureNotificationsEnabled;
     @Nullable
-    private AddNewCheckpointDetailsCallback checkpointDetailsCallback;
+    private CheckpointDetailsCallback checkpointDetailsCallback;
     @Nullable
     private TripCheckpoint tripCheckpoint;
 
@@ -29,14 +29,27 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
     }
 
     @Override
-    public void onInitCallbackToParentFragment(@NonNull AddNewCheckpointDetailsCallback checkpointDetailsCallback) {
+    public void onInitCallbackToParentFragment(@NonNull CheckpointDetailsCallback checkpointDetailsCallback) {
         this.checkpointDetailsCallback = checkpointDetailsCallback;
     }
 
     @Override
     public void onRetrievedTripCheckpointDetailsFromBundle(@NonNull TripCheckpoint tripCheckpoint) {
         this.tripCheckpoint = tripCheckpoint;
-        loadCheckpointDetails(tripCheckpoint);
+        if (isViewAttached) {
+            view.displaySavedCheckpointDetails(tripCheckpoint);
+            view.displayDeleteButton(true);
+        }
+    }
+
+    @Override
+    public void onNewCheckpointDetailsInitialised(@NonNull LatLng newCheckpointLocation) {
+        tripCheckpoint = new TripCheckpoint();
+        tripCheckpoint.setGeographicalPosition(newCheckpointLocation);
+        if (isViewAttached) {
+            view.displayDeleteButton(false);
+        }
+        searchForCheckpointLocationAddress(newCheckpointLocation);
     }
 
     @Override
@@ -46,7 +59,7 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
         } else if (tripCheckpoint != null && isViewAttached) {
             updateCheckpointDetails(checkpointName, checkpointDescription);
             if (checkpointDetailsCallback != null) {
-                checkpointDetailsCallback.onCheckpointDetailsAdded(tripCheckpoint);
+                checkpointDetailsCallback.onCheckpointDetailsUpdated(tripCheckpoint);
             }
             view.dismissDetailsDialog();
         }
@@ -62,16 +75,16 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
     }
 
     @Override
-    public void onNewCheckpointDetailsInitialised(@NonNull LatLng newCheckpointLocation) {
-        tripCheckpoint = new TripCheckpoint();
-        tripCheckpoint.setGeographicalPosition(newCheckpointLocation);
-        searchForCheckpointAddress(newCheckpointLocation);
-    }
-
-    @Override
     public void onDismissButtonClicked() {
         if (isViewAttached) {
             view.dismissDetailsDialog();
+        }
+    }
+
+    @Override
+    public void onDeleteCheckpointButtonClicked() {
+        if (checkpointDetailsCallback != null && tripCheckpoint != null && tripCheckpoint.getCheckpointId() != null) {
+            checkpointDetailsCallback.onCheckpointDeleted(tripCheckpoint.getCheckpointId());
         }
     }
 
@@ -87,13 +100,7 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
         }
     }
 
-    private void loadCheckpointDetails(@NonNull TripCheckpoint tripCheckpoint) {
-        if (isViewAttached) {
-            view.displaySavedCheckpointDetails(tripCheckpoint);
-        }
-    }
-
-    private void searchForCheckpointAddress(@NonNull LatLng newCheckpointLocation) {
+    private void searchForCheckpointLocationAddress(@NonNull LatLng newCheckpointLocation) {
         GpsLocationManager locationManager = GpsLocationManager.getInstance();
         locationManager.getAddressForLocation(newCheckpointLocation)
                 .doOnNext(address -> {

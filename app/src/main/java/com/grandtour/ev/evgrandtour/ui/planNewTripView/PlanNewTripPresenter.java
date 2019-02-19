@@ -41,6 +41,11 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     }
 
     @Override
+    public void onDeleteCheckpointFromTrip(int checkpointId) {
+        // TODO Implemented checkpoint removal logic via id
+    }
+
+    @Override
     public void onMyLocationButtonClicked() {
 
     }

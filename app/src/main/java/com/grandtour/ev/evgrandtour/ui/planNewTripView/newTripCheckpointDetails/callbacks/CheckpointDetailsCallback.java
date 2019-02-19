@@ -4,8 +4,10 @@ import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.support.annotation.NonNull;
 
-public interface AddNewCheckpointDetailsCallback {
+public interface CheckpointDetailsCallback {
 
-    void onCheckpointDetailsAdded(@NonNull TripCheckpoint tripCheckpoint);
+    void onCheckpointDetailsUpdated(@NonNull TripCheckpoint tripCheckpoint);
+
+    void onCheckpointDeleted(int checkpointId);
 
 }

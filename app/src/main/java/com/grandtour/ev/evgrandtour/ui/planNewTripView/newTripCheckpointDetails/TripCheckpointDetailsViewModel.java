@@ -9,10 +9,12 @@ public class TripCheckpointDetailsViewModel {
     @NonNull
     public final ObservableBoolean isCheckpointNameIncomplete = new ObservableBoolean();
     @NonNull
-    public ObservableField<String> checkpointName = new ObservableField<>("");
+    public final ObservableField<String> checkpointName = new ObservableField<>("");
     @NonNull
-    public ObservableField<String> checkpointDescription = new ObservableField<>("");
+    public final ObservableField<String> checkpointDescription = new ObservableField<>("");
     @NonNull
-    public ObservableField<String> checkpointAddress = new ObservableField<>();
+    public final ObservableField<String> checkpointAddress = new ObservableField<>();
+    @NonNull
+    public final ObservableBoolean isCheckpointInEditMode = new ObservableBoolean();
 
 }

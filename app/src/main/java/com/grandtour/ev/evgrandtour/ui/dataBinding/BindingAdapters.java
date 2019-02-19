@@ -111,6 +111,15 @@ public final class BindingAdapters {
         }
     }
 
+    @BindingAdapter("isViewVisible")
+    public static void setViewVisibility(@NonNull View view, boolean isViewVisible) {
+        if (isViewVisible) {
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
+
     @BindingAdapter(value = {"android:onQueryTextSubmit", "android:onQueryTextChange"}, requireAll = false)
     public static void setOnQueryTextListener(SearchView view, final OnQueryTextSubmitListener submit, final OnQueryTextChangeListener change) {
         if (submit == null && change == null) {

@@ -6,7 +6,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentDialogTripCheckpointDetailsViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
-import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.AddNewCheckpointDetailsCallback;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.CheckpointDetailsCallback;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -50,7 +50,7 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
      * Send a reference to the callback that will be used to save the checkpoint details in te parent fragment
      */
     private void initParentFragmentCallback() {
-        AddNewCheckpointDetailsCallback callback = (AddNewCheckpointDetailsCallback) getParentFragment();
+        CheckpointDetailsCallback callback = (CheckpointDetailsCallback) getParentFragment();
         if (callback != null) {
             getPresenter().onInitCallbackToParentFragment(callback);
         }
@@ -104,5 +104,10 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
     @Override
     public void displaySearchedAddressForCheckpoint(@NonNull String address) {
         viewModel.checkpointAddress.set(address);
+    }
+
+    @Override
+    public void displayDeleteButton(boolean shouldDeleteButtonBeDisplayed) {
+        viewModel.isCheckpointInEditMode.set(shouldDeleteButtonBeDisplayed);
     }
 }

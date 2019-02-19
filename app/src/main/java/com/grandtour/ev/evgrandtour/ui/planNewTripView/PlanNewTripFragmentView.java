@@ -129,8 +129,13 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void onCheckpointDetailsAdded(@NonNull TripCheckpoint tripCheckpoint) {
+    public void onCheckpointDetailsUpdated(@NonNull TripCheckpoint tripCheckpoint) {
         getPresenter().onNewTripCheckpointAdded(tripCheckpoint);
+    }
+
+    @Override
+    public void onCheckpointDeleted(int checkpointId) {
+        getPresenter().onDeleteCheckpointFromTrip(checkpointId);
     }
 
     @Override

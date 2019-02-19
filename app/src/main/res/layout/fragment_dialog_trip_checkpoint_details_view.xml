@@ -163,6 +163,22 @@
                 app:iconTintMode="multiply"
                 app:rippleColor="@color/colorAccent" />
 
+            <android.support.design.button.MaterialButton
+                android:id="@+id/buttonDeleteCheckpoint"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:onClick="@{()->presenter.onDeleteCheckpointButtonClicked()}"
+                android:text="@string/btn_delete_checkpoint"
+                android:textColor="@color/colorRed"
+                android:textSize="12sp"
+                app:backgroundTint="@color/colorWhite"
+                app:cornerRadius="@dimen/margin_large"
+                app:icon="@drawable/ic_delete_red_24dp"
+                app:iconTintMode="multiply"
+                app:isViewVisible="@{viewModel.isCheckpointInEditMode}"
+                app:rippleColor="@color/colorAccent" />
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/buttonDismiss"
