@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.domain.useCases.LoadInPlanningTripUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
@@ -12,6 +13,9 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.Presenter {
 
@@ -23,6 +27,12 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
 
     PlanNewTripPresenter(@NonNull PlanNewTripContract.View view) {
         this.view = view;
+    }
+
+    @Override
+    public void onMapReady() {
+        new LoadInPlanningTripUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager()).perform()
+                .subscribe();
     }
 
     @Override

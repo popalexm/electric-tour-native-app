@@ -22,6 +22,8 @@ public class PlanNewTripContract {
     }
 
     public interface Presenter extends BaseContract.Presenter {
+
+        void onMapReady();
         
         void onMapLocationClicked(@NonNull LatLng clickedLocation);
 

@@ -9,6 +9,7 @@ import android.os.Parcelable;
 public final class TripCheckpoint implements ClusterItem, Parcelable {
 
     private Integer checkpointId;
+    private Integer orderInTourId;
     private LatLng geographicalPosition;
     private String checkpointTitle;
     private String checkpointDescription;
@@ -16,20 +17,6 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
     private boolean areArrivalNotificationsEnabled;
     private boolean areDepartureNotificationsEnabled;
     private int checkpointColor;
-
-    public TripCheckpoint() {
-    }
-
-    protected TripCheckpoint(Parcel in) {
-        this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.geographicalPosition = in.readParcelable(LatLng.class.getClassLoader());
-        this.checkpointTitle = in.readString();
-        this.checkpointDescription = in.readString();
-        this.checkpointAddress = in.readString();
-        this.areArrivalNotificationsEnabled = in.readByte() != 0;
-        this.areDepartureNotificationsEnabled = in.readByte() != 0;
-        this.checkpointColor = in.readInt();
-    }
 
     public Integer getCheckpointId() {
         return checkpointId;
@@ -105,9 +92,25 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
         return 0;
     }
 
+    public TripCheckpoint() {
+    }
+
+    protected TripCheckpoint(Parcel in) {
+        this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.orderInTourId = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.geographicalPosition = in.readParcelable(LatLng.class.getClassLoader());
+        this.checkpointTitle = in.readString();
+        this.checkpointDescription = in.readString();
+        this.checkpointAddress = in.readString();
+        this.areArrivalNotificationsEnabled = in.readByte() != 0;
+        this.areDepartureNotificationsEnabled = in.readByte() != 0;
+        this.checkpointColor = in.readInt();
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.checkpointId);
+        dest.writeValue(this.orderInTourId);
         dest.writeParcelable(this.geographicalPosition, flags);
         dest.writeString(this.checkpointTitle);
         dest.writeString(this.checkpointDescription);
@@ -116,6 +119,7 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
         dest.writeByte(this.areDepartureNotificationsEnabled ? (byte) 1 : (byte) 0);
         dest.writeInt(this.checkpointColor);
     }
+
     public static final Parcelable.Creator<TripCheckpoint> CREATOR = new Parcelable.Creator<TripCheckpoint>() {
         @Override
         public TripCheckpoint createFromParcel(Parcel source) {

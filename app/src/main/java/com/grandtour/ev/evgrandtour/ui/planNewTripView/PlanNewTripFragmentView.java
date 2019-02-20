@@ -50,6 +50,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         return viewBinding.getRoot();
     }
 
+
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -60,6 +61,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
                 setupGoogleMapsDarkStyle();
                 setupClusterManager(activity);
                 setupGoogleMapCallbacks();
+                getPresenter().onMapReady();
             } else {
                 PermissionUtils.requestPermissionsInFragment(this, PermissionUtils.LOCATION_REQUEST_PERMISSION_ID, Manifest.permission.ACCESS_FINE_LOCATION);
             }
