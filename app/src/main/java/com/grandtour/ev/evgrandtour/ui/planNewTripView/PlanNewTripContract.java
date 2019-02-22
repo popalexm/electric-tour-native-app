@@ -9,12 +9,18 @@ import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.
 
 import android.support.annotation.NonNull;
 
+import java.util.List;
+
 public class PlanNewTripContract {
 
     public interface View extends BaseContract.View, CheckpointDetailsCallback, ClusterManager.OnClusterClickListener<TripCheckpoint>,
             ClusterManager.OnClusterItemClickListener<TripCheckpoint> {
 
-        void displayTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint);
+        void displayNewTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint);
+
+        void displayPreviousTripCheckpointList(@NonNull List<TripCheckpoint> savedCheckpoints);
+
+        void displayPreviousTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription);
 
         void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation);
 

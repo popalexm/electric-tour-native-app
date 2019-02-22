@@ -25,6 +25,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter> implements PlanNewTripContract.View, GoogleMap.OnMapClickListener {
 
     @NonNull
@@ -49,7 +51,6 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         initGoogleMapsView(savedInstanceState);
         return viewBinding.getRoot();
     }
-
 
     @SuppressLint("MissingPermission")
     @Override
@@ -102,11 +103,24 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void displayTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint) {
+    public void displayNewTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint) {
         if (clusterManager != null) {
             clusterManager.addItem(newCheckpoint);
             clusterManager.cluster();
         }
+    }
+
+    @Override
+    public void displayPreviousTripCheckpointList(@NonNull List<TripCheckpoint> savedCheckpoints) {
+        if (clusterManager != null) {
+            clusterManager.addItems(savedCheckpoints);
+            clusterManager.cluster();
+        }
+    }
+
+    @Override
+    public void displayPreviousTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription) {
+
     }
 
     @Override
