@@ -8,6 +8,6 @@ public interface CheckpointDetailsCallback {
 
     void onCheckpointDetailsUpdated(@NonNull TripCheckpoint tripCheckpoint);
 
-    void onCheckpointDeleted(int checkpointId);
+    void onCheckpointDeleted(@NonNull TripCheckpoint checkpointId);
 
 }

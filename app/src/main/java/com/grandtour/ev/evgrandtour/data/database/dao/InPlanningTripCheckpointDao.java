@@ -9,11 +9,16 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+
 @Dao
 public interface InPlanningTripCheckpointDao {
 
     @Query("SELECT * FROM InPlanningCheckpoint WHERE tripId = :tripId")
     List<InPlanningCheckpoint> getInPlanningCheckpointsByTripId(long tripId);
+
+    @Query("DELETE FROM InPlanningCheckpoint WHERE checkpointId = :checkpointId")
+    Completable deleteInPlanningCheckpoint(long checkpointId);
 
     @Query("SELECT * FROM InPlanningCheckpoint WHERE checkpointId = :checkpointId")
     InPlanningCheckpoint getInPlanningCheckpointById(long checkpointId);

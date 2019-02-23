@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.DeleteInPlanningCheckpointUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.LoadInPlanningTripUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.SaveInPlanningTripCheckpointUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
@@ -66,8 +67,16 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     }
 
     @Override
-    public void onDeleteCheckpointFromTrip(int checkpointId) {
-        // TODO Implemented checkpoint removal logic via id
+    public void onDeleteCheckpointFromTrip(@NonNull TripCheckpoint tripCheckpoint) {
+        addSubscription(new DeleteInPlanningCheckpointUseCase(Injection.provideRxSchedulers()
+                .getDefault(), Injection.provideStorageManager(), tripCheckpoint.getCheckpointId()).perform()
+                .doOnComplete(() -> {
+                    if (isViewAttached) {
+                        view.removeAddedTripCheckpoint(tripCheckpoint);
+                    }
+                })
+                .doOnError(Throwable::printStackTrace)
+                .subscribe());
     }
 
     @Override

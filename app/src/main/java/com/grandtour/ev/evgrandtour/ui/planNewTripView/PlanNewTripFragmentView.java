@@ -136,6 +136,13 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
+    public void removeAddedTripCheckpoint(@NonNull TripCheckpoint tripCheckpoint) {
+        if (clusterManager != null) {
+            clusterManager.removeItem(tripCheckpoint);
+        }
+    }
+
+    @Override
     public void onInfoWindowClose(Marker marker) {
     }
 
@@ -150,8 +157,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void onCheckpointDeleted(int checkpointId) {
-        getPresenter().onDeleteCheckpointFromTrip(checkpointId);
+    public void onCheckpointDeleted(@NonNull TripCheckpoint tripCheckpoint) {
+        getPresenter().onDeleteCheckpointFromTrip(tripCheckpoint);
     }
 
     @Override

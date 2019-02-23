@@ -4,6 +4,7 @@ import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
 import com.grandtour.ev.evgrandtour.data.network.GoogleMapsAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
+import com.grandtour.ev.evgrandtour.domain.schedulers.RxJavaSchedulers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,7 +12,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 
-public class Injection {
+public final class Injection {
 
     /**
      * Provides the global Application Context, which is already a singleton, not an activity / fragment Context instance, not a memory leak .
@@ -26,7 +27,10 @@ public class Injection {
     @NonNull
     private static final String baseBackendUrl = "https://wenwere.com/";
 
-    public static void initialize(@NonNull Context context) {
+    private Injection() {
+    }
+
+    static void initialize(@NonNull Context context) {
         Injection.context = context;
     }
 
@@ -54,6 +58,11 @@ public class Injection {
     @NonNull
     public static Resources provideResources() {
         return Injection.context.getResources();
+    }
+
+    @NonNull
+    public static RxJavaSchedulers provideRxSchedulers() {
+        return RxJavaSchedulers.getRxJavaSchedulers();
     }
 
 }

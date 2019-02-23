@@ -25,6 +25,8 @@ public class PlanNewTripContract {
         void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation);
 
         void displayInvalidTripNameWarning();
+
+        void removeAddedTripCheckpoint(@NonNull TripCheckpoint tripCheckpoint);
     }
 
     public interface Presenter extends BaseContract.Presenter {
@@ -35,7 +37,7 @@ public class PlanNewTripContract {
 
         void onNewTripCheckpointAdded(@NonNull TripCheckpoint tripCheckpoint);
 
-        void onDeleteCheckpointFromTrip(int checkpointId);
+        void onDeleteCheckpointFromTrip(@NonNull TripCheckpoint tripCheckpoint);
 
         void onMyLocationButtonClicked();
 
