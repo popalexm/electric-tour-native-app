@@ -19,9 +19,6 @@ public interface InPlanningTripDao {
     @Query("SELECT count(*) FROM InPlanningTrip")
     int checkNumberOfTableRows();
 
-    @Query("SELECT * FROM InPlanningTrip WHERE tripId = :tripId")
-    InPlanningTrip getInPlanningTripById(long tripId);
-
     @Query("SELECT * FROM InPlanningTrip LIMIT 1")
     InPlanningTrip getLastInPlanningTrip();
 }
