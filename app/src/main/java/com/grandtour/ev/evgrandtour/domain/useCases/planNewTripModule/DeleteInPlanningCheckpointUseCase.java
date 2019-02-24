@@ -23,8 +23,8 @@ public class DeleteInPlanningCheckpointUseCase extends BaseUseCaseRefactored {
 
     @Override
     public Completable perform() {
-        return storageManager.inPlanningTripCheckpointDao()
-                .deleteInPlanningCheckpoint(checkpointId)
+        return Completable.fromAction(() -> storageManager.inPlanningTripCheckpointDao()
+                .deleteInPlanningCheckpoint(checkpointId))
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }

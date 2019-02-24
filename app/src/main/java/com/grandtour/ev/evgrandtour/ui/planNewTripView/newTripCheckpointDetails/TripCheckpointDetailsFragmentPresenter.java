@@ -83,8 +83,9 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
 
     @Override
     public void onDeleteCheckpointButtonClicked() {
-        if (checkpointDetailsCallback != null && tripCheckpoint != null && tripCheckpoint.getCheckpointId() != null) {
-            checkpointDetailsCallback.onCheckpointDeleted(tripCheckpoint.getCheckpointId());
+        if (checkpointDetailsCallback != null && tripCheckpoint != null) {
+            checkpointDetailsCallback.onCheckpointDeleted(tripCheckpoint);
+            onDismissButtonClicked();
         }
     }
 
