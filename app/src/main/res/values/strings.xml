@@ -61,6 +61,8 @@
     <string name="btn_save_checkpoint_details">Save</string>
     <string name="btn_delete_checkpoint">Delete</string>
     <string name="message_please_add_at_least_tqo_checkpoints_to_trip">Please add at least 2 checkpoints to a planned trip before saving it !</string>
+    <string name="message_successfully_saved_trip">Successfully saved your planned trip !</string>
+    <string name="message_error_saving_trip">Failed while trying to save your planned trip !</string>
 
     // Dummy testing strings
     <string name="lorem_ipsum">Lorem Ipsum</string>

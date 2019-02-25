@@ -2,17 +2,17 @@ package com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.InPlanningCheckpoint;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
+import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseRefactored;
 import com.grandtour.ev.evgrandtour.domain.useCases.modelConversion.ModelConversionUtils;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 
-public class SaveInPlanningTripCheckpointUseCase extends BaseUseCase implements UseCaseDefinition {
+public class SaveInPlanningTripCheckpointUseCase extends BaseUseCaseRefactored {
 
     @NonNull
     private final LocalStorageManager storageManager;
@@ -20,9 +20,9 @@ public class SaveInPlanningTripCheckpointUseCase extends BaseUseCase implements 
     private final TripCheckpoint tripCheckpoint;
     private final int tripId;
 
-    public SaveInPlanningTripCheckpointUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public SaveInPlanningTripCheckpointUseCase(@NonNull Pair<Scheduler, Scheduler> schedulers,
             @NonNull LocalStorageManager storageManager, @NonNull TripCheckpoint tripCheckpoint, int tripId) {
-        super(executorThread, postExecutionThread);
+        super(schedulers);
         this.storageManager = storageManager;
         this.tripCheckpoint = tripCheckpoint;
         this.tripId = tripId;

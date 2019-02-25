@@ -4,7 +4,11 @@ import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
+import com.grandtour.ev.evgrandtour.data.network.models.request.PlannedCheckpointRequest;
+import com.grandtour.ev.evgrandtour.data.network.models.request.PlannedTripRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteDirectionsRequest;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.InPlanningTripDetails;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.support.annotation.NonNull;
 
@@ -52,5 +56,32 @@ public final class NetworkRequestBuilders {
             }
         }
         return builder.toString();
+    }
+
+    @NonNull
+    public static PlannedTripRequest createPlannedTripRequest(@NonNull InPlanningTripDetails inPlanningTripDetails) {
+        PlannedTripRequest plannedTripRequest = new PlannedTripRequest();
+
+        int tripId = inPlanningTripDetails.getInPlanningTripId();
+        plannedTripRequest.setTripId(tripId);
+        plannedTripRequest.setTripName(inPlanningTripDetails.getInPlanningTripName());
+        plannedTripRequest.setTripDescription(inPlanningTripDetails.getInPlanningTripDescription());
+
+        List<TripCheckpoint> plannedTripCheckpoints = inPlanningTripDetails.getPlannedTripCheckpoints();
+        if (plannedTripCheckpoints.size() > 0) {
+            for (TripCheckpoint plannedCheckpoint : plannedTripCheckpoints) {
+                PlannedCheckpointRequest checkpointRequest = new PlannedCheckpointRequest();
+                checkpointRequest.setCheckpointId(plannedCheckpoint.getCheckpointId());
+                checkpointRequest.setTripId(tripId);
+                checkpointRequest.setCheckpointDescription(plannedCheckpoint.getCheckpointDescription());
+                checkpointRequest.setCheckpointAddress(plannedCheckpoint.getCheckpointAddress());
+                checkpointRequest.setCheckpointLatitude(plannedCheckpoint.getGeographicalPosition().latitude);
+                checkpointRequest.setCheckpointLongitude(plannedCheckpoint.getGeographicalPosition().longitude);
+                checkpointRequest.setAreArrivalNotificationsEnabled(plannedCheckpoint.isAreArrivalNotificationsEnabled());
+                checkpointRequest.setAreDepartureNotificationsEnabled(plannedCheckpoint.isAreDepartureNotificationsEnabled());
+                checkpointRequest.setCheckpointColor(plannedCheckpoint.getCheckpointColor());
+            }
+        }
+        return plannedTripRequest;
     }
 }

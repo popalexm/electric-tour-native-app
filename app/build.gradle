@@ -15,7 +15,6 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -26,12 +25,23 @@ android {
         versionName "2.9.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
+        debug {
+            buildConfigField "String", "CLOUD_API_URL", '"http://192.168.100.2:8080/"'
+            buildConfigField "String", "BACKED_API_URL", '"https://wenwere.com/"'
+            buildConfigField "String", "DIRECTIONS_API_URL", '"https://maps.googleapis.com/maps/api"'
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CLOUD_API_URL", '"http://192.168.100.2:8080/"'
+            buildConfigField "String", "BACKED_API_URL", '"https://wenwere.com/"'
+            buildConfigField "String", "DIRECTIONS_API_URL", '"https://maps.googleapis.com/maps/api"'
         }
     }
+
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8

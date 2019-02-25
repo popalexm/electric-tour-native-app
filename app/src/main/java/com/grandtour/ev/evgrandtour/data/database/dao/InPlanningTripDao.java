@@ -21,4 +21,7 @@ public interface InPlanningTripDao {
 
     @Query("SELECT * FROM InPlanningTrip LIMIT 1")
     InPlanningTrip getLastInPlanningTrip();
+
+    @Query("UPDATE InPlanningTrip SET tripName = :tripName, tripDescription =:tripDescription WHERE tripId = :tripId")
+    int updateTripNameAndDescription(String tripName, String tripDescription, int tripId);
 }

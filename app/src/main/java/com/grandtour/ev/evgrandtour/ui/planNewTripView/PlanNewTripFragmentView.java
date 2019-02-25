@@ -120,7 +120,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void displayPreviousTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription) {
-
+        viewModel.tripTitle.set(tripName);
     }
 
     @Override

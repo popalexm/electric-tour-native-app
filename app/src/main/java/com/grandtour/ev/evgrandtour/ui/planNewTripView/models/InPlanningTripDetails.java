@@ -1,49 +1,52 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView.models;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InPlanningTripDetails {
 
     @NonNull
     private final Integer inPlanningTripId;
-    @Nullable
+    @NonNull
     private String inPlanningTripName;
-    @Nullable
+    @NonNull
     private String inPlanningTripDescription;
-    @Nullable
+    @NonNull
     private List<TripCheckpoint> plannedTripCheckpoints;
 
     public InPlanningTripDetails(@NonNull Integer inPlanningTripId) {
         this.inPlanningTripId = inPlanningTripId;
+        this.inPlanningTripName = "";
+        this.inPlanningTripDescription = "";
+        this.plannedTripCheckpoints = new ArrayList<>();
     }
 
-    @Nullable
+    @NonNull
     public String getInPlanningTripName() {
         return inPlanningTripName;
     }
 
-    public void setInPlanningTripName(@Nullable String inPlanningTripName) {
+    public void setInPlanningTripName(@NonNull String inPlanningTripName) {
         this.inPlanningTripName = inPlanningTripName;
     }
 
-    @Nullable
+    @NonNull
     public String getInPlanningTripDescription() {
         return inPlanningTripDescription;
     }
 
-    public void setInPlanningTripDescription(@Nullable String inPlanningTripDescription) {
+    public void setInPlanningTripDescription(@NonNull String inPlanningTripDescription) {
         this.inPlanningTripDescription = inPlanningTripDescription;
     }
 
-    @Nullable
+    @NonNull
     public List<TripCheckpoint> getPlannedTripCheckpoints() {
         return plannedTripCheckpoints;
     }
 
-    public void setPlannedTripCheckpoints(@Nullable List<TripCheckpoint> plannedTripCheckpoints) {
+    public void setPlannedTripCheckpoints(@NonNull List<TripCheckpoint> plannedTripCheckpoints) {
         this.plannedTripCheckpoints = plannedTripCheckpoints;
     }
 

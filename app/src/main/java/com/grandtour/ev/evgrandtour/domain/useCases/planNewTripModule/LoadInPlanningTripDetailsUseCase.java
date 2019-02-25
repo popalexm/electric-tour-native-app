@@ -3,13 +3,13 @@ package com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.InPlanningCheckpoint;
 import com.grandtour.ev.evgrandtour.data.database.models.InPlanningTrip;
-import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
-import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
+import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseRefactored;
 import com.grandtour.ev.evgrandtour.domain.useCases.modelConversion.ModelConversionUtils;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.InPlanningTripDetails;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +19,13 @@ import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
 import io.reactivex.functions.Function;
 
-public class LoadInPlanningTripUseCase extends BaseUseCase implements UseCaseDefinition {
+public class LoadInPlanningTripDetailsUseCase extends BaseUseCaseRefactored {
 
     @NonNull
     private final LocalStorageManager storageManager;
 
-    public LoadInPlanningTripUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread, @NonNull LocalStorageManager storageManager) {
-        super(executorThread, postExecutionThread);
+    public LoadInPlanningTripDetailsUseCase(@NonNull Pair<Scheduler, Scheduler> schedulers, @NonNull LocalStorageManager storageManager) {
+        super(schedulers);
         this.storageManager = storageManager;
     }
 

@@ -14,6 +14,7 @@ public final class NetworkManager {
 
     private static GoogleMapsAPI googleMapsAPI;
     private static BackendAPI backendAPI;
+    private static HolidayTripCloudAPI cloudAPI;
 
     private NetworkManager() { }
 
@@ -28,6 +29,8 @@ public final class NetworkManager {
         return NetworkManager.googleMapsAPI;
     }
 
+    //TODO Remove this when migration to new backend is done
+    @Deprecated
     @Nonnull
     public static BackendAPI getBackendAPIService(@NonNull String baseUrl) {
         if (NetworkManager.backendAPI == null) {
@@ -37,6 +40,17 @@ public final class NetworkManager {
             return NetworkManager.backendAPI;
         }
         return NetworkManager.backendAPI;
+    }
+
+    @Nonnull
+    public static HolidayTripCloudAPI getCloudAPIService(@NonNull String baseUrl) {
+        if (NetworkManager.cloudAPI == null) {
+            OkHttpClient okHttpClient = NetworkManager.buildOkHttpClient();
+            Retrofit retrofit = NetworkManager.buildRetrofit(baseUrl, okHttpClient);
+            NetworkManager.cloudAPI = retrofit.create(HolidayTripCloudAPI.class);
+            return NetworkManager.cloudAPI;
+        }
+        return NetworkManager.cloudAPI;
     }
 
     @NonNull

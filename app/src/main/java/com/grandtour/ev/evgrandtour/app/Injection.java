@@ -1,8 +1,10 @@
 package com.grandtour.ev.evgrandtour.app;
 
+import com.grandtour.ev.evgrandtour.BuildConfig;
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.network.BackendAPI;
 import com.grandtour.ev.evgrandtour.data.network.GoogleMapsAPI;
+import com.grandtour.ev.evgrandtour.data.network.HolidayTripCloudAPI;
 import com.grandtour.ev.evgrandtour.data.network.NetworkManager;
 import com.grandtour.ev.evgrandtour.domain.schedulers.RxJavaSchedulers;
 
@@ -22,10 +24,12 @@ public final class Injection {
     private static Context context;
     @NonNull
     private static final String SHARED_PREFERENCES = "app_status";
-    @NonNull
+   /* @NonNull
     private static final String directionsBaseUrl = "https://maps.googleapis.com/maps/api/";
     @NonNull
     private static final String baseBackendUrl = "https://wenwere.com/";
+    @NonNull
+    private static final String baseCloudAPI = "http://192.168.100.2:8080/"; */
 
     private Injection() {
     }
@@ -46,11 +50,18 @@ public final class Injection {
 
     @NonNull
     public static GoogleMapsAPI provideDirectionsApi() {
-        return NetworkManager.getDirectionsAPIService(Injection.directionsBaseUrl);
+        return NetworkManager.getDirectionsAPIService(BuildConfig.DIRECTIONS_API_URL);
     }
 
     @NonNull
-    public static BackendAPI provideBackendApi() {return NetworkManager.getBackendAPIService(Injection.baseBackendUrl);}
+    public static BackendAPI provideBackendApi() {
+        return NetworkManager.getBackendAPIService(BuildConfig.BACKED_API_URL);
+    }
+
+    @NonNull
+    public static HolidayTripCloudAPI provideCloudApi() {
+        return NetworkManager.getCloudAPIService(BuildConfig.CLOUD_API_URL);
+    }
 
     @NonNull
     public static SharedPreferences provideSharedPreferences () {return Injection.context.getSharedPreferences(Injection.SHARED_PREFERENCES, Context.MODE_PRIVATE);}
