@@ -29,6 +29,8 @@ public class PlanNewTripContract {
         void removeAddedTripCheckpoint(@NonNull TripCheckpoint tripCheckpoint);
 
         void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList);
+
+        void moveCameraToLocation(@NonNull LatLng latLng);
     }
 
     public interface Presenter extends BaseContract.Presenter {

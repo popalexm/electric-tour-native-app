@@ -1,9 +1,11 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.domain.models.PlannedTripStatus;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.DeleteInPlanningCheckpointUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.LoadInPlanningTripDetailsUseCase;
@@ -13,11 +15,15 @@ import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.InPlanningTripDetails;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 
-class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.Presenter {
+class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.Presenter, OnSuccessListener<Location> {
 
     @NonNull
     private final PlanNewTripContract.View view;
@@ -80,7 +86,11 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
 
     @Override
     public void onMyLocationButtonClicked() {
-
+        if (ActivityCompat.checkSelfPermission(Injection.provideGlobalContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            GpsLocationManager.getInstance()
+                    .getLastKnownLocation(this);
+        }
     }
 
     @Override
@@ -121,14 +131,15 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     }
 
     private void loadCheckpointsInReorderingList(@NonNull InPlanningTripDetails tripDetails) {
-        // List<TripCheckpoint> tripCheckpointListModelReordering = new ArrayList<>();
-      /*  for (TripCheckpoint checkpoint : tripDetails.getPlannedTripCheckpoints()){
-            TripCheckpointReorderingModel tripCheckpointReorderingModel = new TripCheckpointReorderingModel(checkpoint.getCheckpointId(), String.valueOf(2)
-                    ,checkpoint.getCheckpointTitle(), checkpoint.getCheckpointAddress());
-            tripCheckpointListModelReordering.add(tripCheckpointReorderingModel);
-        } */
         if (isViewAttached) {
             view.displayTripCheckpointsInReorderingList(tripDetails.getPlannedTripCheckpoints());
+        }
+    }
+
+    @Override
+    public void onSuccess(Location location) {
+        if (isViewAttached) {
+            view.moveCameraToLocation(new LatLng(location.getLatitude(), location.getLongitude()));
         }
     }
 }

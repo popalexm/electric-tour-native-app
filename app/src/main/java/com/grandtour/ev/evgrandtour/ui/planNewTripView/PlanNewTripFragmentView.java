@@ -1,5 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -10,6 +11,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
+import com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentView;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsFragmentView;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
@@ -145,6 +147,14 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     @Override
     public void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList) {
         viewModel.reorderingList.addAll(checkpointReorderingList);
+    }
+
+    @Override
+    public void moveCameraToLocation(@NonNull LatLng latLng) {
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, CurrentTripFragmentView.ZOOM_LEVEL));
+        }
     }
 
     @Override
