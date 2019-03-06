@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:bind="http://schemas.android.com/tools">
 
     <data>
 
@@ -82,30 +83,40 @@
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapViewAddTrip"
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-        </com.google.android.gms.maps.MapView>
 
-        <android.support.design.button.MaterialButton
-            android:id="@+id/btnDoneEditing"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_margin="@dimen/margin_medium"
-            android:text="@string/btn_finish_trip_planning"
-            android:textColor="@android:color/white"
-            android:textSize="10sp"
-            app:backgroundTint="@color/colorBlue"
-            app:cornerRadius="@dimen/margin_large"
-            app:icon="@drawable/ic_check_white_24dp"
-            app:iconTintMode="multiply"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
-            app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
-            android:onClick="@{() -> presenter.onFinalizeTripPlanningClicked(viewModel.tripTitle)}"
-            app:rippleColor="@color/colorAccent" />
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapViewAddTrip"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <include
+                layout="@layout/bottom_view_reordering_checkpoints"
+                bind:viewModel="@{viewModel}" />
+
+            <android.support.design.button.MaterialButton
+                android:id="@+id/btnDoneEditing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_margin="@dimen/margin_medium"
+                android:elevation="@dimen/fab_elevation"
+                android:onClick="@{() -> presenter.onFinalizeTripPlanningClicked(viewModel.tripTitle)}"
+                android:stateListAnimator="@null"
+                android:text="@string/btn_finish_trip_planning"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                app:backgroundTint="@color/colorBlue"
+                app:cornerRadius="@dimen/margin_large"
+                app:icon="@drawable/ic_check_white_24dp"
+                app:iconTintMode="multiply"
+                app:layout_anchor="@+id/bottomSheetRouteInfo"
+                app:layout_anchorGravity="top|center_horizontal"
+                app:rippleColor="@color/colorAccent" />
+
+        </android.support.design.widget.CoordinatorLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"

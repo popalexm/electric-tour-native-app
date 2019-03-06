@@ -18,15 +18,17 @@ public class PlanNewTripContract {
 
         void displayNewTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint);
 
-        void displayPreviousTripCheckpointList(@NonNull List<TripCheckpoint> savedCheckpoints);
+        void displayPlannedTripCheckpointsOnMapView(@NonNull List<TripCheckpoint> savedCheckpoints);
 
-        void displayPreviousTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription);
+        void displayPlannedTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription);
 
         void openNewCheckpointDetailsDialog(@NonNull LatLng clickedLocation);
 
         void displayInvalidTripNameWarning();
 
         void removeAddedTripCheckpoint(@NonNull TripCheckpoint tripCheckpoint);
+
+        void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList);
     }
 
     public interface Presenter extends BaseContract.Presenter {

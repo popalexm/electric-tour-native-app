@@ -38,7 +38,8 @@ public class SignInActivityView extends Activity implements SignInContract.View 
     @Override
     protected void onStart() {
         super.onStart();
-        presenter.onAttachView();
+        moveToMainMapScreen();
+        //  presenter.onAttachView();
     }
 
     @Override
@@ -77,7 +78,8 @@ public class SignInActivityView extends Activity implements SignInContract.View 
 
     @Override
     public void openGoogleSignInDialog(@NonNull Intent googleSignInIntent) {
-        startActivityForResult(googleSignInIntent, SignInPresenter.RC_SIGN_IN);
+        moveToMainMapScreen();
+        //   startActivityForResult(googleSignInIntent, SignInPresenter.RC_SIGN_IN);
     }
 
     @Override

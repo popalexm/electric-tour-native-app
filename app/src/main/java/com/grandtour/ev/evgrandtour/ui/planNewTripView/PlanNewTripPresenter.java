@@ -34,7 +34,8 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                 .getDefault(), Injection.provideStorageManager()).perform()
                 .doOnNext(inPlanningTrip -> {
                     inPlanningTripDetails = inPlanningTrip;
-                    loadPreviouslyPlannedTripDetails(inPlanningTrip);
+                    loadPlannedTripOnMainMapView(inPlanningTrip);
+                    loadCheckpointsInReorderingList(inPlanningTripDetails);
                 })
                 .doOnError(Throwable::printStackTrace)
                 .subscribe());
@@ -112,12 +113,22 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
         }
     }
 
-    private void loadPreviouslyPlannedTripDetails(@NonNull InPlanningTripDetails inPlanningTripDetails) {
+    private void loadPlannedTripOnMainMapView(@NonNull InPlanningTripDetails tripDetails) {
         if (isViewAttached) {
-            view.displayPreviousTripCheckpointList(inPlanningTripDetails.getPlannedTripCheckpoints());
-            String name = inPlanningTripDetails.getInPlanningTripName();
-            String description = inPlanningTripDetails.getInPlanningTripDescription();
-            view.displayPreviousTripNameAndDescription(name, description);
+            view.displayPlannedTripCheckpointsOnMapView(tripDetails.getPlannedTripCheckpoints());
+            view.displayPlannedTripNameAndDescription(tripDetails.getInPlanningTripName(), tripDetails.getInPlanningTripDescription());
+        }
+    }
+
+    private void loadCheckpointsInReorderingList(@NonNull InPlanningTripDetails tripDetails) {
+        // List<TripCheckpoint> tripCheckpointListModelReordering = new ArrayList<>();
+      /*  for (TripCheckpoint checkpoint : tripDetails.getPlannedTripCheckpoints()){
+            TripCheckpointReorderingModel tripCheckpointReorderingModel = new TripCheckpointReorderingModel(checkpoint.getCheckpointId(), String.valueOf(2)
+                    ,checkpoint.getCheckpointTitle(), checkpoint.getCheckpointAddress());
+            tripCheckpointListModelReordering.add(tripCheckpointReorderingModel);
+        } */
+        if (isViewAttached) {
+            view.displayTripCheckpointsInReorderingList(tripDetails.getPlannedTripCheckpoints());
         }
     }
 }

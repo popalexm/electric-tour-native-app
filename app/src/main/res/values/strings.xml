@@ -63,9 +63,11 @@
     <string name="message_please_add_at_least_tqo_checkpoints_to_trip">Please add at least 2 checkpoints to a planned trip before saving it !</string>
     <string name="message_successfully_saved_trip">Successfully saved your planned trip !</string>
     <string name="message_error_saving_trip">Failed while trying to save your planned trip !</string>
+    <string name="hint_swipe_to_to_reorder">Swipe up to reorder checkpoints</string>
 
     // Dummy testing strings
     <string name="lorem_ipsum">Lorem Ipsum</string>
     <string name="lorem_ipsum_medium">Lorem ipsum dolor sit amet</string>
+    <string name="lorem_ipsum_extra_long">Lorem ipsum dolor sit amet, in ultrices mauris dapibus tristique nunc. Lobortis donec tortor ipsum odio quam tortor, dapibus dolor dolor quae, nam justo leo omnis, dictum tellus dolor. Praesent aliquet a morbi vitae velit dis. Urna suscipit, mi turpis eu duis et urna placerat, lectus amet aliquam orci pulvinar a conubia, id aut odio ante amet dui. </string>
 
 </resources>

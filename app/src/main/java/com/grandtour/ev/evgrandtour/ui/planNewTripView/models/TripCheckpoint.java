@@ -9,7 +9,7 @@ import android.os.Parcelable;
 public final class TripCheckpoint implements ClusterItem, Parcelable {
 
     private Integer checkpointId;
-    private Integer orderInTourId;
+    private Integer orderInTrip;
     private LatLng geographicalPosition;
     private String checkpointTitle;
     private String checkpointDescription;
@@ -24,6 +24,22 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
 
     public void setCheckpointId(Integer checkpointId) {
         this.checkpointId = checkpointId;
+    }
+
+    protected TripCheckpoint(Parcel in) {
+        this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.orderInTrip = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.geographicalPosition = in.readParcelable(LatLng.class.getClassLoader());
+        this.checkpointTitle = in.readString();
+        this.checkpointDescription = in.readString();
+        this.checkpointAddress = in.readString();
+        this.areArrivalNotificationsEnabled = in.readByte() != 0;
+        this.areDepartureNotificationsEnabled = in.readByte() != 0;
+        this.checkpointColor = in.readInt();
+    }
+
+    public Integer getOrderInTrip() {
+        return orderInTrip;
     }
 
     public LatLng getGeographicalPosition() {
@@ -95,22 +111,14 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
     public TripCheckpoint() {
     }
 
-    protected TripCheckpoint(Parcel in) {
-        this.checkpointId = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.orderInTourId = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.geographicalPosition = in.readParcelable(LatLng.class.getClassLoader());
-        this.checkpointTitle = in.readString();
-        this.checkpointDescription = in.readString();
-        this.checkpointAddress = in.readString();
-        this.areArrivalNotificationsEnabled = in.readByte() != 0;
-        this.areDepartureNotificationsEnabled = in.readByte() != 0;
-        this.checkpointColor = in.readInt();
+    public void setOrderInTrip(Integer orderInTrip) {
+        this.orderInTrip = orderInTrip;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.checkpointId);
-        dest.writeValue(this.orderInTourId);
+        dest.writeValue(this.orderInTrip);
         dest.writeParcelable(this.geographicalPosition, flags);
         dest.writeString(this.checkpointTitle);
         dest.writeString(this.checkpointDescription);

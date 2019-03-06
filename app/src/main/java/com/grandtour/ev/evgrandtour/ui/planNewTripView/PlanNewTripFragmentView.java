@@ -111,7 +111,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void displayPreviousTripCheckpointList(@NonNull List<TripCheckpoint> savedCheckpoints) {
+    public void displayPlannedTripCheckpointsOnMapView(@NonNull List<TripCheckpoint> savedCheckpoints) {
         if (clusterManager != null) {
             clusterManager.addItems(savedCheckpoints);
             clusterManager.cluster();
@@ -119,7 +119,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     }
 
     @Override
-    public void displayPreviousTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription) {
+    public void displayPlannedTripNameAndDescription(@NonNull String tripName, @NonNull String tripDescription) {
         viewModel.tripTitle.set(tripName);
     }
 
@@ -140,6 +140,11 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         if (clusterManager != null) {
             clusterManager.removeItem(tripCheckpoint);
         }
+    }
+
+    @Override
+    public void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList) {
+        viewModel.reorderingList.addAll(checkpointReorderingList);
     }
 
     @Override
