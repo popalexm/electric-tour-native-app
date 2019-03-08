@@ -37,6 +37,7 @@ public class MapsClusterRenderer extends DefaultClusterRenderer<MapCheckpoint> {
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(generateMarkerIcon(color, checkpointId)));
         markerOptions.title(mapCheckpoint.getMapCheckpointTitle());
         markerOptions.snippet(mapCheckpoint.getMapCheckpointDetails());
+
     }
 
     @NonNull

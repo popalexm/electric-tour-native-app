@@ -6,7 +6,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
@@ -29,10 +28,11 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter> implements PlanNewTripContract.View, GoogleMap.OnMapClickListener {
+public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter>
+        implements PlanNewTripContract.View, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerDragListener {
 
     @NonNull
-    public static String TAG = PlanNewTripFragmentView.class.getSimpleName();
+    public static final String TAG = PlanNewTripFragmentView.class.getSimpleName();
     @NonNull
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
     @Nullable
@@ -80,6 +80,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
             googleMap.setOnInfoWindowClickListener(clusterManager);
             googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
             googleMap.setOnInfoWindowCloseListener(this);
+            googleMap.setOnMarkerDragListener(clusterManager.getMarkerManager());
         }
     }
 
@@ -89,7 +90,9 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
             clusterManager = new ClusterManager<>(activity, googleMap);
             clusterManager.setOnClusterClickListener(this);
             clusterManager.setOnClusterItemClickListener(this);
-            clusterManager.setRenderer(new DefaultClusterRenderer<>(activity, googleMap, clusterManager));
+            clusterManager.setRenderer(new TripCheckpointsClusterRenderer(activity, googleMap, clusterManager));
+            clusterManager.getMarkerCollection()
+                    .setOnMarkerDragListener(this);
         }
     }
 
@@ -193,5 +196,20 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         TripCheckpointDetailsFragmentView detailsFragmentView = TripCheckpointDetailsFragmentView.createInstance();
         detailsFragmentView.setArguments(bundle);
         showDialog(detailsFragmentView, this, TripCheckpointDetailsFragmentView.TAG, 112);
+    }
+
+    @Override
+    public void onMarkerDragStart(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDrag(Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(Marker marker) {
+
     }
 }
