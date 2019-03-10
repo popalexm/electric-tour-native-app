@@ -66,7 +66,7 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
         this.checkpointDescription = checkpointDescription;
     }
 
-    public boolean isAreArrivalNotificationsEnabled() {
+    public boolean areArrivalNotificationsEnabled() {
         return areArrivalNotificationsEnabled;
     }
 
@@ -74,7 +74,7 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
         this.areArrivalNotificationsEnabled = areArrivalNotificationsEnabled;
     }
 
-    public boolean isAreDepartureNotificationsEnabled() {
+    public boolean areDepartureNotificationsEnabled() {
         return areDepartureNotificationsEnabled;
     }
 
@@ -101,6 +101,16 @@ public final class TripCheckpoint implements ClusterItem, Parcelable {
     @Override
     public LatLng getPosition() {
         return geographicalPosition;
+    }
+
+    @Override
+    public String getTitle() {
+        return checkpointTitle;
+    }
+
+    @Override
+    public String getSnippet() {
+        return checkpointDescription;
     }
 
     @Override

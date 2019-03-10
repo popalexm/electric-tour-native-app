@@ -6,14 +6,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
-import com.grandtour.ev.evgrandtour.domain.models.PlannedTripStatus;
+import com.grandtour.ev.evgrandtour.data.network.NetworkRequestBuilders;
+import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningCheckpointResponse;
+import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningTripResponse;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.DeleteInPlanningCheckpointUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.LoadInPlanningTripDetailsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.MoveInPlanningTripToPlannedStatus;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.SaveInPlanningTripCheckpointUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.InPlanningTripDetails;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -23,12 +25,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 
+import java.util.List;
+
 class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.Presenter, OnSuccessListener<Location> {
 
     @NonNull
     private final PlanNewTripContract.View view;
     @Nullable
     private InPlanningTripDetails inPlanningTripDetails;
+
+    private final static int USER_ID = 1;
 
     PlanNewTripPresenter(@NonNull PlanNewTripContract.View view) {
         this.view = view;
@@ -37,11 +43,20 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     @Override
     public void onMapReady() {
         addSubscription(new LoadInPlanningTripDetailsUseCase(Injection.provideRxSchedulers()
-                .getDefault(), Injection.provideStorageManager()).perform()
-                .doOnNext(inPlanningTrip -> {
-                    inPlanningTripDetails = inPlanningTrip;
-                    loadPlannedTripOnMainMapView(inPlanningTrip);
-                    loadCheckpointsInReorderingList(inPlanningTripDetails);
+                .getDefault(), Injection.provideCloudApi(), PlanNewTripPresenter.USER_ID).perform()
+                .doOnNext(response -> {
+                    if (response.isSuccessful() && response.code() == 200 && response.body() != null) {
+                        InPlanningTripResponse inPlanningTrip = response.body();
+                        List<InPlanningCheckpointResponse> checkpoints = inPlanningTrip.getInPlanningCheckpoints();
+
+                        inPlanningTripDetails = new InPlanningTripDetails(inPlanningTrip.getTripId());
+                        inPlanningTripDetails.setInPlanningTripName(inPlanningTrip.getTripName());
+                        inPlanningTripDetails.setInPlanningTripDescription(inPlanningTrip.getTripDescription());
+                        if (checkpoints != null && checkpoints.size() > 0) {
+                            inPlanningTripDetails.setPlannedTripCheckpoints(MapUtils.convertInPlanningCheckpointsResponseToMapObjects(checkpoints));
+                        }
+                        loadInPlanningTripOnMainMapView();
+                    }
                 })
                 .doOnError(Throwable::printStackTrace)
                 .subscribe());
@@ -58,30 +73,40 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     public void onNewTripCheckpointAdded(@NonNull TripCheckpoint tripCheckpoint) {
         if (inPlanningTripDetails != null) {
             addSubscription(new SaveInPlanningTripCheckpointUseCase(Injection.provideRxSchedulers()
-                    .getDefault(), Injection.provideStorageManager(), tripCheckpoint, inPlanningTripDetails.getInPlanningTripId()).perform()
-                    .doOnNext(tripCheckpoint1 -> {
-                        if (isViewAttached) {
-                            inPlanningTripDetails.getPlannedTripCheckpoints()
-                                    .add(tripCheckpoint);
-                            view.displayNewTripCheckpointOnMap(tripCheckpoint);
+                    .getDefault(), Injection.provideCloudApi(), NetworkRequestBuilders.createPlannedTripCheckpointRequest(tripCheckpoint),
+                    inPlanningTripDetails.getInPlanningTripId(), PlanNewTripPresenter.USER_ID).perform()
+                    .subscribe(response -> {
+                        if (response.code() == 200) {
+                            if (response.body() != null && response.body() > 0 && isViewAttached) {
+                                view.displayNewTripCheckpointOnMap(tripCheckpoint);
+                            }
                         }
-                    })
-                    .doOnError(Throwable::printStackTrace)
-                    .subscribe());
+                    }, throwable -> {
+                        throwable.printStackTrace();
+                        if (isViewAttached) {
+                            // TODO displayError message
+                        }
+                    }));
         }
     }
 
     @Override
     public void onDeleteCheckpointFromTrip(@NonNull TripCheckpoint tripCheckpoint) {
-        addSubscription(new DeleteInPlanningCheckpointUseCase(Injection.provideRxSchedulers()
-                .getDefault(), Injection.provideStorageManager(), tripCheckpoint.getCheckpointId()).perform()
-                .doOnComplete(() -> {
-                    if (isViewAttached) {
-                        view.removeAddedTripCheckpoint(tripCheckpoint);
-                    }
-                })
-                .doOnError(Throwable::printStackTrace)
-                .subscribe());
+        if (inPlanningTripDetails != null)
+            addSubscription(new DeleteInPlanningCheckpointUseCase(Injection.provideRxSchedulers()
+                    .getDefault(), Injection.provideCloudApi(), inPlanningTripDetails.getInPlanningTripId(), tripCheckpoint.getCheckpointId()).perform()
+                    .subscribe(response -> {
+                        if (isViewAttached) {
+                            if (response != null && response.body() != null && response.body() > 0) {
+                                view.removeAddedTripCheckpoint(tripCheckpoint);
+                            }
+                        }
+                    }, throwable -> {
+                        throwable.printStackTrace();
+                        if (isViewAttached) {
+                            // TODO Add error handler
+                        }
+                    }));
     }
 
     @Override
@@ -104,29 +129,15 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                         .getString(R.string.message_please_add_at_least_tqo_checkpoints_to_trip));
             } else {
                 inPlanningTripDetails.setInPlanningTripName(tripTitle);
-                addSubscription(new MoveInPlanningTripToPlannedStatus(Injection.provideRxSchedulers()
-                        .getDefault(), Injection.provideStorageManager(), inPlanningTripDetails).perform()
-                        .doOnNext(plannedTripStatus -> {
-                            if (isViewAttached) {
-                                if (plannedTripStatus.equals(PlannedTripStatus.STATUS_SAVED_LOCALLY_SUCCESSFULLY)) {
-                                    view.showMessage(Injection.provideResources()
-                                            .getString(R.string.message_successfully_saved_trip));
-                                } else {
-                                    view.showMessage(Injection.provideResources()
-                                            .getString(R.string.message_error_saving_trip));
-                                }
-                            }
-                        })
-                        .doOnError(Throwable::printStackTrace)
-                        .subscribe());
+                //TODO Send final request confirming moving the trip to planned trips
             }
         }
     }
 
-    private void loadPlannedTripOnMainMapView(@NonNull InPlanningTripDetails tripDetails) {
-        if (isViewAttached) {
-            view.displayPlannedTripCheckpointsOnMapView(tripDetails.getPlannedTripCheckpoints());
-            view.displayPlannedTripNameAndDescription(tripDetails.getInPlanningTripName(), tripDetails.getInPlanningTripDescription());
+    private void loadInPlanningTripOnMainMapView() {
+        if (isViewAttached && inPlanningTripDetails != null) {
+            view.displayPlannedTripCheckpointsOnMapView(inPlanningTripDetails.getPlannedTripCheckpoints());
+            view.displayPlannedTripNameAndDescription(inPlanningTripDetails.getInPlanningTripName(), inPlanningTripDetails.getInPlanningTripDescription());
         }
     }
 

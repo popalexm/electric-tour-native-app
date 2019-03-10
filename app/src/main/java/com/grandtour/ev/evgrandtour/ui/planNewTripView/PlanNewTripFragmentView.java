@@ -75,7 +75,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         GoogleMap googleMap = getGoogleMap();
         if (googleMap != null && clusterManager != null) {
             googleMap.setOnMapClickListener(this);
-            googleMap.setOnCameraChangeListener(clusterManager);
+            googleMap.setOnCameraIdleListener(clusterManager);
             googleMap.setOnMarkerClickListener(clusterManager);
             googleMap.setOnInfoWindowClickListener(clusterManager);
             googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());
@@ -144,6 +144,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     public void removeAddedTripCheckpoint(@NonNull TripCheckpoint tripCheckpoint) {
         if (clusterManager != null) {
             clusterManager.removeItem(tripCheckpoint);
+            clusterManager.cluster();
         }
     }
 

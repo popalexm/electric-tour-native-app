@@ -197,7 +197,7 @@ public class CurrentTripFragmentView extends BaseMapFragment<CurrentTripFragment
     private void setupGoogleMapCallbacks() {
         GoogleMap googleMap = getGoogleMap();
         if (clusterManager != null && googleMap != null) {
-            googleMap.setOnCameraChangeListener(clusterManager);
+            googleMap.setOnCameraIdleListener(clusterManager);
             googleMap.setOnMarkerClickListener(clusterManager);
             googleMap.setOnInfoWindowClickListener(clusterManager);
             googleMap.setInfoWindowAdapter(clusterManager.getMarkerManager());

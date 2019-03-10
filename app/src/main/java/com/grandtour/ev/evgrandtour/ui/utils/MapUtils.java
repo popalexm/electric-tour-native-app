@@ -10,7 +10,9 @@ import com.google.maps.android.PolyUtil;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
+import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningCheckpointResponse;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -145,4 +147,30 @@ public final class MapUtils {
                         .getColor(R.color.colorAccent))
                 .radius(MapUtils.LOCATION_CIRCLE_RADIUS);
     }
+
+    @NonNull
+    public static List<TripCheckpoint> convertInPlanningCheckpointsResponseToMapObjects(@NonNull Iterable<InPlanningCheckpointResponse> checkpointResponses) {
+        List<TripCheckpoint> tripCheckpoints = new ArrayList<>();
+        for (InPlanningCheckpointResponse checkpointResponse : checkpointResponses) {
+            TripCheckpoint checkpoint = new TripCheckpoint();
+            checkpoint.setCheckpointId(checkpointResponse.getCheckpointId());
+            checkpoint.setOrderInTrip(checkpointResponse.getOrderInTripId());
+
+            checkpoint.setCheckpointTitle(checkpointResponse.getCheckpointTitle());
+            checkpoint.setCheckpointDescription(checkpointResponse.getCheckpointDescription());
+            checkpoint.setCheckpointAddress(checkpointResponse.getCheckpointAddress());
+
+            checkpoint.setGeographicalPosition(new LatLng(checkpointResponse.getCheckpointLatitude(), checkpointResponse.getCheckpointLongitude()));
+
+            checkpoint.setAreArrivalNotificationsEnabled(checkpointResponse.areArrivalNotificationsEnabled());
+            checkpoint.setAreDepartureNotificationsEnabled(checkpointResponse.areDepartureNotificationsEnabled());
+            checkpoint.setCheckpointColor(checkpointResponse.getCheckpointColor());
+
+            tripCheckpoints.add(checkpoint);
+        }
+        return tripCheckpoints;
+    }
+
+
+
 }

@@ -35,6 +35,16 @@ public class MapCheckpoint implements ClusterItem {
         return position;
     }
 
+    @Override
+    public String getTitle() {
+        return mapCheckpointTitle;
+    }
+
+    @Override
+    public String getSnippet() {
+        return mapCheckpointDetails;
+    }
+
     @NonNull
     public Integer getMapCheckpointId() {
         return mapCheckpointId;
