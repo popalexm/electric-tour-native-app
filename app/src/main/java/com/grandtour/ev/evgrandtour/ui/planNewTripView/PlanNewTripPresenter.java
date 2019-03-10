@@ -44,7 +44,7 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     public void onMapReady() {
         addSubscription(new LoadInPlanningTripDetailsUseCase(Injection.provideRxSchedulers()
                 .getDefault(), Injection.provideCloudApi(), PlanNewTripPresenter.USER_ID).perform()
-                .doOnNext(response -> {
+                .subscribe(response -> {
                     if (response.isSuccessful() && response.code() == 200 && response.body() != null) {
                         InPlanningTripResponse inPlanningTrip = response.body();
                         List<InPlanningCheckpointResponse> checkpoints = inPlanningTrip.getInPlanningCheckpoints();
@@ -57,9 +57,12 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                         }
                         loadInPlanningTripOnMainMapView();
                     }
-                })
-                .doOnError(Throwable::printStackTrace)
-                .subscribe());
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    if (isViewAttached) {
+                        // TODO Show error message
+                    }
+                }));
     }
 
     @Override
@@ -78,6 +81,8 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                     .subscribe(response -> {
                         if (response.code() == 200) {
                             if (response.body() != null && response.body() > 0 && isViewAttached) {
+                                int addedCheckpointId = response.body();
+                                tripCheckpoint.setCheckpointId(addedCheckpointId);
                                 view.displayNewTripCheckpointOnMap(tripCheckpoint);
                             }
                         }
