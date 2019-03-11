@@ -42,6 +42,26 @@ public final class NetworkRequestBuilders {
     }
 
     @NonNull
+    public static RouteDirectionsRequest createDirectionRequestParameters(@NonNull List<TripCheckpoint> checkpoints, @NonNull String apiKey) {
+        List<LatLng> checkpointLatLng = new ArrayList<>();
+        for (int index = 0; index < checkpoints.size(); index++) {
+            TripCheckpoint checkpoint = checkpoints.get(index);
+            checkpointLatLng.add(new LatLng(checkpoint.getGeographicalPosition().latitude, checkpoint.getGeographicalPosition().longitude));
+        }
+
+        LatLng startCheckpoint = checkpointLatLng.get(0);
+        LatLng endCheckpoint = checkpointLatLng.get(checkpointLatLng.size() - 1);
+        checkpointLatLng.remove(startCheckpoint);
+        checkpointLatLng.remove(endCheckpoint);
+        return new RouteDirectionsRequest.RouteParametersBuilder().setStartWaypoint(startCheckpoint)
+                .setEndWaypoint(endCheckpoint)
+                .setTransitWaypoints(checkpointLatLng)
+                .setMode(NetworkRequestBuilders.DIRECTIONS_REQUEST_MODE)
+                .setAPIKey(apiKey)
+                .createRouteParameters();
+    }
+
+    @NonNull
     public static String createElevationRequest(@NonNull List<ElevationPoint> elevationPoints) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < elevationPoints.size(); i++) {

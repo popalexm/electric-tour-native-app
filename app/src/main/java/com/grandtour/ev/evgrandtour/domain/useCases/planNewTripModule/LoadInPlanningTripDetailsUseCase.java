@@ -29,5 +29,4 @@ public class LoadInPlanningTripDetailsUseCase extends BaseUseCaseRefactored {
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }
-
 }

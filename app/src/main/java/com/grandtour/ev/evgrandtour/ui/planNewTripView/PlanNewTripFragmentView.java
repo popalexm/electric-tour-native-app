@@ -4,6 +4,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -26,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter>
@@ -37,6 +40,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
     @Nullable
     private ClusterManager<TripCheckpoint> clusterManager;
+    @NonNull
+    private final ArrayList<Polyline> inPlanningTripRoute = new ArrayList<>();
 
     @NonNull
     public static PlanNewTripFragmentView createInstance() {
@@ -159,6 +164,23 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         if (googleMap != null) {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, CurrentTripFragmentView.ZOOM_LEVEL));
         }
+    }
+
+    @Override
+    public void drawRoutePolyline(@NonNull PolylineOptions routePolyOptions) {
+        Activity activity = getActivity();
+        GoogleMap googleMap = getGoogleMap();
+        if (activity != null && googleMap != null) {
+            inPlanningTripRoute.add(googleMap.addPolyline(routePolyOptions));
+        }
+    }
+
+    @Override
+    public void clearRoutePolyline() {
+        for (Polyline route : inPlanningTripRoute) {
+            route.remove();
+        }
+        inPlanningTripRoute.clear();
     }
 
     @Override

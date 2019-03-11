@@ -1,6 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.ClusterManager;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
@@ -31,6 +32,10 @@ public class PlanNewTripContract {
         void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList);
 
         void moveCameraToLocation(@NonNull LatLng latLng);
+
+        void drawRoutePolyline(@NonNull PolylineOptions routePolyOptions);
+
+        void clearRoutePolyline();
     }
 
     public interface Presenter extends BaseContract.Presenter {
