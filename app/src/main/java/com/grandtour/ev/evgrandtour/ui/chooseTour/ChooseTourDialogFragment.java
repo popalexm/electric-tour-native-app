@@ -5,14 +5,15 @@ import com.grandtour.ev.evgrandtour.databinding.FragmentDialogRoutesBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourListener;
 
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 
 public class ChooseTourDialogFragment extends BaseDialogFragment<ChooseTourDialogContract.Presenter> implements ChooseTourDialogContract.View {
 

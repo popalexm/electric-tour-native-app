@@ -10,11 +10,10 @@ import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourL
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;

@@ -11,13 +11,14 @@ import com.grandtour.ev.evgrandtour.ui.signIn.SignInActivityView;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 
 public class SettingsFragmentView extends BaseFragment<SettingsFragmentPresenter>
         implements SettingsFragmentContract.View, CompoundButton.OnCheckedChangeListener {

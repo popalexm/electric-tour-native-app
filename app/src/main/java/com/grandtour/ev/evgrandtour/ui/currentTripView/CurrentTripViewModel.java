@@ -1,15 +1,15 @@
 package com.grandtour.ev.evgrandtour.ui.currentTripView;
 
-import com.android.databinding.library.baseAdapters.BR;
+import com.google.android.material.chip.Chip;
+
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.models.SearchResultModel;
 
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.support.annotation.NonNull;
-import android.support.design.chip.Chip;
-
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.library.baseAdapters.BR;
 import me.tatarka.bindingcollectionadapter2.ItemBinding;
 import me.tatarka.bindingcollectionadapter2.collections.DiffObservableList;
 

@@ -1,9 +1,9 @@
 package com.grandtour.ev.evgrandtour.ui.planNewTripView.models;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class InPlanningTripDetails {
 

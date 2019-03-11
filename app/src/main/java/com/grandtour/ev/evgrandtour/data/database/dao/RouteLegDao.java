@@ -1,14 +1,14 @@
 package com.grandtour.ev.evgrandtour.data.database.dao;
-import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
-import android.arch.persistence.room.Query;
-import android.support.annotation.NonNull;
+import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
 import io.reactivex.Maybe;
 
 @Dao

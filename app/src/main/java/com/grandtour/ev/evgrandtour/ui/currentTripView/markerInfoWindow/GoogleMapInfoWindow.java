@@ -6,9 +6,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.grandtour.ev.evgrandtour.R;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 public class GoogleMapInfoWindow implements GoogleMap.InfoWindowAdapter {
 

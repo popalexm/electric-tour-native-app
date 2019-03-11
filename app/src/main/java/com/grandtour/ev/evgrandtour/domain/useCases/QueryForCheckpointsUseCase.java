@@ -4,12 +4,12 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Maybe;
 import io.reactivex.Scheduler;
 

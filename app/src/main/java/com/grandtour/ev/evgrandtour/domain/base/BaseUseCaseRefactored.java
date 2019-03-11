@@ -1,8 +1,8 @@
 package com.grandtour.ev.evgrandtour.domain.base;
 
-import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 
 public abstract class BaseUseCaseRefactored implements UseCaseDefinition {

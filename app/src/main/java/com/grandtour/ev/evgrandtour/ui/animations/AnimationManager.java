@@ -8,12 +8,13 @@ import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
 import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+
+import androidx.annotation.NonNull;
 
 public final class AnimationManager {
 

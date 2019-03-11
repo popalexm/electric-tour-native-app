@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.settingsView;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class SettingsFragmentPresenter extends BasePresenter implements SettingsFragmentContract.Presenter {
 

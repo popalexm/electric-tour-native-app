@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.ui.currentTripView.models;
 
 import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSearchResultClickListener;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class SearchResultModel {
 

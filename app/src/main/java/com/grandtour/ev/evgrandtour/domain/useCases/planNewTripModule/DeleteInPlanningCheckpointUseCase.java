@@ -3,9 +3,9 @@ package com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule;
 import com.grandtour.ev.evgrandtour.data.network.HolidayTripCloudAPI;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseRefactored;
 
-import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import retrofit2.Response;

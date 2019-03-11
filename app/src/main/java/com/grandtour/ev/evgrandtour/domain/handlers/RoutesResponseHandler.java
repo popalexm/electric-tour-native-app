@@ -6,10 +6,11 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Leg;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RouteResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public final class RoutesResponseHandler {
 

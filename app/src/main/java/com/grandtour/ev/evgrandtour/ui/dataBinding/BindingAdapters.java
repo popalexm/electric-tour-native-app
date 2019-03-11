@@ -1,5 +1,9 @@
 package com.grandtour.ev.evgrandtour.ui.dataBinding;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
@@ -10,16 +14,14 @@ import com.grandtour.ev.evgrandtour.ui.currentTripView.models.SearchResultModel;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.databinding.BindingAdapter;
-import android.support.annotation.NonNull;
-import android.support.design.button.MaterialButton;
-import android.support.design.chip.Chip;
-import android.support.design.chip.ChipGroup;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.View;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
+import androidx.databinding.BindingAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 
 public final class BindingAdapters {
 

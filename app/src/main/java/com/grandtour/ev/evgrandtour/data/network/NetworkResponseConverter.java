@@ -11,10 +11,10 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourC
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Leg;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.Step;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public final class NetworkResponseConverter {
 

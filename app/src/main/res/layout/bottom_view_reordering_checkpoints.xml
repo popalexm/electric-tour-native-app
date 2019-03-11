@@ -13,7 +13,7 @@
             type="com.grandtour.ev.evgrandtour.ui.planNewTripView.PlanNewTripViewModel" />
     </data>
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomSheetRouteInfo"
         android:layout_width="match_parent"
         android:layout_height="500dp"
@@ -22,7 +22,7 @@
         app:cardBackgroundColor="@color/colorPrimaryDark"
         app:cardCornerRadius="@dimen/margin_medium"
         app:cardElevation="@dimen/bottom_info_card_elevation"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,16 +46,16 @@
                 android:layout_margin="@dimen/margin_small"
                 android:text="@string/hint_swipe_to_to_reorder" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/routeReordering"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
 
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>
 

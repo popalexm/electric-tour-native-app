@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.currentTripView.models;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class MapCheckpoint implements ClusterItem {
 

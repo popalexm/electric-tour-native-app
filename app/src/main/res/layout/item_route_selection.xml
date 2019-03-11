@@ -9,7 +9,7 @@
             type="com.grandtour.ev.evgrandtour.ui.chooseTour.TourModel" />
     </data>
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_sx_small"
@@ -53,6 +53,6 @@
 
         </LinearLayout>
 
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

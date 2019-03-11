@@ -2,11 +2,11 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableField;
-import android.databinding.ObservableList;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.databinding.ObservableList;
 
 public class PlanNewTripViewModel {
 

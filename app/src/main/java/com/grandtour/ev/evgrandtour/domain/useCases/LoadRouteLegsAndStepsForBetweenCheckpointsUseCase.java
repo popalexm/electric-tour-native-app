@@ -6,13 +6,13 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
-import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;

@@ -3,10 +3,10 @@ package com.grandtour.ev.evgrandtour.domain.services;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 final class DirectionsElevationServiceUtils {
 

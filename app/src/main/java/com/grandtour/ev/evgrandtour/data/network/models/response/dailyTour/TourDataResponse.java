@@ -3,9 +3,9 @@ package com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class TourDataResponse {
 

@@ -8,10 +8,10 @@ import com.grandtour.ev.evgrandtour.data.network.models.request.PlannedCheckpoin
 import com.grandtour.ev.evgrandtour.data.network.models.request.RouteDirectionsRequest;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public final class NetworkRequestBuilders {
 

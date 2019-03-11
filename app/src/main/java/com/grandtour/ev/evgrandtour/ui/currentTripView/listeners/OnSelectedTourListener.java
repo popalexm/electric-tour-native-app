@@ -2,9 +2,9 @@ package com.grandtour.ev.evgrandtour.ui.currentTripView.listeners;
 
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public interface OnSelectedTourListener {
 

@@ -6,7 +6,8 @@ import com.google.android.gms.common.api.ApiException;
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 public class SignInContract {
 

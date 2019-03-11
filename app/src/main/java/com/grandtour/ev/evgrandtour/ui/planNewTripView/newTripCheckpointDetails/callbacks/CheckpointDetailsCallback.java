@@ -2,7 +2,7 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface CheckpointDetailsCallback {
 

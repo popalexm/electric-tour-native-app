@@ -3,9 +3,9 @@ package com.grandtour.ev.evgrandtour.ui.currentTripView.chartView;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 
-import android.support.annotation.NonNull;
-
 import java.text.DecimalFormat;
+
+import androidx.annotation.NonNull;
 
 public class XAxisValueFormatter implements IAxisValueFormatter {
 

@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.signIn;
 
-import android.databinding.ObservableBoolean;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableBoolean;
 
 public class SignInViewModel {
 

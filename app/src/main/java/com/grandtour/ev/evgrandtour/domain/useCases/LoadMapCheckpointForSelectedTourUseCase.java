@@ -7,10 +7,9 @@ import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.models.MapCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.MapUtils;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;
 import io.reactivex.Scheduler;

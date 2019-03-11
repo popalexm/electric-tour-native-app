@@ -15,38 +15,41 @@
             type="com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsFragmentContract.Presenter" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/dialog_background">
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/leftVerticalGuideLine"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_constraintGuide_begin="8dp" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/rightVerticalGuideLine"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_constraintGuide_end="8dp" />
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtLayoutNewCheckpointName"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_medium"
-            android:paddingTop="@dimen/margin_medium"
+
             android:textColorHint="@color/colorWhite"
+            app:boxStrokeColor="@color/colorWhite"
+
             app:isWarningState="@{viewModel.isCheckpointNameIncomplete}"
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -55,19 +58,23 @@
                 android:textColor="@color/colorWhite"
                 android:textColorHighlight="@color/colorWhite" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txtLayoutNewCheckpointDescription"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_medium"
+
             android:textColorHint="@color/colorWhite"
+            app:boxStrokeColor="@color/colorWhite"
+
             app:layout_constraintEnd_toStartOf="@id/rightVerticalGuideLine"
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toBottomOf="@id/txtLayoutNewCheckpointName">
 
-            <android.support.design.widget.TextInputEditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -76,7 +83,7 @@
                 android:textColor="@color/colorWhite"
                 android:textColorHighlight="@color/colorWhite" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/checkpointAddress"
@@ -147,7 +154,7 @@
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toBottomOf="@id/txtNotificationDesc">
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveCheckpointDetails"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -163,7 +170,7 @@
                 app:iconTintMode="multiply"
                 app:rippleColor="@color/colorAccent" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDeleteCheckpoint"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -180,7 +187,7 @@
                 app:isViewVisible="@{viewModel.isCheckpointInEditMode}"
                 app:rippleColor="@color/colorAccent" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDismiss"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
@@ -198,7 +205,7 @@
 
         </LinearLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </layout>

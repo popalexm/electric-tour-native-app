@@ -28,7 +28,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.net.UnknownHostException;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.reactivex.Maybe;
 import io.reactivex.MaybeSource;

@@ -16,7 +16,7 @@
 
         </FrameLayout>
 
-        <android.support.design.widget.BottomNavigationView
+        <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationBar"
             style="@style/Widget.MaterialComponents.BottomNavigationView"
             android:layout_width="match_parent"
@@ -27,7 +27,7 @@
             app:itemTextColor="@color/colorWhite"
             app:menu="@menu/bottom_navigation_bar">
 
-        </android.support.design.widget.BottomNavigationView>
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     </RelativeLayout>
 </layout>

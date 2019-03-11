@@ -5,14 +5,15 @@ import com.grandtour.ev.evgrandtour.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
 
 public abstract class BaseDialogFragment<T extends BaseContract.Presenter> extends DialogFragment implements BaseContract.View {
 

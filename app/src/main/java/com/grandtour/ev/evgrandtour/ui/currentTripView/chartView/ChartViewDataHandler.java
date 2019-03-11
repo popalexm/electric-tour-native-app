@@ -9,11 +9,12 @@ import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.database.models.ElevationPoint;
 
 import android.graphics.Color;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 
 public class ChartViewDataHandler {
 

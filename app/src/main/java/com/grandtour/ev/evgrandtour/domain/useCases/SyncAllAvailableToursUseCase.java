@@ -7,11 +7,10 @@ import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourD
 import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Scheduler;

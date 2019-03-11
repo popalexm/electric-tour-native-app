@@ -20,16 +20,17 @@ import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 
 public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter>
         implements PlanNewTripContract.View, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerDragListener {

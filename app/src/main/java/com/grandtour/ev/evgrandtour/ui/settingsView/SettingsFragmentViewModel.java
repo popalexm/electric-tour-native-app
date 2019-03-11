@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.settingsView;
 
-import android.databinding.ObservableField;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableField;
 
 public class SettingsFragmentViewModel {
 

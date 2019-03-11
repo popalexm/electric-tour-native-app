@@ -2,9 +2,9 @@ package com.grandtour.ev.evgrandtour.domain.models;
 
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class NavigationPathData {
 

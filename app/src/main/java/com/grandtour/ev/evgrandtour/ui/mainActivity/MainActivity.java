@@ -1,18 +1,20 @@
 package com.grandtour.ev.evgrandtour.ui.mainActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.ActivityMainBinding;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentView;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.PlanNewTripFragmentView;
 import com.grandtour.ev.evgrandtour.ui.settingsView.SettingsFragmentView;
 
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 

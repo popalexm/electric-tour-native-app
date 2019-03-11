@@ -1,8 +1,6 @@
 package com.grandtour.ev.evgrandtour.domain.base;
 
-
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 
 

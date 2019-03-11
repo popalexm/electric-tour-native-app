@@ -1,6 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.chooseTour;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class TourModel {
 

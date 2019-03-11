@@ -12,7 +12,7 @@
             type="com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripViewModel" />
     </data>
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomSheetRouteInfo"
         android:layout_width="match_parent"
         android:layout_height="500dp"
@@ -21,7 +21,7 @@
         app:cardBackgroundColor="@color/colorPrimaryDark"
         app:cardCornerRadius="@dimen/margin_medium"
         app:cardElevation="@dimen/bottom_info_card_elevation"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,5 +88,5 @@
                 android:layout_marginTop="@dimen/margin_medium" />
 
         </LinearLayout>
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

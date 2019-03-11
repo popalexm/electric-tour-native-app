@@ -1,6 +1,6 @@
 package com.grandtour.ev.evgrandtour.ui.currentTripView.listeners;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface OnSearchResultClickListener {
 

@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.currentTripView.chartView;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.LineData;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public interface ChartDataCreatedListener {
 

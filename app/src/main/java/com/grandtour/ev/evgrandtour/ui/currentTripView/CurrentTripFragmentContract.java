@@ -16,9 +16,10 @@ import com.grandtour.ev.evgrandtour.ui.currentTripView.models.SearchResultModel;
 import com.grandtour.ev.evgrandtour.ui.settingsView.UpdateSettingsListener;
 
 import android.location.Location;
-import android.support.annotation.NonNull;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class CurrentTripFragmentContract {
 

@@ -13,11 +13,12 @@ import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteStep;
 import com.grandtour.ev.evgrandtour.data.database.models.Tour;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
 @Database(entities = {Checkpoint.class, Route.class, Tour.class, RouteStep.class, RouteLeg.class, ElevationPoint.class}, version = 8)
 public abstract class LocalStorageManager extends RoomDatabase {

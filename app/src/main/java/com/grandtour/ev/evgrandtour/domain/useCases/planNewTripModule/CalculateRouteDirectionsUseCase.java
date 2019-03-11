@@ -10,12 +10,12 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCaseRefactored;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.utils.ArrayUtils;
 
-import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;

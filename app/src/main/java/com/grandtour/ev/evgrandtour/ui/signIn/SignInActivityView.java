@@ -11,10 +11,11 @@ import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 
 public class SignInActivityView extends Activity implements SignInContract.View {
 

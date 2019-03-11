@@ -2,9 +2,9 @@ package com.grandtour.ev.evgrandtour.data.network.models.request;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import android.support.annotation.NonNull;
-
 import java.util.List;
+
+import androidx.annotation.NonNull;
 
 public class RouteDirectionsRequest {
 

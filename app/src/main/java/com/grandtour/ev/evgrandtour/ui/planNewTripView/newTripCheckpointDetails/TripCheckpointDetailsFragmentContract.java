@@ -7,7 +7,7 @@ import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.CheckpointDetailsCallback;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.SwitchCheckedStatusCallback;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class TripCheckpointDetailsFragmentContract {
 

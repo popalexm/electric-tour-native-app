@@ -7,11 +7,10 @@ import com.grandtour.ev.evgrandtour.domain.base.BaseUseCase;
 import com.grandtour.ev.evgrandtour.domain.base.UseCaseDefinition;
 import com.grandtour.ev.evgrandtour.domain.models.NavigationPathData;
 
-import android.support.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Scheduler;
 import io.reactivex.Single;
 import io.reactivex.SingleSource;

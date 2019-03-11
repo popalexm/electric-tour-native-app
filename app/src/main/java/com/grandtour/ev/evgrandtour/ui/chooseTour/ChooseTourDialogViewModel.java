@@ -3,11 +3,10 @@ package com.grandtour.ev.evgrandtour.ui.chooseTour;
 import com.grandtour.ev.evgrandtour.BR;
 import com.grandtour.ev.evgrandtour.R;
 
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableBoolean;
-import android.databinding.ObservableList;
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableList;
 import me.tatarka.bindingcollectionadapter2.ItemBinding;
 
 public class ChooseTourDialogViewModel {

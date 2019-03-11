@@ -19,18 +19,18 @@
             type="com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentContract.Presenter" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/leftVerticalGuideLine"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_constraintGuide_begin="8dp" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/rightVerticalGuideLine"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -38,21 +38,21 @@
             app:layout_constraintGuide_end="8dp" />
 
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/fabStartPointRightVerticalGuideLine"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
             app:layout_constraintGuide_end="64dp" />
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/horizontalBottomGuide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_end="120dp" />
 
-        <android.support.design.widget.CoordinatorLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -65,7 +65,7 @@
                 layout="@layout/route_info_bottom_sheet"
                 bind:viewModel="@{viewModel}" />
 
-            <android.support.design.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnOpenTourSelectionScreen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
                 app:layout_anchorGravity="top|end"
                 tools:isButtonRevealed="false">
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/clearSelection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                     app:isButtonBounced="@{viewModel.isButtonBouncing}"
                     app:rippleColor="@color/colorWhite" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnStartNavigation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
 
             </LinearLayout>
 
-        </android.support.design.widget.CoordinatorLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <LinearLayout
             android:id="@+id/topBar"
@@ -146,7 +146,7 @@
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.v7.widget.SearchView
+            <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchViewCheckpoints"
                 style="@style/SearchViewStyle"
                 android:layout_width="wrap_content"
@@ -200,7 +200,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1" />
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilter"
                     style="@style/buttonFilterStyle"
                     android:layout_width="wrap_content"
@@ -228,7 +228,7 @@
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toBottomOf="@id/topBar">
 
-            <android.support.design.chip.ChipGroup
+            <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupFilteringOptions"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -238,11 +238,11 @@
                 app:removeChipGroupItems="@{viewModel.removeFilteringOptions}"
                 app:singleLine="true">
 
-            </android.support.design.chip.ChipGroup>
+            </com.google.android.material.chip.ChipGroup>
 
         </HorizontalScrollView>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -263,7 +263,7 @@
             app:layout_constraintStart_toEndOf="@id/leftVerticalGuideLine"
             app:layout_constraintTop_toBottomOf="@id/topBar" />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/margin_medium"
@@ -279,5 +279,5 @@
             app:layout_constraintTop_toBottomOf="@id/horizontalBottomGuide"
             app:rippleColor="@color/colorAccent" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
