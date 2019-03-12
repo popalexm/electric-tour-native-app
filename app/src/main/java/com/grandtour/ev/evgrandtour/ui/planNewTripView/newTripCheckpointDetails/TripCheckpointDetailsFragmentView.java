@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.databinding.FragmentDialogTripCheckpointDetailsViewBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentDialogCheckpointDetailsBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.CheckpointDetailsCallback;
@@ -37,7 +37,7 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentDialogTripCheckpointDetailsViewBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_trip_checkpoint_details_view,
+        FragmentDialogCheckpointDetailsBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_checkpoint_details,
                 container, false);
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);

@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.ui.chooseTour;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.databinding.FragmentDialogRoutesBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentDialogChooseTripBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourListener;
 
@@ -29,7 +29,7 @@ public class ChooseTourDialogFragment extends BaseDialogFragment<ChooseTourDialo
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FragmentDialogRoutesBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_routes, null, false);
+        FragmentDialogChooseTripBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_choose_trip, null, false);
         binding.setViewModel(viewModel);
         binding.setPresenter(getPresenter());
         setupTransparentDialogBackground();

@@ -23,7 +23,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
-import com.grandtour.ev.evgrandtour.databinding.FragmentCurrentTripMapViewBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentCurrentTripBinding;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.chooseTour.ChooseTourDialogFragment;
@@ -88,7 +88,7 @@ public class CurrentTripFragmentView extends BaseMapFragment<CurrentTripFragment
     @Nullable
     private Circle userLocationCircle;
     @NonNull
-    private FragmentCurrentTripMapViewBinding viewBinding;
+    private FragmentCurrentTripBinding viewBinding;
     @Nullable
     private ClusterManager<MapCheckpoint> clusterManager;
 
@@ -100,7 +100,7 @@ public class CurrentTripFragmentView extends BaseMapFragment<CurrentTripFragment
     @Override
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_current_trip_map_view, container, false);
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_current_trip, container, false);
         viewBinding.setViewModel(currentTripViewModel);
         viewBinding.setPresenter(getPresenter());
 

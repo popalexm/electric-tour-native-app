@@ -62,7 +62,7 @@
                 android:layout_height="match_parent" />
 
             <include
-                layout="@layout/route_info_bottom_sheet"
+                layout="@layout/bottom_view_route_info"
                 bind:viewModel="@{viewModel}" />
 
             <com.google.android.material.button.MaterialButton

@@ -4,7 +4,7 @@ import com.grandtour.ev.evgrandtour.BuildConfig;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.SharedPreferencesKeys;
-import com.grandtour.ev.evgrandtour.databinding.FragmentSettingsViewBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentSettingsBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
 import com.grandtour.ev.evgrandtour.ui.signIn.SignInActivityView;
 
@@ -30,11 +30,11 @@ public class SettingsFragmentView extends BaseFragment<SettingsFragmentPresenter
     @NonNull
     private final SettingsFragmentViewModel viewModel = new SettingsFragmentViewModel();
     @NonNull
-    private FragmentSettingsViewBinding viewBinding;
+    private FragmentSettingsBinding viewBinding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings_view, container, false);
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_settings, container, false);
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
         viewBinding.switchLocation.setOnCheckedChangeListener(this);

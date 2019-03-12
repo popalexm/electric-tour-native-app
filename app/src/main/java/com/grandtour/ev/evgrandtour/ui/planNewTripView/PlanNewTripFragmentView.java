@@ -10,7 +10,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripViewBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentView;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
@@ -51,7 +51,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentPlanNewTripViewBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip_view, container, false);
+        FragmentPlanNewTripBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip, container, false);
         viewBinding.setViewModel(viewModel);
         viewBinding.setPresenter(getPresenter());
 

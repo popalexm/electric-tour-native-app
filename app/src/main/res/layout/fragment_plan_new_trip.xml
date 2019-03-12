@@ -95,7 +95,7 @@
                 android:layout_height="match_parent" />
 
             <include
-                layout="@layout/bottom_view_reordering_checkpoints"
+                layout="@layout/bottom_view_reorder_checkpoints"
                 bind:viewModel="@{viewModel}" />
 
             <com.google.android.material.button.MaterialButton
