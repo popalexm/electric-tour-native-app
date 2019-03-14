@@ -35,21 +35,6 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
         return new TripCheckpointDetailsFragmentView();
     }
 
-    /**
-     * Incorrect way, must remove
-     */
-   /* @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-      /*  FragmentDialogCheckpointDetailsBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_checkpoint_details,
-                container, false);
-        viewBinding.setPresenter(getPresenter());
-        viewBinding.setViewModel(viewModel);
-        setupTransparentDialogBackground();
-        initParentFragmentCallback();
-        retrieveCheckpointDetails(getArguments()); */
-    // View rootView = inflater.inflate(R.layout.fragment_dialog_edit_checkpoint, container);
-    //  return rootView;//viewBinding.getRoot();
-    //}
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -57,8 +42,16 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
                 null, false);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(viewBinding.getRoot());
-
+        viewBinding.setPresenter(getPresenter());
+        viewBinding.setViewModel(viewModel);
         return builder.create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        initParentFragmentCallback();
+        retrieveCheckpointDetails(getArguments());
     }
 
     /**

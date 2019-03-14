@@ -73,4 +73,39 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="RoundedButtonStyleConfirm" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="backgroundTint">@color/colorBlue</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="iconTintMode">multiply</item>
+        <item name="rippleColor">@color/colorWhite</item>
+    </style>
+
+    <style name="RoundedButtonStyleCancel" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="backgroundTint">@color/colorDeepOrange</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="iconTintMode">multiply</item>
+        <item name="rippleColor">@color/colorWhite</item>
+    </style>
+
+    <style name="RoundedButtonStyleDelete" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">12sp</item>
+        <item name="backgroundTint">@color/colorRed</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="iconTintMode">multiply</item>
+        <item name="rippleColor">@color/colorWhite</item>
+    </style>
+
+    <style name="MyLocationButtonStyle">
+        <item name="backgroundTint">@android:color/white</item>
+        <item name="fabSize">mini</item>
+        <item name="rippleColor">@color/colorBlue</item>
+        <item name="android:elevation">@dimen/margin_medium</item>
+
+    </style>
+
 </resources>

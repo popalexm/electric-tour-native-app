@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -19,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@drawable/dialog_background_rectangle"
         android:padding="@dimen/margin_medium">
 
         <LinearLayout
@@ -31,11 +33,14 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:isWarningState="@{viewModel.isCheckpointNameIncomplete}"
                 android:layout_margin="@dimen/margin_medium">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="@={viewModel.checkpointName}"
+                    android:textColor="@color/colorWhite"
                     android:hint="@string/hint_enter_checkpoint_name">
 
                 </com.google.android.material.textfield.TextInputEditText>
@@ -52,6 +57,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="@={viewModel.checkpointDescription}"
                     android:hint="@string/hint_enter_checkpoint_description">
 
                 </com.google.android.material.textfield.TextInputEditText>
@@ -68,7 +74,7 @@
             android:orientation="vertical">
 
             <TextView
-                style="@style/TextAppearance.AppCompat"
+                style="@style/TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/margin_medium"
@@ -77,11 +83,12 @@
 
             <TextView
                 android:id="@+id/text_view_address"
-                style="@style/TextAppearance.AppCompat"
+                style="TextViewStyleHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/lorem_ipsum"
-                android:textAlignment="center" />
+                android:text="@{viewModel.checkpointAddress}"
+                android:textAlignment="center"
+                tools:text="@string/lorem_ipsum" />
 
         </LinearLayout>
 
@@ -94,23 +101,27 @@
 
             <Switch
                 android:id="@+id/switch_arrival_notifications"
+                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
                 android:switchPadding="@dimen/margin_small"
-                android:text="@string/hint_enable_checkpoint_arrival_tracking" />
+                android:text="@string/hint_enable_checkpoint_arrival_tracking"
+                android:theme="@style/SwitchStyle" />
 
             <Switch
                 android:id="@+id/switch_departure_notifications"
+                android:onCheckedChanged="@{(switch, checked)-> presenter.onCheckedChanged(switch,checked)}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium"
                 android:switchPadding="@dimen/margin_small"
-                android:text="@string/hint_enable_checkpoint_departure_tracking" />
+                android:text="@string/hint_enable_checkpoint_departure_tracking"
+                android:theme="@style/SwitchStyle" />
 
             <TextView
                 android:id="@+id/label_text_view_notifications"
-                style="@style/TextAppearance.AppCompat"
+                style="@style/TextViewStyleHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -127,26 +138,34 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveCheckpointDetails"
+                style="@style/RoundedButtonStyleConfirm"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:onClick="@{()-> presenter.onSaveCheckpointDetailsClicked(viewModel.checkpointName,viewModel.checkpointDescription)}"
                 android:text="@string/btn_save_checkpoint_details"
-                android:textSize="12sp" />
+                app:icon="@drawable/ic_check_white_24dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDeleteCheckpoint"
+                style="@style/RoundedButtonStyleDelete"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/btn_delete_checkpoint" />
+                android:onClick="@{()->presenter.onDeleteCheckpointButtonClicked()}"
+                android:text="@string/btn_delete_checkpoint"
+                app:icon="@drawable/ic_delete_white_24dp"
+                app:isViewVisible="@{viewModel.isCheckpointInEditMode}" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDismiss"
+                style="@style/RoundedButtonStyleCancel"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:onClick="@{()->presenter.onDismissButtonClicked()}"
                 android:text="@string/btn_cancel"
-                android:textSize="12sp" />
+                app:icon="@drawable/ic_close_white_24dp" />
 
         </LinearLayout>
     </LinearLayout>

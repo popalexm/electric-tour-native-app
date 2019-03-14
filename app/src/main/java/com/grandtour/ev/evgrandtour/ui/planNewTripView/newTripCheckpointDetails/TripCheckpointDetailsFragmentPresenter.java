@@ -93,10 +93,10 @@ public class TripCheckpointDetailsFragmentPresenter extends BasePresenter implem
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
-            case R.id.switchArrivalNotifications:
+            case R.id.switch_arrival_notifications:
                 areArrivalNotificationsEnabled = isChecked;
                 break;
-            case R.id.switchDepartureNotifications:
+            case R.id.switch_departure_notifications:
                 areDepartureNotificationsEnabled = isChecked;
                 break;
         }
