@@ -3,18 +3,18 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails
 import com.google.android.gms.maps.model.LatLng;
 
 import com.grandtour.ev.evgrandtour.R;
-import com.grandtour.ev.evgrandtour.databinding.FragmentDialogCheckpointDetailsBinding;
+import com.grandtour.ev.evgrandtour.databinding.FragmentDialogEditCheckpointBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseDialogFragment;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.CheckpointDetailsCallback;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 
 public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCheckpointDetailsFragmentPresenter>
@@ -35,16 +35,30 @@ public class TripCheckpointDetailsFragmentView extends BaseDialogFragment<TripCh
         return new TripCheckpointDetailsFragmentView();
     }
 
-    @Override
+    /**
+     * Incorrect way, must remove
+     */
+   /* @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentDialogCheckpointDetailsBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_checkpoint_details,
+      /*  FragmentDialogCheckpointDetailsBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_dialog_checkpoint_details,
                 container, false);
         viewBinding.setPresenter(getPresenter());
         viewBinding.setViewModel(viewModel);
         setupTransparentDialogBackground();
         initParentFragmentCallback();
-        retrieveCheckpointDetails(getArguments());
-        return viewBinding.getRoot();
+        retrieveCheckpointDetails(getArguments()); */
+    // View rootView = inflater.inflate(R.layout.fragment_dialog_edit_checkpoint, container);
+    //  return rootView;//viewBinding.getRoot();
+    //}
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        FragmentDialogEditCheckpointBinding viewBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.fragment_dialog_edit_checkpoint,
+                null, false);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(viewBinding.getRoot());
+
+        return builder.create();
     }
 
     /**

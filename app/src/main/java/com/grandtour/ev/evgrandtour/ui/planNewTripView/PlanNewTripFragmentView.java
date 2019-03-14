@@ -55,6 +55,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
         viewBinding.setViewModel(viewModel);
         viewBinding.setPresenter(getPresenter());
 
+        // View rootView = inflater.inflate(R.layout.fragment_dialog_edit_checkpoint, container, false);
         setMapView(viewBinding.mapViewAddTrip);
         initGoogleMapsView(savedInstanceState);
         return viewBinding.getRoot();

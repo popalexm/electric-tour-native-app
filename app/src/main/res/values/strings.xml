@@ -51,6 +51,7 @@
     <string name="btn_add_checkpoint">Add Checkpoint</string>
     <string name="btn_finish_trip_planning">Finish Planning</string>
     <string name="hint_enter_trip_name">Please enter trip name</string>
+    <string name="label_address">Address</string>
 
     // Add/Edit Trip Checkpoint Details
     <string name="hint_enter_checkpoint_name">Please enter a name</string>
