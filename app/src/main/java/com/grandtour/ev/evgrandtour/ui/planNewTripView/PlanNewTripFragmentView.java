@@ -39,10 +39,10 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     public static final String TAG = PlanNewTripFragmentView.class.getSimpleName();
     @NonNull
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
-    @Nullable
-    private ClusterManager<TripCheckpoint> clusterManager;
     @NonNull
     private final ArrayList<Polyline> inPlanningTripRoute = new ArrayList<>();
+    @Nullable
+    private ClusterManager<TripCheckpoint> clusterManager;
     private FragmentPlanNewTripBinding viewBinding;
 
     @NonNull
@@ -224,16 +224,17 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void onMarkerDragStart(Marker marker) {
-
     }
 
     @Override
     public void onMarkerDrag(Marker marker) {
-
     }
 
     @Override
     public void onMarkerDragEnd(Marker marker) {
-
+        Integer checkpointId = (Integer) marker.getTag();
+        if (checkpointId != null) {
+            getPresenter().onTripCheckpointLocationChanged(checkpointId, marker.getPosition());
+        }
     }
 }

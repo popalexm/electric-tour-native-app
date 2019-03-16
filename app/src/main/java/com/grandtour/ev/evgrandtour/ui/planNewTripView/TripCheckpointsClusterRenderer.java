@@ -2,6 +2,7 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -36,7 +37,7 @@ public class TripCheckpointsClusterRenderer extends DefaultClusterRenderer<TripC
     protected void onBeforeClusterItemRendered(TripCheckpoint mapCheckpoint, MarkerOptions markerOptions) {
         String checkpointId = String.valueOf(mapCheckpoint.getCheckpointId());
         int color = Injection.provideResources()
-                .getColor(R.color.colorBlue); //mapCheckpoint.getMarkerIconColor();
+                .getColor(R.color.colorBlue);
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(generateMarkerIcon(color, checkpointId)));
         markerOptions.title(mapCheckpoint.getCheckpointTitle());
         markerOptions.snippet(mapCheckpoint.getCheckpointDescription());
@@ -63,5 +64,12 @@ public class TripCheckpointsClusterRenderer extends DefaultClusterRenderer<TripC
         Bitmap clusterIcon = clusterIconGenerator.makeIcon(String.valueOf(cluster.getSize()));
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(clusterIcon))
                 .anchor(clusterIconGenerator.getAnchorU(), clusterIconGenerator.getAnchorV());
+    }
+
+    @Override
+    protected void onClusterItemRendered(TripCheckpoint clusterItem, Marker marker) {
+        if (clusterItem.getCheckpointId() != null) {
+            marker.setTag(clusterItem.getCheckpointId());
+        }
     }
 }

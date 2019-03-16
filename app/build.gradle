@@ -28,7 +28,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "CLOUD_API_URL", '"http://192.168.100.8:8080/"'
+            buildConfigField "String", "CLOUD_API_URL", '"http://10.0.2.2:8080/"'
             buildConfigField "String", "BACKED_API_URL", '"https://wenwere.com/"'
             buildConfigField "String", "DIRECTIONS_API_URL", '"https://maps.googleapis.com/maps/api/"'
         }

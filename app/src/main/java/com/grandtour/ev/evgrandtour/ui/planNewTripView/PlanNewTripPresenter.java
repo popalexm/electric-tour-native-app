@@ -8,6 +8,7 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.location.GpsLocationManager;
 import com.grandtour.ev.evgrandtour.data.network.NetworkRequestBuilders;
+import com.grandtour.ev.evgrandtour.data.network.models.request.UpdateCheckpointLocationRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningCheckpointResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningTripResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
@@ -15,6 +16,7 @@ import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.CalculateR
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.DeleteInPlanningCheckpointUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.LoadInPlanningTripDetailsUseCase;
 import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.SaveInPlanningTripCheckpointUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.UpdateTripCheckpointLocationUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.InPlanningTripDetails;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
@@ -34,12 +36,11 @@ import retrofit2.Response;
 
 class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.Presenter, OnSuccessListener<Location> {
 
+    private final static int USER_ID = 1;
     @NonNull
     private final PlanNewTripContract.View view;
     @Nullable
     private InPlanningTripDetails inPlanningTripDetails;
-
-    private final static int USER_ID = 1;
 
     PlanNewTripPresenter(@NonNull PlanNewTripContract.View view) {
         this.view = view;
@@ -127,27 +128,27 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                 view.showLoadingView(true);
             }
         }
-            addSubscription(new DeleteInPlanningCheckpointUseCase(Injection.provideRxSchedulers()
-                    .getDefault(), Injection.provideCloudApi(), inPlanningTripDetails.getInPlanningTripId(), tripCheckpoint.getCheckpointId()).perform()
-                    .subscribe(response -> {
-                        if (isViewAttached) {
-                            if (response != null && response.body() != null && response.body() > 0) {
-                                view.removeAddedTripCheckpoint(tripCheckpoint);
-                                inPlanningTripDetails.getPlannedTripCheckpoints()
-                                        .remove(tripCheckpoint);
+        addSubscription(new DeleteInPlanningCheckpointUseCase(Injection.provideRxSchedulers()
+                .getDefault(), Injection.provideCloudApi(), inPlanningTripDetails.getInPlanningTripId(), tripCheckpoint.getCheckpointId()).perform()
+                .subscribe(response -> {
+                    if (isViewAttached) {
+                        if (response != null && response.body() != null && response.body() > 0) {
+                            view.removeAddedTripCheckpoint(tripCheckpoint);
+                            inPlanningTripDetails.getPlannedTripCheckpoints()
+                                    .remove(tripCheckpoint);
 
-                                view.clearRoutePolyline();
-                                startDirectionsRequest();
-                            }
+                            view.clearRoutePolyline();
+                            startDirectionsRequest();
                         }
-                    }, throwable -> {
-                        throwable.printStackTrace();
-                        if (isViewAttached) {
-                            view.showLoadingView(false);
-                            view.showMessage(Injection.provideGlobalContext()
-                                    .getString(R.string.message_error_deleting_checkpoint));
-                        }
-                    }));
+                    }
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    if (isViewAttached) {
+                        view.showLoadingView(false);
+                        view.showMessage(Injection.provideGlobalContext()
+                                .getString(R.string.message_error_deleting_checkpoint));
+                    }
+                }));
     }
 
     @Override
@@ -173,6 +174,36 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                 //TODO Send final request confirming moving the trip to planned trips
             }
         }
+    }
+
+    @Override
+    public void onTripCheckpointLocationChanged(@NonNull Integer checkpointId, @NonNull LatLng updatedPosition) {
+        UpdateCheckpointLocationRequest request = new UpdateCheckpointLocationRequest(checkpointId, updatedPosition.latitude, updatedPosition.longitude);
+        addSubscription(new UpdateTripCheckpointLocationUseCase(Injection.provideRxSchedulers()
+                .getDefault(), Injection.provideCloudApi(), request, PlanNewTripPresenter.USER_ID).perform()
+                .subscribe(response -> {
+                    if (response.code() == 200 && response.body() != null) {
+                        int updatedCheckpointId = response.body();
+                        if (inPlanningTripDetails != null && isViewAttached) {
+                            List<TripCheckpoint> tripCheckpoints = inPlanningTripDetails.getPlannedTripCheckpoints();
+                            for (TripCheckpoint checkpoint : tripCheckpoints) {
+                                if (updatedCheckpointId == checkpoint.getCheckpointId()) {
+                                    checkpoint.setGeographicalPosition(updatedPosition);
+                                    view.clearRoutePolyline();
+                                    view.showLoadingView(true);
+                                    startDirectionsRequest();
+                                }
+                            }
+                        }
+                    }
+                }, throwable -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(false);
+                        view.showMessage(Injection.provideGlobalContext()
+                                .getString(R.string.message_error_deleting_checkpoint));
+                    }
+                }));
+
     }
 
     private void loadInPlanningTripOnMainMapView() {

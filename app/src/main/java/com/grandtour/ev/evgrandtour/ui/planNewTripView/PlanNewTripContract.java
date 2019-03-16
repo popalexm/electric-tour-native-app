@@ -53,5 +53,7 @@ public class PlanNewTripContract {
         void onMyLocationButtonClicked();
 
         void onFinalizeTripPlanningClicked(@NonNull String tripTitle);
+
+        void onTripCheckpointLocationChanged(Integer checkpointId, @NonNull LatLng position);
     }
 }
