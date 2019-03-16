@@ -4,6 +4,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.animations.AnimationManager;
@@ -164,6 +165,18 @@ public final class BindingAdapters {
             searchView.setOnSearchClickListener(null);
         } else {
             searchView.setOnSearchClickListener(onSearchViewOpenListener);
+        }
+    }
+
+    @BindingAdapter(value = {"isLottieAnimationShowing"})
+    public static void setLottieAnimationVisible(@NonNull LottieAnimationView lottieAnimationView, boolean shouldBeDisplayed) {
+        if (shouldBeDisplayed) {
+            lottieAnimationView.setVisibility(View.VISIBLE);
+            lottieAnimationView.setSpeed(3);
+            lottieAnimationView.playAnimation();
+        } else {
+            lottieAnimationView.cancelAnimation();
+            lottieAnimationView.setVisibility(View.GONE);
         }
     }
 }

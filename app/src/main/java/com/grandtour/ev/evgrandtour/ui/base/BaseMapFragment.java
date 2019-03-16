@@ -1,12 +1,16 @@
 package com.grandtour.ev.evgrandtour.ui.base;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.Manifest;
 import android.app.Activity;
@@ -18,6 +22,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresPermission;
@@ -27,7 +33,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 public abstract class BaseMapFragment<P extends BaseContract.Presenter> extends Fragment
-        implements BaseContract.View, OnMapReadyCallback, GoogleMap.OnInfoWindowCloseListener {
+        implements BaseMapContract.View, OnMapReadyCallback, GoogleMap.OnInfoWindowCloseListener {
 
     private P presenter;
 
@@ -145,6 +151,21 @@ public abstract class BaseMapFragment<P extends BaseContract.Presenter> extends 
         fragmentTransaction.addToBackStack(null);
         dialogFrag.setTargetFragment(targetFrag.getParentFragment(), requestCode);
         dialogFrag.show(fragmentTransaction, tag);
+    }
+
+    @Override
+    public void centerCameraOnCheckpoints(@NonNull List<TripCheckpoint> routeCheckpoints) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (int i = 0; i < routeCheckpoints.size(); i++) {
+            LatLng position = routeCheckpoints.get(i)
+                    .getPosition();
+            builder.include(new LatLng(position.latitude, position.longitude));
+        }
+        LatLngBounds bounds = builder.build();
+        GoogleMap googleMap = getGoogleMap();
+        if (googleMap != null) {
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 200));
+        }
     }
 
     public P getPresenter() {

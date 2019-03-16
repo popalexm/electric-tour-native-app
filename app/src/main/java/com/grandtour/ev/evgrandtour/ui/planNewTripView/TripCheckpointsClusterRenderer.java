@@ -9,6 +9,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 import com.grandtour.ev.evgrandtour.R;
+import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 
 import android.content.Context;
@@ -33,9 +34,10 @@ public class TripCheckpointsClusterRenderer extends DefaultClusterRenderer<TripC
 
     @Override
     protected void onBeforeClusterItemRendered(TripCheckpoint mapCheckpoint, MarkerOptions markerOptions) {
-        // String checkpointId = String.valueOf(mapCheckpoint.getOrderInRouteId());
-        // int color = mapCheckpoint.getMarkerIconColor();
-        //  markerOptions.icon(BitmapDescriptorFactory.fromBitmap(generateMarkerIcon(color, checkpointId)));
+        String checkpointId = String.valueOf(mapCheckpoint.getCheckpointId());
+        int color = Injection.provideResources()
+                .getColor(R.color.colorBlue); //mapCheckpoint.getMarkerIconColor();
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(generateMarkerIcon(color, checkpointId)));
         markerOptions.title(mapCheckpoint.getCheckpointTitle());
         markerOptions.snippet(mapCheckpoint.getCheckpointDescription());
         markerOptions.draggable(true);

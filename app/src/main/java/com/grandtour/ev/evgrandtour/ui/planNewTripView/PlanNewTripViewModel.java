@@ -16,6 +16,9 @@ public class PlanNewTripViewModel {
     public ObservableField<String> tripTitle = new ObservableField<>("");
     @NonNull
     public ObservableList<TripCheckpoint> reorderingList = new ObservableArrayList<>();
+    @NonNull
+    public ObservableBoolean isLoadingInProgress = new ObservableBoolean(false);
+
    /* @NonNull
     public ItemBinding<TripCheckpoint> itemBindingReorderingList = ItemBinding.of(BR.viewModel, R.layout.item_reorder_trip_checkpoint); */
 

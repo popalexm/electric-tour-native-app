@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.clustering.ClusterManager;
 
 import com.grandtour.ev.evgrandtour.ui.base.BaseContract;
+import com.grandtour.ev.evgrandtour.ui.base.BaseMapContract;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.callbacks.CheckpointDetailsCallback;
 
@@ -14,7 +15,7 @@ import androidx.annotation.NonNull;
 
 public class PlanNewTripContract {
 
-    public interface View extends BaseContract.View, CheckpointDetailsCallback, ClusterManager.OnClusterClickListener<TripCheckpoint>,
+    public interface View extends BaseMapContract.View, CheckpointDetailsCallback, ClusterManager.OnClusterClickListener<TripCheckpoint>,
             ClusterManager.OnClusterItemClickListener<TripCheckpoint> {
 
         void displayNewTripCheckpointOnMap(@NonNull TripCheckpoint newCheckpoint);
@@ -36,6 +37,7 @@ public class PlanNewTripContract {
         void drawRoutePolyline(@NonNull PolylineOptions routePolyOptions);
 
         void clearRoutePolyline();
+
     }
 
     public interface Presenter extends BaseContract.Presenter {

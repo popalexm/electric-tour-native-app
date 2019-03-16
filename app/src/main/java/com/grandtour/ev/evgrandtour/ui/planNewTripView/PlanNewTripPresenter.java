@@ -49,6 +49,11 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     public void onMapReady() {
         addSubscription(new LoadInPlanningTripDetailsUseCase(Injection.provideRxSchedulers()
                 .getDefault(), Injection.provideCloudApi(), PlanNewTripPresenter.USER_ID).perform()
+                .doOnSubscribe(disposable -> {
+                    if (isViewAttached) {
+                        view.showLoadingView(true);
+                    }
+                })
                 .subscribe(response -> {
                     if (response.isSuccessful() && response.code() == 200 && response.body() != null) {
                         InPlanningTripResponse inPlanningTrip = response.body();
@@ -60,11 +65,15 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                         if (checkpoints != null && checkpoints.size() > 0) {
                             inPlanningTripDetails.setPlannedTripCheckpoints(MapUtils.convertInPlanningCheckpointsResponseToMapObjects(checkpoints));
                         }
+
                         loadInPlanningTripOnMainMapView();
+                        view.clearRoutePolyline();
+                        startDirectionsRequest();
                     }
                 }, throwable -> {
                     throwable.printStackTrace();
                     if (isViewAttached) {
+                        view.showLoadingView(false);
                         view.showMessage(Injection.provideGlobalContext()
                                 .getString(R.string.message_error_loading_checkpoints));
                     }
@@ -81,6 +90,9 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
     @Override
     public void onNewTripCheckpointAdded(@NonNull TripCheckpoint tripCheckpoint) {
         if (inPlanningTripDetails != null) {
+            if (isViewAttached) {
+                view.showLoadingView(true);
+            }
             addSubscription(new SaveInPlanningTripCheckpointUseCase(Injection.provideRxSchedulers()
                     .getDefault(), Injection.provideCloudApi(), NetworkRequestBuilders.createPlannedTripCheckpointRequest(tripCheckpoint),
                     inPlanningTripDetails.getInPlanningTripId(), PlanNewTripPresenter.USER_ID).perform()
@@ -93,12 +105,14 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                                         .add(tripCheckpoint);
                                 view.displayNewTripCheckpointOnMap(tripCheckpoint);
 
+                                view.clearRoutePolyline();
                                 startDirectionsRequest();
                             }
                         }
                     }, throwable -> {
                         throwable.printStackTrace();
                         if (isViewAttached) {
+                            view.showLoadingView(false);
                             view.showMessage(Injection.provideGlobalContext()
                                     .getString(R.string.message_error_adding_checkpoint));
                         }
@@ -108,7 +122,11 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
 
     @Override
     public void onDeleteCheckpointFromTrip(@NonNull TripCheckpoint tripCheckpoint) {
-        if (inPlanningTripDetails != null)
+        if (inPlanningTripDetails != null) {
+            if (isViewAttached) {
+                view.showLoadingView(true);
+            }
+        }
             addSubscription(new DeleteInPlanningCheckpointUseCase(Injection.provideRxSchedulers()
                     .getDefault(), Injection.provideCloudApi(), inPlanningTripDetails.getInPlanningTripId(), tripCheckpoint.getCheckpointId()).perform()
                     .subscribe(response -> {
@@ -118,12 +136,14 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
                                 inPlanningTripDetails.getPlannedTripCheckpoints()
                                         .remove(tripCheckpoint);
 
+                                view.clearRoutePolyline();
                                 startDirectionsRequest();
                             }
                         }
                     }, throwable -> {
                         throwable.printStackTrace();
                         if (isViewAttached) {
+                            view.showLoadingView(false);
                             view.showMessage(Injection.provideGlobalContext()
                                     .getString(R.string.message_error_deleting_checkpoint));
                         }
@@ -159,40 +179,41 @@ class PlanNewTripPresenter extends BasePresenter implements PlanNewTripContract.
         if (isViewAttached && inPlanningTripDetails != null) {
             view.displayPlannedTripCheckpointsOnMapView(inPlanningTripDetails.getPlannedTripCheckpoints());
             view.displayPlannedTripNameAndDescription(inPlanningTripDetails.getInPlanningTripName(), inPlanningTripDetails.getInPlanningTripDescription());
-            startDirectionsRequest();
+            view.centerCameraOnCheckpoints(inPlanningTripDetails.getPlannedTripCheckpoints());
         }
     }
 
     private void startDirectionsRequest() {
         if (inPlanningTripDetails != null) {
-            view.clearRoutePolyline();
-        }
-        addSubscription(new CalculateRouteDirectionsUseCase(Injection.provideRxSchedulers()
-                .getDefault(), inPlanningTripDetails.getPlannedTripCheckpoints()).perform()
-                .doOnError(throwable -> {
-                    throwable.printStackTrace();
-                    if (isViewAttached) {
-                        view.showMessage(Injection.provideGlobalContext()
-                                .getString(R.string.message_error_calculating_route));
-                    }
-                })
-                .subscribe(responses -> {
-                    if (isViewAttached) {
-                        for (Response<RoutesResponse> response : responses) {
-                            if (response.body() != null && response.code() == 200) {
-                                List<LatLng> routeCoordinates = MapUtils.convertPolyLineToMapPoints(response.body()
-                                        .getRoutes()
-                                        .get(0)
-                                        .getOverviewPolyline()
-                                        .getPoints());
-                                PolylineOptions routePolyline = MapUtils.generateRoute(routeCoordinates);
-                                if (isViewAttached) {
-                                    view.drawRoutePolyline(routePolyline);
+            addSubscription(new CalculateRouteDirectionsUseCase(Injection.provideRxSchedulers()
+                    .getDefault(), inPlanningTripDetails.getPlannedTripCheckpoints()).perform()
+                    .doOnError(throwable -> {
+                        throwable.printStackTrace();
+                        if (isViewAttached) {
+                            view.showLoadingView(false);
+                            view.showMessage(Injection.provideGlobalContext()
+                                    .getString(R.string.message_error_calculating_route));
+                        }
+                    })
+                    .subscribe(responses -> {
+                        if (isViewAttached) {
+                            for (Response<RoutesResponse> response : responses) {
+                                if (response.body() != null && response.code() == 200) {
+                                    List<LatLng> routeCoordinates = MapUtils.convertPolyLineToMapPoints(response.body()
+                                            .getRoutes()
+                                            .get(0)
+                                            .getOverviewPolyline()
+                                            .getPoints());
+                                    PolylineOptions routePolyline = MapUtils.generateRoute(routeCoordinates);
+                                    if (isViewAttached) {
+                                        view.drawRoutePolyline(routePolyline);
+                                        view.showLoadingView(false);
+                                    }
                                 }
                             }
                         }
-                    }
-                }));
+                    }));
+        }
     }
 
     private void loadCheckpointsInReorderingList(@NonNull InPlanningTripDetails tripDetails) {

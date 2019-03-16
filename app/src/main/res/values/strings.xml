@@ -51,14 +51,14 @@
     <string name="btn_add_checkpoint">Add Checkpoint</string>
     <string name="btn_finish_trip_planning">Finish Planning</string>
     <string name="hint_enter_trip_name">Please enter trip name</string>
-    <string name="label_address">Address</string>
+    <string name="label_address">Destination address</string>
 
     // Add/Edit Trip Checkpoint Details
-    <string name="hint_enter_checkpoint_name">Please enter a name</string>
-    <string name="hint_enter_checkpoint_description">Please enter a description</string>
+    <string name="hint_enter_checkpoint_name">Destination name</string>
+    <string name="hint_enter_checkpoint_description">Destination description</string>
     <string name="hint_checkpoint_tracking_description">By enabling arrival or departure notifications, the application will notify you when you have approached or departed from the vicinity of this checkpoint</string>
-    <string name="hint_enable_checkpoint_arrival_tracking">Enable arrival notifications</string>
-    <string name="hint_enable_checkpoint_departure_tracking">Enable departure notifications</string>
+    <string name="hint_enable_checkpoint_arrival_tracking">Enable arrival notifications for this destination</string>
+    <string name="hint_enable_checkpoint_departure_tracking">Enable departure notifications for this destination</string>
     <string name="btn_save_checkpoint_details">Save</string>
     <string name="btn_delete_checkpoint">Delete</string>
     <string name="message_please_add_at_least_tqo_checkpoints_to_trip">Please add at least 2 checkpoints to a planned trip before saving it !</string>

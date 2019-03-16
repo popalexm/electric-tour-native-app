@@ -43,6 +43,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     private ClusterManager<TripCheckpoint> clusterManager;
     @NonNull
     private final ArrayList<Polyline> inPlanningTripRoute = new ArrayList<>();
+    private FragmentPlanNewTripBinding viewBinding;
 
     @NonNull
     public static PlanNewTripFragmentView createInstance() {
@@ -51,11 +52,9 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        FragmentPlanNewTripBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip, container, false);
+        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip, container, false);
         viewBinding.setViewModel(viewModel);
         viewBinding.setPresenter(getPresenter());
-
-        // View rootView = inflater.inflate(R.layout.fragment_dialog_edit_checkpoint, container, false);
         setMapView(viewBinding.mapViewAddTrip);
         initGoogleMapsView(savedInstanceState);
         return viewBinding.getRoot();
@@ -111,7 +110,7 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
 
     @Override
     public void showLoadingView(boolean isLoading) {
-
+        viewModel.isLoadingInProgress.set(isLoading);
     }
 
     @Override
