@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain.useCases;
+package com.grandtour.ev.evgrandtour.domain.useCases.currentTripView;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.RouteLeg;

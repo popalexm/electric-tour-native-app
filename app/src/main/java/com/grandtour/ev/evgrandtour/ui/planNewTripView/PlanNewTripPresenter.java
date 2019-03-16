@@ -12,11 +12,11 @@ import com.grandtour.ev.evgrandtour.data.network.models.request.UpdateCheckpoint
 import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningCheckpointResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningTripResponse;
 import com.grandtour.ev.evgrandtour.data.network.models.response.routes.RoutesResponse;
-import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.CalculateRouteDirectionsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.DeleteInPlanningCheckpointUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.LoadInPlanningTripDetailsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.SaveInPlanningTripCheckpointUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule.UpdateTripCheckpointLocationUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.newTripView.CalculateRouteDirectionsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.newTripView.DeleteInPlanningCheckpointUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.newTripView.LoadInPlanningTripDetailsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.newTripView.SaveInPlanningTripCheckpointUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.newTripView.UpdateTripCheckpointLocationUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.InPlanningTripDetails;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;

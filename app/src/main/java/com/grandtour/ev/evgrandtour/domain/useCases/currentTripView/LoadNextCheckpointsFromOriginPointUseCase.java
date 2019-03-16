@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain.useCases;
+package com.grandtour.ev.evgrandtour.domain.useCases.currentTripView;
 
 import com.grandtour.ev.evgrandtour.data.database.LocalStorageManager;
 import com.grandtour.ev.evgrandtour.data.database.models.Checkpoint;
@@ -16,7 +16,7 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import io.reactivex.functions.Function;
 
-public class LoadNextCheckpointsFromOriginPoint extends BaseUseCase implements UseCaseDefinition {
+public class LoadNextCheckpointsFromOriginPointUseCase extends BaseUseCase implements UseCaseDefinition {
 
     @NonNull
     private final LocalStorageManager storageManager;
@@ -25,7 +25,7 @@ public class LoadNextCheckpointsFromOriginPoint extends BaseUseCase implements U
     private final int startCheckpointId;
     private final int endCheckpointId;
 
-    public LoadNextCheckpointsFromOriginPoint(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
+    public LoadNextCheckpointsFromOriginPointUseCase(@NonNull Scheduler executorThread, @NonNull Scheduler postExecutionThread,
             @NonNull LocalStorageManager storageManager, int checkpointId, int maxCheckpointsToRetrieve, int startCheckpointId, int endCheckpointId) {
         super(executorThread, postExecutionThread);
         this.storageManager = storageManager;

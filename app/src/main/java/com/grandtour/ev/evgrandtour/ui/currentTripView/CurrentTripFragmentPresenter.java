@@ -19,16 +19,16 @@ import com.grandtour.ev.evgrandtour.data.network.NetworkExceptions;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
 import com.grandtour.ev.evgrandtour.domain.services.DirectionsElevationService;
 import com.grandtour.ev.evgrandtour.domain.services.LocationsUpdatesService;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadElevationPointsForSelectedTourUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointForSelectedTourUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadMapCheckpointsForFilteredCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadNextCheckpointsFromOriginPoint;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteInformationUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteLegsAndStepsForBetweenCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.LoadRouteLegsAndStepsForEntireTripUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.QueryForCheckpointsUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SaveToursDataLocallyUseCase;
-import com.grandtour.ev.evgrandtour.domain.useCases.SetTourSelectionStatusUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadElevationPointsForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadMapCheckpointForSelectedTourUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadMapCheckpointsForFilteredCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadNextCheckpointsFromOriginPointUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadRouteInformationUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadRouteLegsAndStepsForBetweenCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.LoadRouteLegsAndStepsForEntireTripUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.QueryForCheckpointsUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.SaveToursDataLocallyUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.SetTourSelectionStatusUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.chartView.ChartDataCreatedListener;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.chartView.ChartViewDataHandler;
@@ -289,8 +289,8 @@ public class CurrentTripFragmentPresenter extends BasePresenter
                 .getMapCheckpointId();
         int endCheckpointId = mapCheckpoints.get(mapCheckpoints.size() - 1)
                 .getMapCheckpointId();
-        addSubscription(
-                new LoadNextCheckpointsFromOriginPoint(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(), markerCheckpointId,
+        addSubscription(new LoadNextCheckpointsFromOriginPointUseCase(Schedulers.io(), AndroidSchedulers.mainThread(), Injection.provideStorageManager(),
+                markerCheckpointId,
                         NAVIGATION_CHECKPOINTS_SIZE, startCheckpointId, endCheckpointId).perform()
                         .doOnSuccess(navigationPathData -> {
                             if (navigationPathData != null) {

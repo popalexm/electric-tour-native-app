@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain.useCases.planNewTripModule;
+package com.grandtour.ev.evgrandtour.domain.useCases.newTripView;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;

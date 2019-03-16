@@ -1,4 +1,4 @@
-package com.grandtour.ev.evgrandtour.domain.useCases;
+package com.grandtour.ev.evgrandtour.domain.useCases.currentTripView;
 
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.BackendAPI;

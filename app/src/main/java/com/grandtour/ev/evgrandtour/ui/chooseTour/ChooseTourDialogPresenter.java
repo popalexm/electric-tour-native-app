@@ -3,7 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.chooseTour;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
 import com.grandtour.ev.evgrandtour.data.network.models.response.dailyTour.TourDataResponse;
-import com.grandtour.ev.evgrandtour.domain.useCases.SyncAllAvailableToursUseCase;
+import com.grandtour.ev.evgrandtour.domain.useCases.currentTripView.SyncAllAvailableToursUseCase;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.listeners.OnSelectedTourListener;
 
