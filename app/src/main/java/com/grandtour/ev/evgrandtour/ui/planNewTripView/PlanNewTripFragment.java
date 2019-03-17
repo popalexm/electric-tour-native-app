@@ -32,11 +32,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresenter>
+public class PlanNewTripFragment extends BaseMapFragment<PlanNewTripPresenter>
         implements PlanNewTripContract.View, GoogleMap.OnMapClickListener, GoogleMap.OnMarkerDragListener {
 
     @NonNull
-    public static final String TAG = PlanNewTripFragmentView.class.getSimpleName();
+    public static final String TAG = PlanNewTripFragment.class.getSimpleName();
     @NonNull
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
     @NonNull
@@ -46,8 +46,8 @@ public class PlanNewTripFragmentView extends BaseMapFragment<PlanNewTripPresente
     private FragmentPlanNewTripBinding viewBinding;
 
     @NonNull
-    public static PlanNewTripFragmentView createInstance() {
-        return new PlanNewTripFragmentView();
+    public static PlanNewTripFragment createInstance() {
+        return new PlanNewTripFragment();
     }
 
     @Override

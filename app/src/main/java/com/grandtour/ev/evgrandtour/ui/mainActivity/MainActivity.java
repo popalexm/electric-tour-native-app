@@ -5,7 +5,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.ActivityMainBinding;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentView;
-import com.grandtour.ev.evgrandtour.ui.planNewTripView.PlanNewTripFragmentView;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.PlanNewTripFragment;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.createNewTrip.CreateNewTripFragment;
 import com.grandtour.ev.evgrandtour.ui.settingsView.SettingsFragmentView;
 
 import android.os.Bundle;
@@ -32,8 +33,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     private void loadAddEditTripsFragment() {
-        PlanNewTripFragmentView newTripFragmentView = PlanNewTripFragmentView.createInstance();
-        replaceInFragmentManager(newTripFragmentView, PlanNewTripFragmentView.TAG);
+        PlanNewTripFragment newTripFragmentView = PlanNewTripFragment.createInstance();
+        replaceInFragmentManager(newTripFragmentView, PlanNewTripFragment.TAG);
+    }
+
+    private void loadCreateNewTripFragment() {
+        CreateNewTripFragment createNewTripFragment = CreateNewTripFragment.createInstance();
+        replaceInFragmentManager(createNewTripFragment, CreateNewTripFragment.TAG);
     }
 
     private void loadSettingsFragment() {
@@ -54,7 +60,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 loadCurrentTripView();
                 return true;
             case R.id.action_create_trip:
-                loadAddEditTripsFragment();
+                //  loadAddEditTripsFragment();
+                loadCreateNewTripFragment();
                 return true;
             case R.id.action_settings:
                 loadSettingsFragment();

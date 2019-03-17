@@ -8,6 +8,7 @@ public abstract class BasePresenter implements BaseContract.Presenter {
 
     @NonNull
     private final CompositeDisposable subscribers = new CompositeDisposable();
+
     protected boolean isViewAttached;
 
     protected void addSubscription(@NonNull Disposable subscriber) {
@@ -31,5 +32,9 @@ public abstract class BasePresenter implements BaseContract.Presenter {
     @Override
     public void onDestroyView() {
         removeSubscriptions();
+    }
+
+    public boolean isViewAttached() {
+        return isViewAttached;
     }
 }

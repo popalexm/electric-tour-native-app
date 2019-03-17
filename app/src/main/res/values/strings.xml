@@ -53,6 +53,11 @@
     <string name="hint_enter_trip_name">Please enter trip name</string>
     <string name="label_address">Destination address</string>
 
+
+    // New Trip Details
+    <string name="hint_trip_name">Trip Name</string>
+    <string name="hint_trip_description">Trip Description</string>
+
     // Add/Edit Trip Checkpoint Details
     <string name="hint_enter_checkpoint_name">Destination name</string>
     <string name="hint_enter_checkpoint_description">Destination description</string>
