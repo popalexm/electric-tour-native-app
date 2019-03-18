@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, NavigationFlowListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,5 +68,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void moveToFragment(@NonNull Fragment fragment, @NonNull String tag) {
+        replaceInFragmentManager(fragment, tag);
     }
 }

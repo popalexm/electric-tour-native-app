@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout>
-
     <data>
-
         <variable
             name="viewModel"
             type="com.grandtour.ev.evgrandtour.ui.planNewTripView.createNewTrip.CreateNewTripViewModel" />
@@ -16,6 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/dialog_background_rectangle"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -57,16 +56,19 @@
             app:layout_constraintTop_toBottomOf="@+id/header_animation_view">
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:errorEnabled="true"
+                app:textInputError="@{viewModel.newTripNameErrorMessage}"
                 android:layout_margin="@dimen/margin_medium">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_trip_name"
-                    android:textColor="@color/colorWhite">
+                    android:text="@={viewModel.newTripName}">
 
                 </com.google.android.material.textfield.TextInputEditText>
 
@@ -74,15 +76,17 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/TextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_medium">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    style="@style/EditTextStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/hint_trip_description">
+                    android:hint="@string/hint_trip_description"
+                    android:text="@={viewModel.newTripDescription}">
 
                 </com.google.android.material.textfield.TextInputEditText>
 
@@ -96,7 +100,8 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/btn_save_checkpoint_details"
+            android:onClick="@{()-> presenter.onNextPressed(viewModel.newTripName, viewModel.newTripDescription)}"
+            android:text="@string/button_next"
             app:icon="@drawable/ic_check_white_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

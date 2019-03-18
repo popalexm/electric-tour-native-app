@@ -10,15 +10,14 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface HolidayTripCloudAPI {
 
-    @POST("post-new-planned-trip-for-user-id")
-    Observable<Response<String>> postPlannedTripToCloud(@Header("userId") Integer userId, @Body PlannedTripRequest plannedTripRequest);
+    @POST("post-in-planning-trip")
+    Observable<Response<Integer>> postPlannedTrip(@Body PlannedTripRequest plannedTripRequest);
 
     @GET("get-current-in-planning-trip")
     Observable<Response<InPlanningTripResponse>> getCurrentInPlanningTripForUser(@Query("userId") Integer userId);

@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorOnPrimary">@color/colorWhite</item>
         <item name="android:textViewStyle">@style/TextViewStyle</item>
         <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
 
@@ -112,6 +113,16 @@
         <item name="rippleColor">@color/colorBlue</item>
         <item name="android:elevation">@dimen/margin_medium</item>
 
+    </style>
+
+    <style name="TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/colorWhite</item>
+        <item name="hintTextColor">@color/colorWhite</item>
+        <item name="errorTextColor">@color/colorRed</item>
+    </style>
+
+    <style name="EditTextStyle" parent="Widget.MaterialComponents.TextInputEditText.OutlinedBox">
+        <item name="android:textColor">@color/colorWhite</item>
     </style>
 
 </resources>

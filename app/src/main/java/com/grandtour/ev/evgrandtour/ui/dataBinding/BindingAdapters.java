@@ -3,6 +3,7 @@ package com.grandtour.ev.evgrandtour.ui.dataBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.textfield.TextInputLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.grandtour.ev.evgrandtour.R;
@@ -15,6 +16,7 @@ import com.grandtour.ev.evgrandtour.ui.currentTripView.models.SearchResultModel;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.text.TextUtils;
 import android.view.View;
 
 import java.util.List;
@@ -177,6 +179,15 @@ public final class BindingAdapters {
         } else {
             lottieAnimationView.cancelAnimation();
             lottieAnimationView.setVisibility(View.GONE);
+        }
+    }
+
+    @BindingAdapter(value = {"textInputError"})
+    public static void setTextInputLayoutError(@NonNull TextInputLayout textInputLayout, @NonNull String error) {
+        if (!TextUtils.isEmpty(error)) {
+            textInputLayout.setError(error);
+        } else {
+            textInputLayout.setError(null);
         }
     }
 }

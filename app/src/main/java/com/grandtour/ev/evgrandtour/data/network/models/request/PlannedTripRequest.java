@@ -5,6 +5,7 @@ public class PlannedTripRequest {
 
     private String tripName;
     private String tripDescription;
+    private Integer userId;
 
     public void setTripName(String tripName) {
         this.tripName = tripName;
@@ -12,5 +13,9 @@ public class PlannedTripRequest {
 
     public void setTripDescription(String tripDescription) {
         this.tripDescription = tripDescription;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

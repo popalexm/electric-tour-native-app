@@ -57,6 +57,8 @@
     // New Trip Details
     <string name="hint_trip_name">Trip Name</string>
     <string name="hint_trip_description">Trip Description</string>
+    <string name="button_next">Next</string>
+    <string name="error_trip_name_is_mandatory">Trip name is mandatory!</string>
 
     // Add/Edit Trip Checkpoint Details
     <string name="hint_enter_checkpoint_name">Destination name</string>

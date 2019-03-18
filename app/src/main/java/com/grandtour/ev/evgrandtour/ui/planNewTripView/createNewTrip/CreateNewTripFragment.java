@@ -3,7 +3,10 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.createNewTrip;
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentCreateNewTripBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseFragment;
+import com.grandtour.ev.evgrandtour.ui.mainActivity.NavigationFlowListener;
+import com.grandtour.ev.evgrandtour.ui.planNewTripView.PlanNewTripFragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,10 +20,12 @@ public class CreateNewTripFragment extends BaseFragment<CreateNewTripPresenter> 
 
     @NonNull
     public final static String TAG = CreateNewTripFragment.class.getSimpleName();
-
+    @NonNull
+    public final static String BUNDLE_TRIP_ID = "BUNDLE_TRIP_ID";
     @NonNull
     private final CreateNewTripViewModel viewModel = new CreateNewTripViewModel();
-
+    @Nullable
+    private NavigationFlowListener navigationFlowListener;
     @NonNull
     public static CreateNewTripFragment createInstance() {
         return new CreateNewTripFragment();
@@ -35,6 +40,17 @@ public class CreateNewTripFragment extends BaseFragment<CreateNewTripPresenter> 
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            navigationFlowListener = (NavigationFlowListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.getClass()
+                    .getSimpleName() + " must implement NavigationFlowListener");
+        }
+    }
+
+    @Override
     public void showLoadingView(boolean isLoading) {
         viewModel.isLoadingInProgress.set(isLoading);
     }
@@ -43,5 +59,26 @@ public class CreateNewTripFragment extends BaseFragment<CreateNewTripPresenter> 
     @Override
     protected CreateNewTripPresenter createPresenter() {
         return new CreateNewTripPresenter(this);
+    }
+
+    @Override
+    public void displayErrorOnTripNameField(@NonNull String error) {
+        viewModel.newTripNameErrorMessage.set(error);
+    }
+
+    @Override
+    public void removeErrorOnTripNameField() {
+        viewModel.newTripNameErrorMessage.set(null);
+    }
+
+    @Override
+    public void moveToTripCheckpointsPlanningScreen(int tripId) {
+        PlanNewTripFragment fragment = PlanNewTripFragment.createInstance();
+        Bundle bundle = new Bundle();
+        bundle.putInt(CreateNewTripFragment.BUNDLE_TRIP_ID, tripId);
+        fragment.setArguments(bundle);
+        if (navigationFlowListener != null) {
+            navigationFlowListener.moveToFragment(fragment, PlanNewTripFragment.TAG);
+        }
     }
 }
