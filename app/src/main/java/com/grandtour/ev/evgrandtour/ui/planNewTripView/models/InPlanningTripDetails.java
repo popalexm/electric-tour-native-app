@@ -42,11 +42,11 @@ public class InPlanningTripDetails {
     }
 
     @NonNull
-    public List<TripCheckpoint> getPlannedTripCheckpoints() {
+    public List<TripCheckpoint> getTripCheckpoints() {
         return plannedTripCheckpoints;
     }
 
-    public void setPlannedTripCheckpoints(@NonNull List<TripCheckpoint> plannedTripCheckpoints) {
+    public void setTripCheckpoints(@NonNull List<TripCheckpoint> plannedTripCheckpoints) {
         this.plannedTripCheckpoints = plannedTripCheckpoints;
     }
 

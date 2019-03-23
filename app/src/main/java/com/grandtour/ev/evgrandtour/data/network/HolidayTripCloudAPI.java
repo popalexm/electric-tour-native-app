@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.data.network;
 
 import com.grandtour.ev.evgrandtour.data.network.models.request.PlannedCheckpointRequest;
-import com.grandtour.ev.evgrandtour.data.network.models.request.PlannedTripRequest;
+import com.grandtour.ev.evgrandtour.data.network.models.request.AddInPlanningTripRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.request.UpdateCheckpointLocationRequest;
 import com.grandtour.ev.evgrandtour.data.network.models.response.planNewTrip.InPlanningTripResponse;
 
@@ -17,7 +17,7 @@ import retrofit2.http.Query;
 public interface HolidayTripCloudAPI {
 
     @POST("post-in-planning-trip")
-    Observable<Response<Integer>> postPlannedTrip(@Body PlannedTripRequest plannedTripRequest);
+    Observable<Response<Integer>> postPlannedTrip(@Body AddInPlanningTripRequest addInPlanningTripRequest);
 
     @GET("get-current-in-planning-trip")
     Observable<Response<InPlanningTripResponse>> getCurrentInPlanningTripForUser(@Query("userId") Integer userId);

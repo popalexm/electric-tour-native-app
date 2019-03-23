@@ -54,13 +54,14 @@
     <string name="label_address">Destination address</string>
 
 
-    // New Trip Details
+    // Create New Trip
     <string name="hint_trip_name">Trip Name</string>
     <string name="hint_trip_description">Trip Description</string>
     <string name="button_next">Next</string>
     <string name="error_trip_name_is_mandatory">Trip name is mandatory!</string>
+    <string name="error_while_creating_your_trip">Error while trying to create your trip!</string>
 
-    // Add/Edit Trip Checkpoint Details
+    // Add/Edit New Trip Checkpoint Details
     <string name="hint_enter_checkpoint_name">Destination name</string>
     <string name="hint_enter_checkpoint_description">Destination description</string>
     <string name="hint_checkpoint_tracking_description">By enabling arrival or departure notifications, the application will notify you when you have approached or departed from the vicinity of this checkpoint</string>

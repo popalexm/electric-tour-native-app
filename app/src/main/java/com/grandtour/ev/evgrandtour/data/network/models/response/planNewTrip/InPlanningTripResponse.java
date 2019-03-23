@@ -5,6 +5,7 @@ import java.util.List;
 public class InPlanningTripResponse {
 
     private Integer tripId;
+    private Integer userId;
     private String tripName;
     private String tripDescription;
     private List<InPlanningCheckpointResponse> inPlanningCheckpoints;

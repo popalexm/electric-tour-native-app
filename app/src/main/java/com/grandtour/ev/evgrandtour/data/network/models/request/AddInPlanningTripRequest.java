@@ -1,7 +1,7 @@
 package com.grandtour.ev.evgrandtour.data.network.models.request;
 
 
-public class PlannedTripRequest {
+public class AddInPlanningTripRequest {
 
     private String tripName;
     private String tripDescription;

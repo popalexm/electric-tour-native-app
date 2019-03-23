@@ -2,10 +2,11 @@ package com.grandtour.ev.evgrandtour.ui.planNewTripView.createNewTrip;
 
 import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.app.Injection;
-import com.grandtour.ev.evgrandtour.data.network.models.request.PlannedTripRequest;
+import com.grandtour.ev.evgrandtour.data.network.models.request.AddInPlanningTripRequest;
 import com.grandtour.ev.evgrandtour.ui.base.BasePresenter;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -21,6 +22,22 @@ public class CreateNewTripPresenter extends BasePresenter implements CreateNewTr
     }
 
     @Override
+    public void onCheckForPreviousInPlanningTrip(){
+        addSubscription(Injection.provideCloudApi()
+                .getCurrentInPlanningTripForUser(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(response -> {
+                          if(isViewAttached()){
+                              if (response.code() == 200 && response.body() != null) {
+                                  onPreviousInPlanningTrip(response.body().getTripId());
+                              }
+                          }
+                        }, Throwable::printStackTrace
+                ));
+    }
+
+    @Override
     public void onNextPressed(@NonNull String newTripName, @NonNull String newTripDescription) {
         if (TextUtils.isEmpty(newTripName)) {
             if (isViewAttached()) {
@@ -31,15 +48,11 @@ public class CreateNewTripPresenter extends BasePresenter implements CreateNewTr
             if (isViewAttached) {
                 view.removeErrorOnTripNameField();
             }
-            PlannedTripRequest request = new PlannedTripRequest();
-            request.setUserId(1);
-            request.setTripName(newTripName);
-            request.setTripDescription(newTripDescription);
-            startAddTripRequest(request);
+            startAddTripRequest(createInPlanningTripRequest(newTripName, newTripDescription));
         }
     }
 
-    private void startAddTripRequest(@NonNull PlannedTripRequest request) {
+    private void startAddTripRequest(@NonNull AddInPlanningTripRequest request) {
         addSubscription(Injection.provideCloudApi()
                 .postPlannedTrip(request)
                 .subscribeOn(Schedulers.io())
@@ -54,6 +67,12 @@ public class CreateNewTripPresenter extends BasePresenter implements CreateNewTr
                 }));
     }
 
+    private void onPreviousInPlanningTrip(@NonNull Integer tripId){
+        if(isViewAttached){
+            view.moveToTripCheckpointsPlanningScreen(tripId);
+        }
+    }
+
     private void onTripPlannedSuccessfully(@NonNull Integer tripId) {
         if (isViewAttached()) {
             view.moveToTripCheckpointsPlanningScreen(tripId);
@@ -62,7 +81,17 @@ public class CreateNewTripPresenter extends BasePresenter implements CreateNewTr
 
     private void onTripRequestFailed() {
         if (isViewAttached()) {
-            view.showMessage("Error while trying to create your trip!");
+            view.showMessage(Injection.provideGlobalContext().getResources().getString(R.string.error_while_creating_your_trip));
         }
     }
+
+    @NonNull
+    private AddInPlanningTripRequest createInPlanningTripRequest(@NonNull String newTripName, @NonNull String newTripDescription){
+        AddInPlanningTripRequest request = new AddInPlanningTripRequest();
+        request.setUserId(1);
+        request.setTripName(newTripName);
+        request.setTripDescription(newTripDescription);
+        return request;
+    }
+
 }

@@ -48,6 +48,7 @@ public class CreateNewTripFragment extends BaseFragment<CreateNewTripPresenter> 
             throw new ClassCastException(context.getClass()
                     .getSimpleName() + " must implement NavigationFlowListener");
         }
+        getPresenter().onCheckForPreviousInPlanningTrip();
     }
 
     @Override

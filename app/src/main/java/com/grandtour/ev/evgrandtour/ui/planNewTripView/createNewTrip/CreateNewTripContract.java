@@ -17,6 +17,8 @@ public class CreateNewTripContract {
 
     public interface Presenter extends BaseContract.Presenter {
 
+        void onCheckForPreviousInPlanningTrip();
+
         void onNextPressed(@NonNull String newTripName, @NonNull String newTripDescription);
     }
 
