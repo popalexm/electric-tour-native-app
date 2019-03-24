@@ -30,13 +30,13 @@ public class PlanNewTripContract {
 
         void removeAddedTripCheckpoint(@NonNull TripCheckpoint tripCheckpoint);
 
-        void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList);
-
         void moveCameraToLocation(@NonNull LatLng latLng);
 
         void drawRoutePolyline(@NonNull PolylineOptions routePolyOptions);
 
         void clearRoutePolyline();
+
+        void moveBackToCurrentTripView();
 
     }
 

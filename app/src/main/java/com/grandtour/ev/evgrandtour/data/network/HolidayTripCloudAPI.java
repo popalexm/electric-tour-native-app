@@ -12,6 +12,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface HolidayTripCloudAPI {
@@ -22,9 +23,8 @@ public interface HolidayTripCloudAPI {
     @GET("get-current-in-planning-trip")
     Observable<Response<InPlanningTripResponse>> getCurrentInPlanningTripForUser(@Query("userId") Integer userId);
 
-    @POST("post-in-planning-checkpoint-for-trip")
-    Observable<Response<Integer>> postPlannedCheckpointForTripId(@Query("tripId") Integer tripId, @Query("userId") Integer userId,
-            @Body PlannedCheckpointRequest plannedCheckpointRequest);
+    @POST("post-in-planning-checkpoint")
+    Observable<Response<Integer>> postPlannedCheckpoint(@Body PlannedCheckpointRequest plannedCheckpointRequest);
 
     @DELETE("delete-in-planning-checkpoint-for-trip-id")
     Observable<Response<Integer>> deletePlannedCheckpointForTripId(@Query("tripId") Integer tripId, @Query("checkpointId") Integer checkpointId);
@@ -32,4 +32,6 @@ public interface HolidayTripCloudAPI {
     @PATCH("update-in-planning-checkpoint-location")
     Observable<Response<Integer>> updatePlannedCheckpointLocationForTripId(@Query("userId") Integer userId, @Body UpdateCheckpointLocationRequest request);
 
+    @POST("set-in-planning-trip-as-done")
+    Observable<Response<Integer>> setInPlanningTripAsDone(@Body Integer userId);
 }

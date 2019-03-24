@@ -61,6 +61,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
             case R.id.action_create_trip:
                 //  loadAddEditTripsFragment();
+
+                // TODO Have decisive logic between showing create trip fragment , and add trip details fragment
+                // TODO Add animations
+
                 loadCreateNewTripFragment();
                 return true;
             case R.id.action_settings:
@@ -74,4 +78,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void moveToFragment(@NonNull Fragment fragment, @NonNull String tag) {
         replaceInFragmentManager(fragment, tag);
     }
+
+
+
+
+
+
 }

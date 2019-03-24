@@ -17,21 +17,19 @@ public class SaveInPlanningTripCheckpointUseCase extends BaseUseCaseRefactored {
     private final HolidayTripCloudAPI cloudAPI;
     @NonNull
     private final PlannedCheckpointRequest checkpointRequest;
-    private final int tripId;
     private final int userId;
 
     public SaveInPlanningTripCheckpointUseCase(@NonNull Pair<Scheduler, Scheduler> schedulers, @NonNull HolidayTripCloudAPI cloudAPI,
-            @NonNull PlannedCheckpointRequest checkpointRequest, int tripId, int userId) {
+            @NonNull PlannedCheckpointRequest checkpointRequest, int userId) {
         super(schedulers);
         this.cloudAPI = cloudAPI;
         this.checkpointRequest = checkpointRequest;
-        this.tripId = tripId;
         this.userId = userId;
     }
 
     @Override
     public Observable<Response<Integer>> perform() {
-        return cloudAPI.postPlannedCheckpointForTripId(tripId, userId, checkpointRequest)
+        return cloudAPI.postPlannedCheckpoint(checkpointRequest)
                 .subscribeOn(executorThread)
                 .observeOn(postExecutionThread);
     }

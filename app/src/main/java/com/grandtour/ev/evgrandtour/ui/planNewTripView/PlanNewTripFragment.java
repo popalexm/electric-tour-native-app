@@ -13,6 +13,8 @@ import com.grandtour.ev.evgrandtour.R;
 import com.grandtour.ev.evgrandtour.databinding.FragmentPlanNewTripBinding;
 import com.grandtour.ev.evgrandtour.ui.base.BaseMapFragment;
 import com.grandtour.ev.evgrandtour.ui.currentTripView.CurrentTripFragmentView;
+import com.grandtour.ev.evgrandtour.ui.mainActivity.MainActivity;
+import com.grandtour.ev.evgrandtour.ui.mainActivity.NavigationFlowListener;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.models.TripCheckpoint;
 import com.grandtour.ev.evgrandtour.ui.planNewTripView.newTripCheckpointDetails.TripCheckpointDetailsFragmentView;
 import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
@@ -20,12 +22,15 @@ import com.grandtour.ev.evgrandtour.ui.utils.PermissionUtils;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -40,10 +45,11 @@ public class PlanNewTripFragment extends BaseMapFragment<PlanNewTripPresenter>
     @NonNull
     private final PlanNewTripViewModel viewModel = new PlanNewTripViewModel();
     @NonNull
-    private final ArrayList<Polyline> inPlanningTripRoute = new ArrayList<>();
+    private final Collection<Polyline> inPlanningTripRoute = new ArrayList<>();
     @Nullable
     private ClusterManager<TripCheckpoint> clusterManager;
-    private FragmentPlanNewTripBinding viewBinding;
+    @Nullable
+    private NavigationFlowListener navigationFlowListener;
 
     @NonNull
     public static PlanNewTripFragment createInstance() {
@@ -52,12 +58,22 @@ public class PlanNewTripFragment extends BaseMapFragment<PlanNewTripPresenter>
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip, container, false);
+        FragmentPlanNewTripBinding viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_plan_new_trip, container, false);
         viewBinding.setViewModel(viewModel);
         viewBinding.setPresenter(getPresenter());
         setMapView(viewBinding.mapViewAddTrip);
         initGoogleMapsView(savedInstanceState);
         return viewBinding.getRoot();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            navigationFlowListener = (NavigationFlowListener) context;
+        } catch (ClassCastException exception){
+            Log.e(PlanNewTripFragment.TAG, "Navigation flow listener not implemented in");
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -155,11 +171,6 @@ public class PlanNewTripFragment extends BaseMapFragment<PlanNewTripPresenter>
     }
 
     @Override
-    public void displayTripCheckpointsInReorderingList(@NonNull List<TripCheckpoint> checkpointReorderingList) {
-        viewModel.reorderingList.addAll(checkpointReorderingList);
-    }
-
-    @Override
     public void moveCameraToLocation(@NonNull LatLng latLng) {
         GoogleMap googleMap = getGoogleMap();
         if (googleMap != null) {
@@ -182,6 +193,14 @@ public class PlanNewTripFragment extends BaseMapFragment<PlanNewTripPresenter>
             route.remove();
         }
         inPlanningTripRoute.clear();
+    }
+
+    @Override
+    public void moveBackToCurrentTripView() {
+        if(navigationFlowListener != null){
+            CurrentTripFragmentView fragmentView = new CurrentTripFragmentView();
+            navigationFlowListener.moveToFragment(fragmentView, CurrentTripFragmentView.TAG);
+        }
     }
 
     @Override

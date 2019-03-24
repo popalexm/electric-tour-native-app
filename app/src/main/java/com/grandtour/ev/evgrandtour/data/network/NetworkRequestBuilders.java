@@ -77,11 +77,11 @@ public final class NetworkRequestBuilders {
     }
 
     @NonNull
-    public static PlannedCheckpointRequest createPlannedTripCheckpointRequest(@NonNull TripCheckpoint tripCheckpoint) {
+    public static PlannedCheckpointRequest createPlannedTripCheckpointRequest(@NonNull TripCheckpoint tripCheckpoint, @NonNull Integer tripId) {
         PlannedCheckpointRequest checkpointRequest = new PlannedCheckpointRequest();
         checkpointRequest.setCheckpointId(tripCheckpoint.getCheckpointId());
         checkpointRequest.setOrderInTripId(tripCheckpoint.getOrderInTrip());
-        checkpointRequest.setTripId(1);
+        checkpointRequest.setTripId(tripId);
 
         checkpointRequest.setCheckpointTitle(tripCheckpoint.getCheckpointTitle());
         checkpointRequest.setCheckpointDescription(tripCheckpoint.getCheckpointDescription());
